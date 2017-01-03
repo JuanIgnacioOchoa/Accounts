@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_activity_moves_swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="367dp"
+        android:id="@+id/listView_Movimientos"
+        android:layout_gravity="center" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gasto"
+            android:id="@+id/frag_moves_tvGasto"
+            android:layout_marginStart="47dp"
+            android:layout_alignTop="@+id/frag_moves_tvIngreso"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingreso"
+            android:id="@+id/frag_moves_tvIngreso"
+            android:layout_marginTop="25dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/frag_moves_spMoneda"
+            android:layout_alignTop="@+id/frag_moves_tvIngreso"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+</FrameLayout>
+<!--
+<android.support.v4.widget.SwipeRefreshLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/fragment_activity_profile_swipeRefreshLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:fillViewport="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+    </ScrollView>
+
+<!-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+            <EditText
+                android:id="@+id/fragment_activity_profile_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:inputType="text"
+                android:hint="Buscar en historial..."
+                android:includeFontPadding="false"
+                android:drawableLeft="@android:drawable/ic_menu_search"/>
+
+
+
+        </LinearLayout>
+
+
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:id="@+id/listView_Movimientos"
+        android:layout_gravity="center" />
+
+</android.support.v4.widget.SwipeRefreshLayout>
+-->

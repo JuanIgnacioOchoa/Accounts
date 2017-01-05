@@ -88,7 +88,7 @@ public class seeCuentas extends AppCompatActivity {
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             // Find fields to populate in inflated template
-            TextView tvId = (TextView) view.findViewById(R.id.lv_see_cuentas_id);
+            //TextView tvId = (TextView) view.findViewById(R.id.lv_see_cuentas_id);
             TextView tvCantidad = (TextView) view.findViewById(R.id.lv_sse_cuentas_cant);
             TextView tvMotivo = (TextView) view.findViewById(R.id.lv_see_cuentas_motivo);
             TextView tvFecha = (TextView) view.findViewById(R.id.lv_see_cuentas_fecha);
@@ -103,7 +103,7 @@ public class seeCuentas extends AppCompatActivity {
             String fecha = cursor.getString(cursor.getColumnIndex(DBMan.DBMovimientos.Fecha));
             String cambio = cursor.getString(cursor.getColumnIndex(DBMan.DBMovimientos.Cambio));
             //set
-            tvId.setText(idCursor);
+            //tvId.setText(" ");
             tvFecha.setText(fecha);
             tvMotivo.setText(motivo);
 

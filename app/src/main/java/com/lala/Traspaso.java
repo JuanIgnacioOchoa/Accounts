@@ -59,10 +59,10 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
         }
 
         from = new String[]{DBMan.DBTotales.Cuenta};
-        simpleCursorAdapter = new SimpleCursorAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,cursorFromCuenta,from,to,0);
+        simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorFromCuenta,from,to,0);
         spFromCuenta.setAdapter(simpleCursorAdapter);
 
-        simpleCursorAdapter = new SimpleCursorAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,cursorToCuenta,from,to,0);
+        simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorToCuenta,from,to,0);
         spToCuenta.setAdapter(simpleCursorAdapter);
 
         spToCuenta.setOnItemSelectedListener(this);

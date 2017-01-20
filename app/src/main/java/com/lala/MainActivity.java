@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -26,14 +27,26 @@ import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+/*
+import com.google.android.gms.common.api.Batch;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.MetadataChangeSet;
+*/
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -168,9 +181,20 @@ public class MainActivity extends AppCompatActivity {
         //BtnIngreso.setOnClickListener(this);
         //BtnMov.setOnClickListener(this);
 
+        //upload("temp.db", AppDir, "application/x-sqlite3");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //upload("temp.db", AppDir, "application/x-sqlite3");
+    }
 
+    @Override
+    protected void onStop(){
+        super.onStop();
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -194,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
         else if(id == R.id.Reportes){
-            
+            Intent i = new Intent(this, Reportes.class);
+            startActivity(i);
         }
         else if(id == R.id.new_moneda){
             AlertDialog.Builder builder = new AlertDialog.Builder(cont);
@@ -314,5 +339,62 @@ public class MainActivity extends AppCompatActivity {
             );
         }
     }
+    /*
+    com.google.android.gms.common.api.GoogleApiClient GAC;
+    ///...
+    void upload(final String titl, final File file, final String mime) {
+        Log.d(Principal.TAG, "Start Uploading " + (GAC != null) + (titl != null) +(file != null));
+        if (GAC != null && GAC.isConnected() && titl != null && file != null) try {
+            Log.d(Principal.TAG, "IF 1");
+            Drive.DriveApi.newDriveContents(GAC).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.DriveContentsResult contRslt) {
+                    if (contRslt.getStatus().isSuccess()){
+                        Log.d(Principal.TAG, "IF 2");
+                        DriveContents cont = contRslt.getDriveContents();
+                        if (cont != null && file2Os(cont.getOutputStream(), file)) {
+                            Log.d(Principal.TAG, "IF 3");
+                            MetadataChangeSet meta = new MetadataChangeSet.Builder().setMimeType(mime).build();
+                            Drive.DriveApi.getRootFolder(GAC).createFile(GAC, meta, cont).setResultCallback(
+                                    new ResultCallback<DriveFolder.DriveFileResult>() {
+                                        @Override
+                                        public void onResult(@NonNull DriveFolder.DriveFileResult fileRslt) {
+                                            if (fileRslt.getStatus().isSuccess()) {
+                                                // fileRslt.getDriveFile();   BINGO !!!
+                                            }
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(Principal.TAG, "Exception, " + e.toString());
+        }
+    }
+
+    static boolean file2Os(OutputStream os, File file) {
+        Log.d(Principal.TAG, "file2os");
+        boolean bOK = false;
+        InputStream is = null;
+        if (file != null && os != null) try {
+            byte[] buf = new byte[4096];
+            is = new FileInputStream(file);
+            int c;
+            while ((c = is.read(buf, 0, buf.length)) > 0)
+                os.write(buf, 0, c);
+            bOK = true;
+        } catch (Exception e) {e.printStackTrace();}
+        finally {
+            try {
+                os.flush(); os.close();
+                if (is != null )is.close();
+            } catch (Exception e) {e.printStackTrace();}
+        }
+        return  bOK;
+    }
+    */
 }
 

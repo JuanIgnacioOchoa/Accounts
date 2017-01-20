@@ -126,7 +126,6 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
             @Override
             public void onClick(View view) {
                 if (edit) {
-                    Toast.makeText(context, "hola", Toast.LENGTH_SHORT).show();
                     if (EditTextError.checkError(etCantidad)) {
                     } else if (verificarDatos()) {
                         Principal.actualizarMovimiento(id,nCantidad,nIdCuenta,nComment,nIdMotivo,nIdMoneda,nCambio,nDate);
@@ -167,6 +166,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                 }
             }
         });
+
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -176,6 +176,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                 //handleOnBackPress();
             }
         });
+
         to = new int[]{android.R.id.text1};
         from = new String[]{DBMan.DBTotales.Cuenta};
         simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorCuenta,from,to,0);

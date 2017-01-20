@@ -113,6 +113,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                         .setAction("Action", null).show();
             }
         });
+
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -122,6 +123,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 //handleOnBackPress();
             }
         });
+
         if(gasto){
             this.setTitle("Gasto (-)");
             etCantidad.setTextColor(Color.RED);

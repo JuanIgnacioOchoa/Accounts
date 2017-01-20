@@ -6,10 +6,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Calendar;
+
 /**
  * Created by Juan on 07/02/2016.
  */
 public class Principal {
+    public static final String TAG = "Account";
     private static SQLiteDatabase db;
     private static Context context;
     public Principal(SQLiteDatabase db, Context con){
@@ -157,16 +162,56 @@ public class Principal {
         }
         return ingreso;
     }
+
+    public static Double getIngresoTotalMonthly(int Moneda,String month, String year){
+        Cursor c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                "  SELECT sum(Cantidad ) as Ingreso FROM Movimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and \n" +
+                "  strftime('%m',Fecha) == \"" + month + "\" \n" +
+                "union\n" +
+                "\n" +
+                "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda\n" +
+                "                then Cantidad * -1 end) as Ingreso FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" and IdMoneda == ? and Cambio IS NOT NULL\n" +
+                "union\n" +
+                "SELECT  SUM(Cantidad) as Ingreso From Totales, Movimiento WHERE IdMotivo == 3 and Traspaso == Totales._id and Totales.IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and strftime('%m',Fecha) == \"" + month + "\"\n" +
+                ")\n",new String[]{Moneda+"",Moneda+"",Moneda+""});
+        c.moveToFirst();
+        Double ingreso;
+        try {
+            ingreso = c.getDouble(c.getColumnIndex("Ingreso"));
+            ingreso++;
+            ingreso--;
+        } catch (Exception e){
+            ingreso = 0.0;
+        }
+        return ingreso;
+    }
+
     public static Double getGastoTotal(int Moneda){
         Cursor c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
                 "SELECT sum(Cantidad ) as Gasto FROM Movimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == strftime('%Y', date('now'))and \n" +
                 "strftime('%m',Fecha) == strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now'))\n" +
-                "union\n" +
-                "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) == ?\n" +
-                " then Cantidad * Cambio end) FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == strftime('%Y', date('now')) and strftime('%m',Fecha) == strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now'))\n" +
-                "union\n" +
-                "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales) == ? THEN Cantidad * Cambio * -1 end) FROM Movimiento WHERE strftime('%Y',Fecha) == strftime('%Y', date('now')) and strftime('%m',Fecha) == strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now'))\n" +
-                ")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+                "union\n" + "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) == ?\n" +
+                " then Cantidad * Cambio end) FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == strftime('%Y', date('now')) and strftime('%m',Fecha)" +
+                " == strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now'))\n" +
+                "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales) == ? THEN" +
+                " Cantidad * Cambio * -1 end) FROM Movimiento WHERE strftime('%Y',Fecha) == strftime('%Y', date('now')) and strftime('%m',Fecha) == strftime('%m',date('now'))" +
+                " and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now'))\n" + ")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+        c.moveToFirst();
+        Double gasto;
+        gasto = c.getDouble(c.getColumnIndex("Gasto"));
+
+        return gasto;
+    }
+    public static Double getGastoTotalMonthly(int Moneda, String month, String year){
+        Cursor c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                "SELECT sum(Cantidad ) as Gasto FROM Movimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\" and \n" +
+                "strftime('%m',Fecha) == \"" + month + "\"\n" +
+                "union\n" + "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) == ?\n" +
+                " then Cantidad * Cambio end) FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" +year +"\" and strftime('%m',Fecha)" +
+                " == \"" + month +"\"\n" +
+                "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales) == ? THEN" +
+                " Cantidad * Cambio * -1 end) FROM Movimiento WHERE strftime('%Y',Fecha) == \"" +year +"\" and strftime('%m',Fecha) == \"" + month +"\"" +
+                " \n" + ")",new String[]{Moneda+"",Moneda+"",Moneda+""});
         c.moveToFirst();
         Double gasto;
         gasto = c.getDouble(c.getColumnIndex("Gasto"));
@@ -174,6 +219,31 @@ public class Principal {
         return gasto;
     }
 
+    public static Cursor getSumByMoitiveMonth(int Moneda, String month, String year){
+        return db.rawQuery("SELECT Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, SUM(count1) as count1 FROM(\n" +
+                "                SELECT sum(Cantidad ) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE  IdMoneda == ? and strftime('%Y',Fecha) ==  \"" + year + "\"  and \n" +
+                "                strftime('%m',Fecha) == \"" + month + "\" and Cantidad < 0 GROUP BY IdMotivo\n" +
+                "                union \n" +
+                "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) == ?\n" +
+                "                 then Cantidad * Cambio end), IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" GROUP BY IdMotivo\n" +
+                "                union \n" +
+                "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales) == ? THEN\n" +
+                "                 Cantidad * Cambio * -1 end), IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" GROUP BY IdMotivo) as table1 LEFT OUTER JOIN (\n" +
+                "\n" +
+                "SELECT SUM(Ingreso) as Ingreso, IdMotivo2 FROM (\n" +
+                "                  SELECT sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) ==\"" + year + "\" and \n" +
+                "                  strftime('%m',Fecha) == \"" + month + "\" Group BY IdMotivo2\n" +
+                "                union\n" +
+                "                SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda\n" +
+                "                                then Cantidad * -1 end) as Ingreso, IdMotivo as IdMotivo2, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" " +
+                "and strftime('%m',Fecha) == \"" + month + "\" and IdMoneda == ? and Cambio IS NOT NULL Group BY IdMotivo2\n" +
+                "union\n" +
+                "                SELECT  SUM(Cantidad) as Ingreso, IdMotivo as IdMotivo2, COUNT(IdMotivo) as count1 From Totales, Movimiento WHERE IdMotivo2 == 3 and Traspaso == Totales._id and Totales.IdMoneda == ? " +
+                "and strftime('%Y',Fecha) == \"" + year + "\"and strftime('%m',Fecha) == \"" + month + "\" Group BY IdMotivo ) as table3, Motivo WHERE table3.IdMotivo2 == Motivo._id GROUP BY IdMotivo2\n" +
+                "\n" +
+                ") as table2 on table1.IdMotivo = table2.IdMotivo2 ,  Motivo WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC",
+                new String[]{Moneda+"", Moneda+"",Moneda+"",Moneda+"", Moneda+"",Moneda+""});
+    }
     //Motivos
     public static void insertMotive(String mot){
         ContentValues contentValues = new ContentValues();
@@ -440,6 +510,30 @@ public class Principal {
         cantidad = cantidadCuenta - cantidad;
         db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
                 " = " + cantidad +" WHERE _id = " + idCuenta);
+    }
+
+
+
+    //GetFirst use date
+    public static Calendar getFirstDate(){
+        Cursor c = db.rawQuery("SELECT Fecha FROM Movimiento WHERE _id = 1", new String[]{});
+        c.moveToFirst();
+        String fecha = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
+        String year = fecha.substring(0,4);
+        int yy = Integer.parseInt(year);
+        //int mm = Integer.getInteger(fecha.substring()
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR,Integer.parseInt(fecha.substring(0,4)));
+        calendar.set(Calendar.MONTH,Integer.parseInt(fecha.substring(5,7)) -1);
+        return calendar;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
 /*

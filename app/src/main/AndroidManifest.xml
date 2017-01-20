@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +21,17 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="com.google.android.apps.drive.APP_ID"
+                android:value="id=576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
+
+            <intent-filter>
+                <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
+
+                <data android:mimeType="application/vnd.google-apps.drive-sdk.576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
+                <data android:mimeType="application/x-sqlite3" />
             </intent-filter>
         </activity>
         <activity android:name=".NewAccount" />
@@ -57,7 +69,8 @@
         <activity
             android:name=".Reportes"
             android:label="@string/title_activity_reportes"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SeeByMotive"></activity>
     </application>
 
 </manifest>

@@ -114,7 +114,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             }
         });
 
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

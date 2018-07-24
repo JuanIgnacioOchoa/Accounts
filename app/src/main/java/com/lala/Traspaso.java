@@ -122,7 +122,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             }
         });
 
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

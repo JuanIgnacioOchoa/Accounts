@@ -9,8 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.lala.Reportes"
-    tools:showIn="@layout/activity_reportes">
+    tools:context="com.lala.Reportes">
 
     <ListView
         android:layout_width="wrap_content"

@@ -1,0 +1,141 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_activity_moves_swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top">
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_alignParentBottom="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gasto"
+            android:id="@+id/textView9"
+            android:width="110dp"
+            android:layout_above="@+id/listView"
+            android:layout_alignParentEnd="true"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingreso"
+            android:id="@+id/textView10"
+            android:width="110dp"
+            android:layout_alignBottom="@+id/textView9"
+            android:layout_toStartOf="@+id/textView9"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Motivos"
+            android:id="@+id/textView11"
+            android:layout_alignBottom="@+id/textView10"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/textView10"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner4"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/CGasto" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingreso"
+            android:id="@+id/textView12"
+            android:layout_alignTop="@+id/CIngreso"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/CIngreso"
+            android:layout_marginTop="37dp"
+            android:layout_below="@+id/spinner4"
+            android:layout_alignStart="@+id/textView10"
+            android:layout_marginStart="67dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gasto"
+            android:id="@+id/textView14"
+            android:layout_below="@+id/textView12"
+            android:layout_alignParentStart="true"
+            android:layout_alignEnd="@+id/textView12" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ganancia"
+            android:id="@+id/textView15"
+            android:layout_below="@+id/textView14"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/textView10" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/CGasto"
+            android:layout_above="@+id/textView15"
+            android:layout_alignStart="@+id/CIngreso"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/CGanancia"
+            android:layout_alignTop="@+id/textView15"
+            android:layout_alignStart="@+id/CGasto" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mes"
+            android:id="@+id/spYear"
+            android:layout_alignBottom="@+id/spinner4"
+            android:layout_alignParentTop="true"
+            android:layout_alignEnd="@+id/CGasto"
+            android:layout_toEndOf="@+id/spinner4"
+            android:textSize="25dp"
+            android:layout_alignStart="@+id/CIngreso" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/Porcentaje"
+            android:layout_below="@+id/CGasto"
+            android:layout_alignBottom="@+id/CGanancia"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/CGanancia" />
+
+    </RelativeLayout>
+</FrameLayout>

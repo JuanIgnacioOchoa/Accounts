@@ -1,5 +1,7 @@
 package com.lala;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,17 +14,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Calendar;
 
 public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private Spinner spFromCuenta, spToCuenta;
-    private EditText etCantidad, etComment, etCambio;
+    private EditText etCantidad, etComment, etCambio, etFecha;
     private TextView tvMoneda, tvCambio;
     private Cursor cursorFromCuenta, cursorToCuenta, c;
     private int idCuentaFrom, idCuentaTo, id, idMotivo, nIdFrom, nIdTo, nIdMotivo;
@@ -30,11 +35,11 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
     private String[] from;
     private Context context = this;
     private SimpleCursorAdapter simpleCursorAdapter;
-    private String idComment, nComment;
+    private String idComment, nComment, date, nDate;
     private Double cantidad, tipoDeCambio, nCantidad, nCambio;
     private NumberFormat instance;
     private Boolean edit;
-
+    private Calendar calendar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,8 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         id = i.getIntExtra("_id",0);
         c = Principal.getData(id);
         c.moveToFirst();
+        calendar = Calendar.getInstance();
+
         edit = false;
         spFromCuenta = (Spinner) findViewById(R.id.see_traspaso_spFrom);
         spToCuenta = (Spinner) findViewById(R.id.see_traspaso_spTo);
@@ -53,11 +60,14 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         tvMoneda = (TextView) findViewById(R.id.see_traspaso_tvMoneda);
         etCambio = (EditText) findViewById(R.id.see_traspaso_etCambio);
         tvCambio = (TextView) findViewById(R.id.see_traspaso_tvCambio);
+        etFecha = (EditText) findViewById(R.id.see_trasp_date);
 
         //etCambio.setFocusable(false);
         //etCambio.setEnabled(false);
         etComment.setFocusable(false);
         etComment.setEnabled(false);
+        etFecha.setFocusable(false);
+        etFecha.setEnabled(false);
         etCantidad.setFocusable(false);
         etCantidad.setEnabled(false);
         etCambio.setEnabled(false);
@@ -67,6 +77,28 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         spToCuenta.setEnabled(false);
         spToCuenta.setEnabled(false);
 
+        etFecha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog alertDialog = new DatePickerDialog(seeTraspaso.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        DateFormatSymbols dfs = new DateFormatSymbols();
+                        String[] months = dfs.getMonths();
+                        String date = months[monthOfYear].substring(0,3) + "-" + String.valueOf(dayOfMonth) + "-" + String.valueOf(year);
+                        etFecha.setText(date);
+                        String m;
+                        String d;
+                        if(dayOfMonth < 10) d = "0" + dayOfMonth;
+                        else d = "" + dayOfMonth;
+                        if(monthOfYear < 10) m = "0"+(monthOfYear+1);
+                        else m = (monthOfYear+1)+"";
+                        nDate = year + "-" + m + "-" + d;
+                    }
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                alertDialog.show();
+            }
+        });
         instance = NumberFormat.getInstance();
         instance.setMinimumFractionDigits(2);
 
@@ -92,7 +124,9 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
             cursorToCuenta = Principal.getTotalWallet(idCuentaTo);
             tvMoneda.setText(Principal.getMonedaTotales(c.getInt(c.getColumnIndex(DBMan.DBMovimientos.Traspaso))));
         }
-
+        date = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
+        nDate = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
+        etFecha.setText(date);
 
 
         from = new String[]{DBMan.DBTotales.Cuenta};
@@ -112,7 +146,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                     Toast.makeText(context, "hola", Toast.LENGTH_SHORT).show();
                     if (EditTextError.checkError(etCantidad)) {
                     } else if (verificarDatos()) {
-                        Principal.actualizarTraspaso(id,nCantidad,nIdFrom,nIdTo,nComment,nIdMotivo,nCambio);
+                        Principal.actualizarTraspaso(id,nCantidad,nIdFrom,nIdTo,nComment,nIdMotivo,nCambio, nDate);
                         //Principal.actualizarTipoDeCambio(Principal.getIdMoneda(nIdMoneda),Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta)),nCambio);
                         finish();
                     } else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
@@ -121,6 +155,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         fab.setImageDrawable(getResources().getDrawable(R.drawable.check, context.getTheme()));
                     } else fab.setImageDrawable(getResources().getDrawable(R.drawable.check));
+                    etFecha.setEnabled(true);
                     etCambio.setFocusable(true);
                     etCambio.setEnabled(true);
                     etCambio.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -139,8 +174,6 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                     spToCuenta.setEnabled(true);
 
                 }
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
 
@@ -182,8 +215,9 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                 if(sCant.charAt(i) != ',') sCantidad += sCant.charAt(i);
             }
             nCantidad = Double.parseDouble(sCantidad);
-
-            nCambio = Double.parseDouble(etCambio.getText().toString());
+            if(Principal.getMonedaId(nIdFrom) != Principal.getMonedaId(nIdTo)){
+                nCambio = Double.parseDouble(etCambio.getText().toString());
+            }
         }catch (Exception e){
             return false;
         }

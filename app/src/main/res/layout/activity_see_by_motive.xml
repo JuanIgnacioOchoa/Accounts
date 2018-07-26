@@ -34,6 +34,6 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/textView5"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
-
+        android:layout_marginTop="30dp"
+        android:id="@+id/listView"/>
 </RelativeLayout>

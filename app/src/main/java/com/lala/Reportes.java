@@ -58,7 +58,7 @@ public class Reportes extends AppCompatActivity{
                     return FragmentReportesMotives.getInstance();
                 }
                 default: {
-                    return FragmentMoves.getInstance();
+                    return FragmentReportesCuentas.getInstance();
                 }
             }
         }

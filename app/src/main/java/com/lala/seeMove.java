@@ -38,7 +38,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
     private String[] from;
     private NumberFormat instance;
     private Double cantidad, nCantidad, cambio, nCambio;
-    private String comment, idComment, nComment, date, nDate;
+    private String comment, nComment, date, nDate;
     private boolean edit = false;
     private Context context = this;
     private Calendar calendar;
@@ -54,14 +54,15 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         c.moveToFirst();
         calendar = Calendar.getInstance();
 
-        idComment = c.getString(c.getColumnIndex(DBMan.DBMovimientos.IdComment));
+
         idMoneda = c.getInt(c.getColumnIndex("IdMoneda"));
         nIdMoneda = idMoneda;
         idCuenta = c.getInt(c.getColumnIndex("IdTotales"));
         nIdCuenta = idCuenta;
         idMotivo = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMotivo));
         nIdMotivo = idMotivo;
-
+        comment = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Comment));
+        nComment = comment;
         cursorMotivo = Principal.getMotive(idMotivo);
         cursorCuenta = Principal.getTotales(idCuenta);
         cursorMoneda = Principal.getMoneda();
@@ -194,7 +195,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         spMoneda.setOnItemSelectedListener(this);
 
 
-        idComment = c.getString(c.getColumnIndex(DBMan.DBMovimientos.IdComment));
+        comment = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Comment));
         idMoneda = c.getInt(c.getColumnIndex("IdMoneda"));
         nIdMoneda = idMoneda;
         idCuenta = c.getInt(c.getColumnIndex("IdTotales"));
@@ -235,13 +236,9 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         Toast.makeText(this, nDate,Toast.LENGTH_LONG).show();
         etCantidad.setText("$"+instance.format(cantidad));
         etFecha.setText(date);
-
+        etComentario.setText(comment);
         etOtro.setVisibility(View.GONE);
-        if(idComment != null){
-            comment = Principal.getComment(Integer.parseInt(idComment));
-            nComment = comment;
-            etComentario.setText(comment);
-        }
+
 
         if(Principal.getMonedaId(idCuenta)== idMoneda){
             Toast.makeText(this,""+Principal.getMonedaId(idCuenta) + " = " + idMoneda, Toast.LENGTH_LONG).show();
@@ -258,6 +255,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
 
         try{
             String sCant = etCantidad.getText().toString();
+
             String sCantidad = "";
             if (sCant.charAt(0) == '$') {
                 sCant = sCant.substring(1, sCant.length());
@@ -353,7 +351,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         // as you specify a parent activity in AndroidManifest.xml.
         int idM = item.getItemId();
         if(idM == R.id.action_delete){
-            Principal.eliminarMov(id, idComment );
+            Principal.eliminarMov(id);
             Toast.makeText(context,"Movimiento ha sido eliminado", Toast.LENGTH_SHORT).show();
             finish();
         }

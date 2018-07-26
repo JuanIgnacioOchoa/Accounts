@@ -35,7 +35,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
     private String[] from;
     private Context context = this;
     private SimpleCursorAdapter simpleCursorAdapter;
-    private String idComment, nComment, date, nDate;
+    private String comment, nComment, date, nDate;
     private Double cantidad, tipoDeCambio, nCantidad, nCambio;
     private NumberFormat instance;
     private Boolean edit;
@@ -102,8 +102,8 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         instance = NumberFormat.getInstance();
         instance.setMinimumFractionDigits(2);
 
-        idComment = c.getString(c.getColumnIndex(DBMan.DBMovimientos.IdComment));
-        nComment = idComment;
+        comment = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Comment));
+        nComment = comment;
         idCuentaFrom = c.getInt(c.getColumnIndex("IdTotales"));
         nIdFrom = idCuentaFrom;
         idCuentaTo = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.Traspaso));
@@ -112,7 +112,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         nIdMotivo = idMotivo;
         cantidad = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cantidad));
         nCantidad = cantidad;
-        if(idComment!=null) etComment.setText(Principal.getComment(Integer.parseInt(idComment)));
+        etComment.setText(nComment);
         etCantidad.setText(cantidad+"");
         if(idMotivo == 1){
             cursorFromCuenta = Principal.getTotales(idCuentaFrom);
@@ -125,7 +125,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
             tvMoneda.setText(Principal.getMonedaTotales(c.getInt(c.getColumnIndex(DBMan.DBMovimientos.Traspaso))));
         }
         date = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
-        nDate = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
+        nDate = c.getString(c.getColumnIndex("nFecha"));;
         etFecha.setText(date);
 
 

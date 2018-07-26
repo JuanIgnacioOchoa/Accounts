@@ -97,10 +97,8 @@ public class Principal {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBMovimientos.Cantidad,cantidad);
-        if(comment != null) {
-            int IdComent = newComment(comment);
-            contentValues.put(DBMan.DBMovimientos.IdComment, IdComent);
-        }
+
+        contentValues.put(DBMan.DBMovimientos.Comment, comment);
         contentValues.put(DBMan.DBMovimientos.IdMotivo,getMotiveId(motivo));
         contentValues.put("IdMoneda", getIdMoneda(moneda));
         contentValues.put("IdTotales", cuenta);
@@ -113,27 +111,23 @@ public class Principal {
                 "when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' " +
                 "when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' else '' " +
                 "end ||'-'|| strftime('%d-%Y', Fecha))  as Fecha, Fecha as nFecha, " +
-                "IdTotales, IdComment, IdMotivo, IdMoneda, Cambio, Traspaso " +
+                "IdTotales, Comment, IdMotivo, IdMoneda, Cambio, Traspaso " +
                 "FROM Movimiento WHERE _id = ?",new String[]{""+id});
     }
-    public static void eliminarMov(int id,String comment ){
+    public static void eliminarMov(int id){
         deshacerMov(id);
         db.execSQL("DELETE FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE _id = " + id);
-        if(comment != null) db.execSQL("DELETE FROM " + DBMan.DBComment.Comments + " WHERE _id = " + comment);
     }
     public static void actualizarMovimiento(int id, Double cantidad, int cuenta, String comment,int motivo, int moneda, double cambio, String date){
         deshacerMov(id);
         String sCambio = null;
-        Cursor c = db.rawQuery("SELECT " + DBMan.DBMovimientos.IdComment + " FROM Movimiento WHERE _id = " + id,null );
-        c.moveToFirst();
-        int idComment = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdComment));
-        //db.execSQL("UPDATE " + DBMan.DBComment.TABLE_NAME + " SET " + DBMan.DBComment.Comments + " = " + comment + " WHERE _id = "+ idComment);
         if(cambio != -1.0) sCambio = cambio + "";
         db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " +
                 DBMan.DBMovimientos.Cantidad + " = " + cantidad +", " + DBMan.DBMovimientos.IdTotales + "="+cuenta+
                 ", " + DBMan.DBMovimientos.IdMotivo + " = " + motivo + ", " + DBMan.DBMovimientos.IdMoneda + " = " + moneda+ ", " +
-                DBMan.DBMovimientos.Cambio + " = " + sCambio+ ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "') WHERE _id = " + id);
-        c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{cuenta+""});
+                DBMan.DBMovimientos.Cambio + " = " + sCambio+ ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "'), " +
+                DBMan.DBMovimientos.Comment+ " = "+ comment+" WHERE _id = " + id);
+        Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{cuenta+""});
         c.moveToFirst();
         if(cambio == -1.0) cantidad = cantidad + c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
         else cantidad = (cantidad*cambio) + c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
@@ -253,16 +247,16 @@ public class Principal {
         return gasto;
     }
 
-    public static Cursor getSumByMoitiveMonth(int Moneda, String month, String year){
-        return db.rawQuery("SELECT Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, SUM(count1) as count1 FROM(\n" +
+    public static Cursor getSumByMotivesMonth(int Moneda, String month, String year){
+        return db.rawQuery("SELECT Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(Gasto,0)) as count1 FROM(\n" +
                 "                SELECT sum(Cantidad ) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE  IdMoneda == ? and strftime('%Y',Fecha) ==  \"" + year + "\"  and \n" +
                 "                strftime('%m',Fecha) == \"" + month + "\" and Cantidad < 0 GROUP BY IdMotivo\n" +
                 "                union \n" +
                 "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) == ?\n" +
-                "                 then Cantidad * Cambio end), IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" GROUP BY IdMotivo\n" +
+                "                 then Cantidad * Cambio end) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" GROUP BY IdMotivo\n" +
                 "                union \n" +
                 "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales) == ? THEN\n" +
-                "                 Cantidad * Cambio * -1 end), IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" GROUP BY IdMotivo) as table1 LEFT OUTER JOIN (\n" +
+                "                 Cantidad * Cambio * -1 end) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" GROUP BY IdMotivo) as table1 LEFT OUTER JOIN (\n" +
                 "\n" +
                 "SELECT SUM(Ingreso) as Ingreso, IdMotivo2 FROM (\n" +
                 "                  SELECT sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) ==\"" + year + "\" and \n" +
@@ -278,16 +272,16 @@ public class Principal {
                 ") as table2 on table1.IdMotivo = table2.IdMotivo2 ,  Motivo WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC",
                 new String[]{Moneda+"", Moneda+"",Moneda+"",Moneda+"", Moneda+"",Moneda+""});
     }
-    public static Cursor getSumByMoitiveYear(int Moneda, String year){
-        return db.rawQuery("SELECT Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, SUM(count1) as count1 FROM(\n" +
+    public static Cursor getSumByMotivesYear(int Moneda, String year){
+        return db.rawQuery("SELECT Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(Gasto,0)) as count1 FROM(\n" +
                         "                SELECT sum(Cantidad ) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE  IdMoneda == ? and strftime('%Y',Fecha) ==  \"" + year + "\"  and \n" +
                         "                Cantidad < 0 GROUP BY IdMotivo\n" +
                         "                union \n" +
                         "SELECT SUM( CASE WHEN (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales and Cambio > 0) == ?\n" +
-                        "                 then Cantidad * Cambio end), IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" GROUP BY IdMotivo\n" +
+                        "                 then Cantidad * Cambio end) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" GROUP BY IdMotivo\n" +
                         "                union \n" +
                         "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT Totales.idMoneda FROM Totales, Movimiento WHERE Totales._id == IdTotales) == ? THEN\n" +
-                        "                 Cantidad * Cambio * -1 end), IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE strftime('%Y',Fecha) == \"" + year + "\" GROUP BY IdMotivo) as table1 LEFT OUTER JOIN (\n" +
+                        "                 Cantidad * Cambio * -1 end) as Gasto, IdMotivo, COUNT(IdMotivo) as count1 FROM Movimiento WHERE strftime('%Y',Fecha) == \"" + year + "\" GROUP BY IdMotivo) as table1 LEFT OUTER JOIN (\n" +
                         "\n" +
                         "SELECT SUM(Ingreso) as Ingreso, IdMotivo2 FROM (\n" +
                         "                  SELECT sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2, COUNT(IdMotivo) as count1 FROM Movimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) ==\"" + year + "\"" +
@@ -302,6 +296,71 @@ public class Principal {
                         "\n" +
                         ") as table2 on table1.IdMotivo = table2.IdMotivo2 ,  Motivo WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC",
                 new String[]{Moneda+"", Moneda+"",Moneda+"",Moneda+"", Moneda+"",Moneda+""});
+    }
+    public static Cursor getSumByMotive(int id, String month, String year){
+        if(month.equals("")){
+            return db.rawQuery("SELECT Movimiento._id, cuenta, Cantidad, Comment, Fecha FROM Movimiento, Totales \n" +
+                    "WHERE idTotales = Totales._id and strftime('%Y',Fecha) == \""+ year+ "\" " +
+                    "and Movimiento.idMotivo == " + id,null);
+        }
+        return db.rawQuery("SELECT Movimiento._id, cuenta, Cantidad, Comment, Fecha FROM Movimiento, Totales \n" +
+                "WHERE idTotales = Totales._id and strftime('%Y',Fecha) == \""+ year+ "\" and " +
+                "strftime('%m',Fecha) == \"" + month +"\" and Movimiento.idMotivo == " + id ,null);
+    }
+    public static Cursor getTotalesCuentasByMonth(String month, String year){
+        return db.rawQuery("select Totales._id, Totales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso, " +
+                "(CurrentCantidad - COALESCE(Gasto,0) - COALESCE(Ingreso,0)) as Inicial, Totales.CurrentCantidad as Final\n" +
+                "from(SELECT t._id as idTotales, sum(Gasto) as Gasto from(\n" +
+                "SELECT * FROM Totales WHERE Totales.Activa\n" +
+                ") as t\n" +
+                "Left outer join (\n" +
+                "\tSELECT (sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end )) as Gasto, " +
+                "idTotales from Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \""+year+"\" and strftime('%m',Fecha) == \""+month+"\" " +
+                "Group by idTotales\n" +
+                "union\n" +
+                "select (-1*sum(CASE WHEN Cambio is not null and IdMotivo == 2 then cantidad*Cambio else cantidad end )) as Gasto, " +
+                "idTotales from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" and " +
+                "strftime('%m',Fecha) == \""+month+"\" Group by idTotales\n" +
+                ") as table3 on t._id == table3.idTotales Group by t._id\n" +
+                ") as table1\n" +
+                "LEFT OUTER JOIN (\n" +
+                "select idTotales, sum(Ingreso) as Ingreso from(\n" +
+                "select idTotales, sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end ) as Ingreso " +
+                "from Movimiento WHERE Cantidad > 0 and Traspaso is null and strftime('%Y',Fecha) == \""+year+"\" and strftime('%m',Fecha) == \""+month+"\" " +
+                "Group by idTotales\n" +
+                "union \n" +
+                "select  Traspaso as idTotales, sum(CASE WHEN Cambio is not null and IdMotivo <> 2 then cantidad*Cambio else cantidad end ) as Ingreso " +
+                "from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" and strftime('%m',Fecha) == \""+month+"\" group by Traspaso\n" +
+                ") Group by idTotales\n" +
+                ") as table2 on table1.idTotales == table2.idTotales, Totales WHERE (Totales._id == table1.idTotales or Totales._id == table2.idTotales) " +
+                "group by Totales._id\n",null);
+    }
+    public static Cursor getTotalesCuentasByYear(String year){
+        return db.rawQuery("select Totales._id, Totales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso, " +
+                "(CurrentCantidad - COALESCE(Gasto,0) - COALESCE(Ingreso,0)) as Inicial, Totales.CurrentCantidad as Final\n" +
+                "from(SELECT t._id as idTotales, sum(Gasto) as Gasto from(\n" +
+                "SELECT * FROM Totales WHERE Totales.Activa\n" +
+                ") as t\n" +
+                "Left outer join (\n" +
+                "\tSELECT (sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end )) as Gasto, " +
+                "idTotales from Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \""+year+"\" " +
+                "Group by idTotales\n" +
+                "union\n" +
+                "select (-1*sum(CASE WHEN Cambio is not null and IdMotivo == 2 then cantidad*Cambio else cantidad end )) as Gasto, " +
+                "idTotales from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" Group by idTotales\n" +
+                ") as table3 on t._id == table3.idTotales Group by t._id\n" +
+                ") as table1\n" +
+                "LEFT OUTER JOIN (\n" +
+                "select idTotales, sum(Ingreso) as Ingreso from(\n" +
+                "select idTotales, sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end ) as Ingreso " +
+                "from Movimiento WHERE Cantidad > 0 and Traspaso is null and strftime('%Y',Fecha) == \""+year+"\" " +
+                "Group by idTotales\n" +
+                "union \n" +
+                "select  Traspaso as idTotales, sum(CASE WHEN Cambio is not null and IdMotivo <> 2 then cantidad*Cambio else cantidad end ) as Ingreso " +
+                "from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" group by Traspaso\n" +
+                ") Group by idTotales\n" +
+                ") as table2 on table1.idTotales == table2.idTotales, Totales WHERE (Totales._id == table1.idTotales or Totales._id == table2.idTotales) " +
+                "group by Totales._id\n",null);
     }
     //Motivos
     public static void insertMotive(String mot){
@@ -342,20 +401,6 @@ public class Principal {
     public static void updateNameMotive(String motivo, int id){
         db.execSQL("UPDATE " + DBMan.DBMotivo.TABLE_NAME + " SET " +
                 DBMan.DBMotivo.Motivo + " = '" + motivo + "' WHERE _id = " + id);
-    }
-    //Comentarios
-    public static int newComment(String comment){
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DBMan.DBComment.Comments,comment);
-        db.insert(DBMan.DBComment.TABLE_NAME,null,contentValues);
-        Cursor c = db.rawQuery("SELECT * FROM Comment",null);
-        c.moveToLast();
-        return c.getInt(c.getColumnIndex("_id"));
-    }
-    public static String getComment(int id){
-        Cursor c = db.rawQuery("SELECT Comment FROM Comment WHERE _id = ?",new String[]{""+id});
-        c.moveToFirst();
-        return c.getString(c.getColumnIndex(DBMan.DBComment.Comments));
     }
     //Moneda
     public static Cursor getMoneda(){
@@ -417,10 +462,7 @@ public class Principal {
     public static void newTraspaso(int cuentaFrom, int cuentaTo, double cantidad, double cambio, String comment){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBMovimientos.Cantidad,cantidad);
-        if(comment != null) {
-            int IdComent = newComment(comment);
-            contentValues.put(DBMan.DBMovimientos.IdComment, IdComent);
-        }
+        contentValues.put(DBMan.DBMovimientos.Comment, comment);
         contentValues.put(DBMan.DBMovimientos.IdMotivo,"1");
         contentValues.put(DBMan.DBMovimientos.IdMoneda,"-1");
         contentValues.put(DBMan.DBMovimientos.IdTotales, cuentaFrom);
@@ -432,10 +474,7 @@ public class Principal {
     public static void newRetiro(int cuentaFrom, int cuentaTo, double cantidad, double cambio, String comment){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBMovimientos.Cantidad,cantidad);
-        if(comment != null) {
-            int IdComent = newComment(comment);
-            contentValues.put(DBMan.DBMovimientos.IdComment, IdComent);
-        }
+        contentValues.put(DBMan.DBMovimientos.Comment, comment);
         contentValues.put(DBMan.DBMovimientos.IdMotivo,"2");
         contentValues.put(DBMan.DBMovimientos.IdMoneda,"-2");
         contentValues.put(DBMan.DBMovimientos.IdTotales, cuentaFrom);
@@ -473,16 +512,13 @@ public class Principal {
         deshacerTras(id);
         String sCambio = null;
 
-        Cursor c = db.rawQuery("SELECT " + DBMan.DBMovimientos.IdComment + " FROM Movimiento WHERE _id = " + id,null );
-        c.moveToFirst();
-        int idComment = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdComment));
-        //db.execSQL("UPDATE " + DBMan.DBComment.TABLE_NAME + " SET " + DBMan.DBComment.Comments + " = " + comment + " WHERE _id = "+ idComment);
         if(Principal.getMonedaId(idFrom) != Principal.getMonedaId(idTo)) sCambio = cambio + "";
         Toast.makeText(context,idFrom + " = " + idTo,Toast.LENGTH_SHORT).show();
         db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " +
                 DBMan.DBMovimientos.Cantidad + " = " + cantidad +", " + DBMan.DBMovimientos.IdTotales + "="+idFrom +
                 ", " + DBMan.DBMovimientos.IdMotivo + " = " + motivo + ", " + DBMan.DBMovimientos.Traspaso + "=" + idTo + ", " +
-                DBMan.DBMovimientos.Cambio + " = " + sCambio + ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "')  WHERE _id = " + id);
+                DBMan.DBMovimientos.Cambio + " = " + sCambio + ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "'), " +
+                DBMan.DBMovimientos.Comment + " = " + comment +"  WHERE _id = " + id);
         if(motivo == 1){
             Principal.newMoveCuenta(cantidad * -1, idFrom);
             if(Principal.getMonedaId(idFrom) != Principal.getMonedaId(idTo)){

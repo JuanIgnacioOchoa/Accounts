@@ -28,20 +28,18 @@ public class DataBase extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TOTALES + "(_id INTEGER PRIMARY KEY  NOT NULL  UNIQUE , " +
                 "Cuenta VARCHAR(20) NOT NULL , Cantidad DOUBLE NOT NULL ," +
-                "IdMoneda INTEGER NOT NULL  DEFAULT M). " +
-                "FOREIGN KEY (IdMoneda) REFERENCES Moneda(_id)");
+                "IdMoneda INTEGER NOT NULL  DEFAULT 1, " +
+                "FOREIGN KEY (IdMoneda) REFERENCES Moneda(_id))");
         db.execSQL("CREATE TABLE Motivo (_id INTEGER PRIMARY KEY  NOT NULL , " +
                 "Motivo VARCHAR(50) NOT NULL )");
         db.execSQL("CREATE TABLE Movimiento (_id INTEGER PRIMARY KEY  NOT NULL , " +
                 "Cantidad DOUBLE NOT NULL ,Fecha DATETIME NOT NULL  DEFAULT CURRENT_DATE, " +
-                "IdTotales INTEGER NOT NULL, IdComment INTEGER NOT NULL , " +
+                "IdTotales INTEGER NOT NULL, " +
                 "IdMotivo INTEGER NOT NULL, IdMoneda INTEGER NOT NULL, " +
-                "FOREIGN KEY (IdComment) REFERENCES Comment(_id)," +
-                "FOREIGN KEY (IdMotivo) REFERENCES Motivo(_id)), " +
+                "Comment VARCHAR(255),"+
+                "FOREIGN KEY (IdMotivo) REFERENCES Motivo(_id), " +
                 " FOREIGN KEY (IdMoneda) REFERENCES Moneda(_id), " +
-                "FOREIGN KEY (IdTotales) REFERENCES Totales(_id)");
-        db.execSQL("CREATE TABLE Comment (_id INTEGER PRIMARY KEY  NOT NULL ," +
-                "Comment TEXT NOT NULL )");
+                "FOREIGN KEY (IdTotales) REFERENCES Totales(_id))");
         db.execSQL("CREATE TABLE MovTotales (_id INTEGER PRIMARY KEY  NOT NULL ," +
                 "IdTotales INTEGER NOT NULL , IdMov INTEGER NOT NULL ," +
                 "Cant INTEGER NOT NULL," +

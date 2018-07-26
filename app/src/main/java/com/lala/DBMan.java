@@ -19,15 +19,11 @@ public class DBMan {
         public static final String Cantidad = "Cantidad";
         public static final String Fecha = "Fecha";
         public static final String IdTotales = "IdTotales";
-        public static final String IdComment = "IdComment";
+        public static final String Comment = "comment";
         public static final String IdMotivo = "IdMotivo";
         public static final String IdMoneda = "IdMoneda";
         public static final String Cambio = "Cambio";
         public static final String Traspaso = "Traspaso";
-    }
-    public static class DBComment{
-        public static final String TABLE_NAME = "Comment";
-        public static final String Comments = "Comment";
     }
     public static class DBMotivo{
         public static final String TABLE_NAME = "Motivo";

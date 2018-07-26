@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class FragmentReportesMotives extends Fragment implements AdapterView.OnItemClickListener {
+public class FragmentReportesCuentas extends Fragment implements AdapterView.OnItemClickListener {
     private NumberFormat instance;
     private ListView lv;
     private TextView TVGanancia,TVGasto, TVIngreso, TVPorcentaje;
@@ -44,19 +44,19 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
     private SwipeRefreshLayout swipeRefreshLayout;
     private static Fragment fragmentProfileUniqueInstance;
     @SuppressLint("ValidFragment")
-    private FragmentReportesMotives(){
+    private FragmentReportesCuentas(){
 
     }
     public static Fragment getInstance() {
         if(fragmentProfileUniqueInstance == null) {
-            fragmentProfileUniqueInstance = new FragmentReportesMotives();
+            fragmentProfileUniqueInstance = new FragmentReportesCuentas();
         }
         return fragmentProfileUniqueInstance;
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_activity_reportes_motives, container, false);
+        final View view = inflater.inflate(R.layout.fragment_activity_reportes_cuentas, container, false);
 
         //Cast to each element from Fragment
 
@@ -145,7 +145,7 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
 
         //TVPorcentaje.setText("     " + instance.format(porcentaje) + "%");
 
-        Cursor c = Principal.getSumByMotivesMonth(1, "06", "2016");
+        Cursor c = Principal.getTotalesCuentasByMonth("06", "2016");
         adapter = new myAdapter(getContext(), c);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(this);
@@ -215,7 +215,7 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
                         TVGasto.setText(instance.format(gasto));
                         TVGanancia.setText(instance.format(ganancia));
 
-                        c = Principal.getSumByMotivesMonth(1, month,year);
+                        c = Principal.getTotalesCuentasByMonth(month,year);
                         adapter.changeCursor(c);
                         break;
                     case 2:
@@ -236,7 +236,7 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
                         TVIngreso.setText(instance.format(ingreso));
                         TVGasto.setText(instance.format(gasto));
                         TVGanancia.setText(instance.format(ganancia));
-                        c = Principal.getSumByMotivesYear(1, year);
+                        c = Principal.getTotalesCuentasByYear(year);
                         adapter.changeCursor(c);
                         break;
                     default:
@@ -257,7 +257,6 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
                     case 0:
                         break;
                     case 1:
-                        spMonth.setAdapter((spAdapteMonth));
                         break;
                     case 2:
                         spMonth.setAdapter(spAdapterYear);
@@ -273,7 +272,7 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+    /*
         Intent i = new Intent(getContext(),SeeByMotive.class);
         switch (spYear.getSelectedItemPosition()) {
             case 0:
@@ -284,13 +283,11 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
                 i.putExtra("year", year);
                 break;
             case 2:
-                i.putExtra("id",(int) id);
-                i.putExtra("month", "");
-                i.putExtra("year", year);
                 break;
             default:
         }
         startActivity(i);
+    */
     }
 
 
@@ -317,8 +314,8 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
             TextView TVMotivo = (TextView) view.findViewById(R.id.textView6);
             TVCantidadI.setText("$" + instance.format(in));
             TVCantidadG.setText("$" + instance.format(ga));
-            TVMotivo.setText(cursor.getString(cursor.getColumnIndex("Motivo")));
-
+            TVMotivo.setText(cursor.getString(cursor.getColumnIndex("Cuenta")));
+            TVMotivo.setTextColor(Color.BLACK);
 
         }
     }

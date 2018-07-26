@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class FragmentReportesCuentas extends Fragment implements AdapterView.OnItemClickListener {
+public class FragmentReportesCuentas extends Fragment {
     private NumberFormat instance;
     private ListView lv;
     private TextView TVGanancia,TVGasto, TVIngreso, TVPorcentaje;
@@ -41,6 +41,7 @@ public class FragmentReportesCuentas extends Fragment implements AdapterView.OnI
     private final String[] months = new String[]{"Ene","Feb","Mar", "Abr", "May", "Jun", "Jul", "Ago" ,"Sep", "Oct","Nov", "Dic"};
 
     private myAdapter adapter;
+    private Cursor c;
     private SwipeRefreshLayout swipeRefreshLayout;
     private static Fragment fragmentProfileUniqueInstance;
     @SuppressLint("ValidFragment")
@@ -68,6 +69,7 @@ public class FragmentReportesCuentas extends Fragment implements AdapterView.OnI
         TVPorcentaje = (TextView) view.findViewById(R.id.Porcentaje);
         spYear        = (Spinner)  view.findViewById(R.id.spYear);
         spMonth      = (Spinner) view.findViewById(R.id.spinner4);
+
 
         return view;
 
@@ -145,14 +147,21 @@ public class FragmentReportesCuentas extends Fragment implements AdapterView.OnI
 
         //TVPorcentaje.setText("     " + instance.format(porcentaje) + "%");
 
-        Cursor c = Principal.getTotalesCuentasByMonth("06", "2016");
+        c = Principal.getTotalesCuentasByMonth("06", "2016");
         adapter = new myAdapter(getContext(), c);
         lv.setAdapter(adapter);
-        lv.setOnItemClickListener(this);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getContext(),seeCuentas.class);
+                i.putExtra("_id",c.getInt(c.getColumnIndex("_id")));
+                startActivity(i);
+            }
+        });
         spMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Cursor c;
+
                 switch (spYear.getSelectedItemPosition()) {
                     case 0:
                         break;
@@ -269,25 +278,6 @@ public class FragmentReportesCuentas extends Fragment implements AdapterView.OnI
 
             }
         });
-    }
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    /*
-        Intent i = new Intent(getContext(),SeeByMotive.class);
-        switch (spYear.getSelectedItemPosition()) {
-            case 0:
-                break;
-            case 1:
-                i.putExtra("id",(int) id);
-                i.putExtra("month", month);
-                i.putExtra("year", year);
-                break;
-            case 2:
-                break;
-            default:
-        }
-        startActivity(i);
-    */
     }
 
 

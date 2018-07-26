@@ -308,59 +308,106 @@ public class Principal {
                 "strftime('%m',Fecha) == \"" + month +"\" and Movimiento.idMotivo == " + id ,null);
     }
     public static Cursor getTotalesCuentasByMonth(String month, String year){
-        return db.rawQuery("select Totales._id, Totales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso, " +
-                "(CurrentCantidad - COALESCE(Gasto,0) - COALESCE(Ingreso,0)) as Inicial, Totales.CurrentCantidad as Final\n" +
-                "from(SELECT t._id as idTotales, sum(Gasto) as Gasto from(\n" +
-                "SELECT * FROM Totales WHERE Totales.Activa\n" +
-                ") as t\n" +
-                "Left outer join (\n" +
-                "\tSELECT (sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end )) as Gasto, " +
-                "idTotales from Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \""+year+"\" and strftime('%m',Fecha) == \""+month+"\" " +
-                "Group by idTotales\n" +
-                "union\n" +
-                "select (-1*sum(CASE WHEN Cambio is not null and IdMotivo == 2 then cantidad*Cambio else cantidad end )) as Gasto, " +
-                "idTotales from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" and " +
-                "strftime('%m',Fecha) == \""+month+"\" Group by idTotales\n" +
-                ") as table3 on t._id == table3.idTotales Group by t._id\n" +
+        return db.rawQuery("select Totales._id, Totales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso\n" +
+                "from(\n" +
+                "\tSELECT t._id as idTotales, sum(Gasto) as Gasto \n" +
+                "\tfrom(\n" +
+                "\t\tSelect _id \n" +
+                "\t\tfrom(\n" +
+                "\t\t\tselect totales.*, Movimiento.* \n" +
+                "\t\t\tfrom Totales\n" +
+                "\t\t\tLEFT JOIN Movimiento\n" +
+                "\t\t\t\ton Totales._id = Movimiento.IdTotales\n" +
+                "\t\t\t\tWHERE ((strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ?))\n" +
+                "\t\t\tGroup by idTotales\n" +
+                "\t\tUnion all\n" +
+                "\t\t\tSelect Totales.* , Movimiento.*\n" +
+                "\t\t\tfrom Movimiento\n" +
+                "\t\t\tLEFT JOIN Totales\n" +
+                "\t\t\t\tOn Totales._id = Movimiento.IdTotales Where Totales.Activa\n" +
+                "\t\t\tGroup by idTotales\n" +
+                "\t\t) group by _id\n" +
+                "\t) as t \n" +
+                "\tLeft outer join (\n" +
+                "\t\tSELECT (sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end )) as Gasto, idTotales \n" +
+                "\t\tfrom Movimiento \n" +
+                "\t\t\tWHERE Cantidad < 0 and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "\t\tGroup by idTotales\n" +
+                "\t\tunion\n" +
+                "\t\tselect (-1*sum(CASE WHEN Cambio is not null and IdMotivo == 2 then cantidad*Cambio else cantidad end )) as Gasto, idTotales \n" +
+                "\t\tfrom Movimiento \n" +
+                "\t\t\tWHERE Traspaso is not null and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "\t\tGroup by idTotales\n" +
+                "\t) as table3 on t._id == table3.idTotales Group by t._id\n" +
                 ") as table1\n" +
-                "LEFT OUTER JOIN (\n" +
-                "select idTotales, sum(Ingreso) as Ingreso from(\n" +
-                "select idTotales, sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end ) as Ingreso " +
-                "from Movimiento WHERE Cantidad > 0 and Traspaso is null and strftime('%Y',Fecha) == \""+year+"\" and strftime('%m',Fecha) == \""+month+"\" " +
-                "Group by idTotales\n" +
-                "union \n" +
-                "select  Traspaso as idTotales, sum(CASE WHEN Cambio is not null and IdMotivo <> 2 then cantidad*Cambio else cantidad end ) as Ingreso " +
-                "from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" and strftime('%m',Fecha) == \""+month+"\" group by Traspaso\n" +
-                ") Group by idTotales\n" +
-                ") as table2 on table1.idTotales == table2.idTotales, Totales WHERE (Totales._id == table1.idTotales or Totales._id == table2.idTotales) " +
-                "group by Totales._id\n",null);
+                "\tLEFT OUTER JOIN (\n" +
+                "\tselect idTotales, sum(Ingreso) as Ingreso \n" +
+                "\t\tfrom(\n" +
+                "\t\t\tselect idTotales, sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end ) as Ingreso \n" +
+                "\t\t\tfrom Movimiento \n" +
+                "\t\t\t\tWHERE Cantidad > 0 and Traspaso is null and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "\t\t\tGroup by idTotales\n" +
+                "\t\tunion \n" +
+                "\t\tselect  Traspaso as idTotales, sum(CASE WHEN Cambio is not null and IdMotivo <> 2 then cantidad*Cambio else cantidad end ) as Ingreso \n" +
+                "\t\tfrom Movimiento \n" +
+                "\t\t\tWHERE Traspaso is not null and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "\t\tgroup by Traspaso\n" +
+                "\t) Group by idTotales\n" +
+                ") as table2 on table1.idTotales == table2.idTotales, Movimiento, Totales \n" +
+                "\tWHERE (Totales._id == table1.idTotales or Totales._id == table2.idTotales) \n" +
+                "group by Totales._id\n" +
+                "\n",new String[]{year, month,year, month,year, month,year, month,year, month});
     }
     public static Cursor getTotalesCuentasByYear(String year){
-        return db.rawQuery("select Totales._id, Totales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso, " +
-                "(CurrentCantidad - COALESCE(Gasto,0) - COALESCE(Ingreso,0)) as Inicial, Totales.CurrentCantidad as Final\n" +
-                "from(SELECT t._id as idTotales, sum(Gasto) as Gasto from(\n" +
-                "SELECT * FROM Totales WHERE Totales.Activa\n" +
-                ") as t\n" +
-                "Left outer join (\n" +
-                "\tSELECT (sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end )) as Gasto, " +
-                "idTotales from Movimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \""+year+"\" " +
-                "Group by idTotales\n" +
-                "union\n" +
-                "select (-1*sum(CASE WHEN Cambio is not null and IdMotivo == 2 then cantidad*Cambio else cantidad end )) as Gasto, " +
-                "idTotales from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" Group by idTotales\n" +
-                ") as table3 on t._id == table3.idTotales Group by t._id\n" +
+        return db.rawQuery("select Totales._id, Totales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso\n" +
+                "from(\n" +
+                "\tSELECT t._id as idTotales, sum(Gasto) as Gasto \n" +
+                "\tfrom(\n" +
+                "\t\tSelect _id \n" +
+                "\t\tfrom(\n" +
+                "\t\t\tselect totales.*, Movimiento.* \n" +
+                "\t\t\tfrom Totales\n" +
+                "\t\t\tLEFT JOIN Movimiento\n" +
+                "\t\t\t\ton Totales._id = Movimiento.IdTotales\n" +
+                "\t\t\t\tWHERE strftime('%Y',Fecha) == ?\n" +
+                "\t\t\tGroup by idTotales\n" +
+                "\t\tUnion all\n" +
+                "\t\t\tSelect Totales.* , Movimiento.*\n" +
+                "\t\t\tfrom Movimiento\n" +
+                "\t\t\tLEFT JOIN Totales\n" +
+                "\t\t\t\tOn Totales._id = Movimiento.IdTotales Where Totales.Activa\n" +
+                "\t\t\tGroup by idTotales\n" +
+                "\t\t) group by _id\n" +
+                "\t) as t \n" +
+                "\tLeft outer join (\n" +
+                "\t\tSELECT (sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end )) as Gasto, idTotales \n" +
+                "\t\tfrom Movimiento \n" +
+                "\t\t\tWHERE Cantidad < 0 and strftime('%Y',Fecha) == ? \n" +
+                "\t\tGroup by idTotales\n" +
+                "\t\tunion\n" +
+                "\t\tselect (-1*sum(CASE WHEN Cambio is not null and IdMotivo == 2 then cantidad*Cambio else cantidad end )) as Gasto, idTotales \n" +
+                "\t\tfrom Movimiento \n" +
+                "\t\t\tWHERE Traspaso is not null and strftime('%Y',Fecha) == ? \n" +
+                "\t\tGroup by idTotales\n" +
+                "\t) as table3 on t._id == table3.idTotales Group by t._id\n" +
                 ") as table1\n" +
-                "LEFT OUTER JOIN (\n" +
-                "select idTotales, sum(Ingreso) as Ingreso from(\n" +
-                "select idTotales, sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end ) as Ingreso " +
-                "from Movimiento WHERE Cantidad > 0 and Traspaso is null and strftime('%Y',Fecha) == \""+year+"\" " +
-                "Group by idTotales\n" +
-                "union \n" +
-                "select  Traspaso as idTotales, sum(CASE WHEN Cambio is not null and IdMotivo <> 2 then cantidad*Cambio else cantidad end ) as Ingreso " +
-                "from Movimiento WHERE Traspaso is not null and strftime('%Y',Fecha) == \""+year+"\" group by Traspaso\n" +
-                ") Group by idTotales\n" +
-                ") as table2 on table1.idTotales == table2.idTotales, Totales WHERE (Totales._id == table1.idTotales or Totales._id == table2.idTotales) " +
-                "group by Totales._id\n",null);
+                "\tLEFT OUTER JOIN (\n" +
+                "\tselect idTotales, sum(Ingreso) as Ingreso \n" +
+                "\t\tfrom(\n" +
+                "\t\t\tselect idTotales, sum(CASE WHEN Cambio is not null then cantidad*Cambio else cantidad end ) as Ingreso \n" +
+                "\t\t\tfrom Movimiento \n" +
+                "\t\t\t\tWHERE Cantidad > 0 and Traspaso is null and strftime('%Y',Fecha) == ? \n" +
+                "\t\t\tGroup by idTotales\n" +
+                "\t\tunion \n" +
+                "\t\tselect  Traspaso as idTotales, sum(CASE WHEN Cambio is not null and IdMotivo <> 2 then cantidad*Cambio else cantidad end ) as Ingreso \n" +
+                "\t\tfrom Movimiento \n" +
+                "\t\t\tWHERE Traspaso is not null and strftime('%Y',Fecha) == ? \n" +
+                "\t\tgroup by Traspaso\n" +
+                "\t) Group by idTotales\n" +
+                ") as table2 on table1.idTotales == table2.idTotales, Movimiento, Totales \n" +
+                "\tWHERE (Totales._id == table1.idTotales or Totales._id == table2.idTotales) \n" +
+                "group by Totales._id\n" +
+                "\n",new String[]{year, year, year, year, year});
     }
     //Motivos
     public static void insertMotive(String mot){

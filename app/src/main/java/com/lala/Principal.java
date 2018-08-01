@@ -27,6 +27,15 @@ public class Principal {
         return db.rawQuery("SELECT * FROM Movimiento WHERE Fecha BETWEEN date('now', '-1 month') and date('now') " +
                 "and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC", new String[]{""+id, ""+id});
     }
+    public static Cursor getTotalMoves(int id, String year){
+        return db.rawQuery("SELECT * FROM Movimiento WHERE strftime('%Y',Fecha) == ? " +
+                "and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC", new String[]{year,""+id, ""+id});
+    }
+
+    public static Cursor getTotalMoves(int id, String month, String year){
+        return db.rawQuery("SELECT * FROM Movimiento WHERE strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? " +
+                "and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC", new String[]{year, month,""+id, ""+id});
+    }
     public static Cursor getTotalCredit(){
         return db.rawQuery("SELECT * FROM Totales WHERE Activa == 1 and Tipo = 2",null);
     }
@@ -126,7 +135,7 @@ public class Principal {
                 DBMan.DBMovimientos.Cantidad + " = " + cantidad +", " + DBMan.DBMovimientos.IdTotales + "="+cuenta+
                 ", " + DBMan.DBMovimientos.IdMotivo + " = " + motivo + ", " + DBMan.DBMovimientos.IdMoneda + " = " + moneda+ ", " +
                 DBMan.DBMovimientos.Cambio + " = " + sCambio+ ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "'), " +
-                DBMan.DBMovimientos.Comment+ " = "+ comment+" WHERE _id = " + id);
+                DBMan.DBMovimientos.Comment+ " = '"+ comment+"' WHERE _id = " + id);
         Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{cuenta+""});
         c.moveToFirst();
         if(cambio == -1.0) cantidad = cantidad + c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));

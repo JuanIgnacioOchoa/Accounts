@@ -155,6 +155,8 @@ public class FragmentReportesCuentas extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getContext(),seeCuentas.class);
                 i.putExtra("_id",c.getInt(c.getColumnIndex("_id")));
+                i.putExtra("year", year);
+                i.putExtra("month", month);
                 startActivity(i);
             }
         });
@@ -229,6 +231,7 @@ public class FragmentReportesCuentas extends Fragment {
                         break;
                     case 2:
                         year = spAdapterYear.getItem(position);
+                        month = null;
                         gasto    = Principal.round(Principal.getGastoTotalYearly(1, year),2);
                         ingreso  = Principal.round(Principal.getIngresoTotalYearly(1, year),2);
                         ganancia = ingreso + gasto;

@@ -23,12 +23,16 @@ public class seeCuentas extends AppCompatActivity {
     private Cursor cursorTotales, cursorMoves;
     private myAdapter adapter;
     private int id;
+    private String month, year;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_cuentas);
         Intent i = getIntent();
         id = i.getIntExtra("_id", 1);
+        year = i.getStringExtra("year");
+        month = i.getStringExtra("month");
+
         cursorTotales = Principal.getTotal(id);
         cursorTotales.moveToFirst();
         String title = cursorTotales.getString(cursorTotales.getColumnIndex(DBMan.DBTotales.Cuenta));
@@ -40,7 +44,7 @@ public class seeCuentas extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView_see_acc);
 
 
-        cursorMoves = Principal.getTotalMoves(id);
+
         adapter = new myAdapter(getApplicationContext(),cursorMoves);
         tvCurrent.setText(instance.format(cursorTotales.getDouble(cursorTotales.getColumnIndex(DBMan.DBTotales.CantidadActual))));
         tvInicial.setText(instance.format(cursorTotales.getDouble(cursorTotales.getColumnIndex(DBMan.DBTotales.CantidadInicial))));
@@ -69,7 +73,13 @@ public class seeCuentas extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        cursorMoves = Principal.getTotalMoves(id);
+        if(year != null && month == null){
+            cursorMoves = Principal.getTotalMoves(id, year);
+        } else if(year != null && month != null){
+            cursorMoves = Principal.getTotalMoves(id, month, year);
+        } else {
+            cursorMoves = Principal.getTotalMoves(id);
+        }
         adapter.changeCursor(cursorMoves);
         cursorTotales = Principal.getTotal(id);
         cursorTotales.moveToFirst();

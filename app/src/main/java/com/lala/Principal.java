@@ -123,8 +123,12 @@ public class Principal {
                 "IdTotales, Comment, IdMotivo, IdMoneda, Cambio, Traspaso " +
                 "FROM Movimiento WHERE _id = ?",new String[]{""+id});
     }
-    public static void eliminarMov(int id){
+    public static void eliminarMov(int id) {
         deshacerMov(id);
+        db.execSQL("DELETE FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE _id = " + id);
+    }
+    public static void eliminarTras(int id) {
+        deshacerTras(id);
         db.execSQL("DELETE FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE _id = " + id);
     }
     public static void actualizarMovimiento(int id, Double cantidad, int cuenta, String comment,int motivo, int moneda, double cambio, String date){

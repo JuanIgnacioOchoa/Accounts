@@ -266,7 +266,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         // as you specify a parent activity in AndroidManifest.xml.
         int idM = item.getItemId();
         if(idM == R.id.action_delete){
-            Principal.deshacerTras(id);
+            Principal.eliminarTras(id);
             Toast.makeText(context,"Movimiento ha sido eliminado", Toast.LENGTH_SHORT).show();
             finish();
         }

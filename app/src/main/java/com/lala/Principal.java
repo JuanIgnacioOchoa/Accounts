@@ -611,7 +611,7 @@ public class Principal {
                     "FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{""+idCuentaFrom}));
             cCuenta.moveToFirst();
             Double cantCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
-            cantCuenta = cantCuenta - cantidad;
+            cantCuenta = cantCuenta + cantidad;
             db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
                     " = " + cantCuenta +" WHERE _id = " + idCuentaFrom);
             cCuenta = db.rawQuery("SELECT "+ DBMan.DBTotales.CantidadActual + " " +
@@ -619,7 +619,7 @@ public class Principal {
             cCuenta.moveToFirst();
             cantCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
             if(cambio != null) cantidad = cantidad * Double.parseDouble(cambio);
-            cantCuenta = cantCuenta + cantidad;
+            cantCuenta = cantCuenta - cantidad;
             db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
                     " = " + cantCuenta +" WHERE _id = " + idCuentaTo);
 

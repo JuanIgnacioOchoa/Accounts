@@ -684,9 +684,11 @@ public class Principal {
         return calendar;
     }
 
-    public static double round(double value, int places) {
+    public static double round(Double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
-
+        if(value.isNaN()){
+            value = 0.0;
+        }
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();

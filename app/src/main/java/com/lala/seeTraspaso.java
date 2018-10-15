@@ -93,7 +93,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                         String d;
                         if(dayOfMonth < 10) d = "0" + dayOfMonth;
                         else d = "" + dayOfMonth;
-                        if(monthOfYear < 10) m = "0"+(monthOfYear+1);
+                        if(monthOfYear < 9) m = "0"+(monthOfYear+1);
                         else m = (monthOfYear+1)+"";
                         nDate = year + "-" + m + "-" + d;
                     }

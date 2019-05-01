@@ -13,6 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".SeeTripMainActivity"
+            android:label="@string/title_activity_see_trip_main"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".CreateTrip"
+            android:label="@string/title_activity_create_trip"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TripsMainActivity"
+            android:label="@string/title_activity_trips_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".MainActivity"
             android:label="Cuentas"
             android:screenOrientation="portrait"
@@ -70,7 +82,7 @@
             android:name=".Reportes"
             android:label="@string/title_activity_reportes"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SeeByMotive"></activity>
+        <activity android:name=".SeeByMotive" />
     </application>
 
 </manifest>

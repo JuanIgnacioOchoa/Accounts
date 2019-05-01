@@ -1,9 +1,12 @@
 package com.lala;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -101,7 +104,7 @@ public class Principal {
 
         //return db.rawQuery("SELECT * FROM Movimiento WHERE date('now','-1 month') <= date('now') ORDER BY Fecha",null);
     }
-    public static void newMove(Double cantidad, int cuenta, String comment,String motivo, String moneda, double cambio){
+    public static long newMove(Double cantidad, int cuenta, String comment,String motivo, String moneda, double cambio){
 
 
         ContentValues contentValues = new ContentValues();
@@ -112,7 +115,7 @@ public class Principal {
         contentValues.put("IdMoneda", getIdMoneda(moneda));
         contentValues.put("IdTotales", cuenta);
         if(cambio != -1) contentValues.put("Cambio", cambio);
-        db.insert(DBMan.DBMovimientos.TABLE_NAME,null,contentValues);
+        return db.insert(DBMan.DBMovimientos.TABLE_NAME,null,contentValues);
     }
     public static Cursor getData(int id){
         return db.rawQuery("SELECT _id, Cantidad, (case strftime('%m', Fecha) when '01' then 'Jan'" +
@@ -692,6 +695,72 @@ public class Principal {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    //Trips
+    public static Cursor getTrips(){
+        return db.rawQuery("SELECT * FROM " + DBMan.DBViaje.TABLE_NAME + " order by " + DBMan.DBViaje.FechaCreacion +
+                " desc", null);
+    }
+    public static Cursor getMovesByTrips(int idTrip){
+        return db.rawQuery("SELECT * FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE " + DBMan.DBMovimientos.IdTrip +
+                " == ?", new String[]{idTrip+""});
+    }
+    public static boolean createTrip(String nombre, String fechaInic, String fechaFin, int moneda, String descripcion){
+        if(fechaFin != null && fechaFin.length() <= 0){
+            fechaFin = null;
+        }
+        if(fechaInic != null && fechaInic.length() <= 0){
+            fechaInic = null;
+        }
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBViaje.Nombre, nombre);
+        contentValues.put(DBMan.DBViaje.FechaInicio, fechaInic);
+        contentValues.put(DBMan.DBViaje.FechaFin, fechaFin);
+        contentValues.put(DBMan.DBViaje.IdMoneda, moneda);
+        contentValues.put(DBMan.DBViaje.Descripcion, descripcion);
+        long a = db.insert(DBMan.DBViaje.TABLE_NAME,null,contentValues);
+        if(a >= 0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+    public static String getTripNameById(int IdTrip){
+        Cursor c = db.rawQuery("SELECT " + DBMan.DBViaje.Nombre +
+                " FROM " + DBMan.DBViaje.TABLE_NAME + " WHERE " +
+                "_id = ?",new String[]{String.valueOf(IdTrip)});
+        c.moveToFirst();
+        return c.getString(c.getColumnIndex(DBMan.DBViaje.Nombre));
+    }
+    public static boolean updateMoveTrip(int idMove, int idTrip, Double cantidad){
+        //TODO make it boolean
+        //try {
+            db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " + DBMan.DBMovimientos.IdTrip +
+                    " = ? " + " WHERE _id == ?", new String[]{idTrip+"", idMove+""});
+            Cursor c = db.rawQuery("SELECT " + DBMan.DBViaje.CantTotal + " FROM " + DBMan.DBViaje.TABLE_NAME +
+                    " WHERE _id == ?",new String[]{idTrip+""});
+            c.moveToFirst();
+            Double cantActual = c.getDouble(c.getColumnIndex(DBMan.DBViaje.CantTotal));
+            db.execSQL("UPDATE " + DBMan.DBViaje.TABLE_NAME + " SET " + DBMan.DBViaje.CantTotal +
+                    " = " + (cantActual + cantidad) + " WHERE _id == " + idTrip);
+            return true;
+        //} catch (Exception e){
+        //    return false;
+        //}
+    }
+
+
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
 /*

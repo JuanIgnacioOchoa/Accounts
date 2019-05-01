@@ -7,4 +7,7 @@
     <string name="title_activity_see_traspaso">seeTraspaso</string>
     <string name="title_activity_see_move">seeMove</string>
     <string name="title_activity_reportes">Reportes</string>
+    <string name="title_activity_trips_main">TripsMainActivity</string>
+    <string name="title_activity_create_trip">CreateTrip</string>
+    <string name="title_activity_see_trip_main">SeeTripMainActivity</string>
 </resources>

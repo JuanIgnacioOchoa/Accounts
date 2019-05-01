@@ -36,7 +36,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     private int idCuenta;
     private Context context;
     private NumberFormat instance;
-
+    private int idViaje;
     //private NumberFormat instance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +50,11 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         //cuenta = "valiendo verga";
         Intent i = this.getIntent();
         gasto = i.getBooleanExtra("Gasto",true);
-        if(gasto){
-            this.setTitle("Gasto (-)");
-        } else this.setTitle("Ingreso (+)");
-
+        idViaje = i.getIntExtra("IdViaje", -1);
+        String title = "";
+        if(idViaje >= 0){
+            title = Principal.getTripNameById(idViaje) + " ";
+        }
         etCantidad = (EditText) findViewById(R.id.gasto_etCantidad);
         etComment = (EditText) findViewById(R.id.gasto_etComment);
         etOtro = (EditText) findViewById(R.id.new_move_otro);
@@ -73,10 +74,8 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 }
                 else if (verificarDatos()){
                     monedaCuenta = Principal.getMonedaTotales(idCuenta);
-                    Toast.makeText(context, "1 " + moneda, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "2 " + monedaCuenta, Toast.LENGTH_SHORT).show();
                     if(!monedaCuenta.equals(moneda)){
-                        Toast.makeText(context, "Monedas diferentes", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Monedas diferentes " + moneda + " " + monedaCuenta, Toast.LENGTH_SHORT).show();
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle("Tipo de cambio");
 
@@ -125,10 +124,10 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         });
 
         if(gasto){
-            this.setTitle("Gasto (-)");
+            this.setTitle("Gasto " + title + "(-)");
             etCantidad.setTextColor(Color.RED);
         } else{
-            this.setTitle("Ingreso (+)");
+            this.setTitle("Ingreso " + title + "(+)");
             etCantidad.setTextColor(Color.rgb(11, 79, 34));
         }
         cursorMotivo = Principal.getMotive();
@@ -166,23 +165,6 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         } else if(sp.getId()==R.id.gasto_spMoneda) {
 
             moneda = cursorMoneda.getString(cursorMoneda.getColumnIndex("Moneda"));
-            /*
-            if(!spDataMotivo[position].equals("otros")){
-                etOtro.setVisibility(View.GONE);
-                etOtro.setEnabled(false);
-                etOtro.setInputType(InputType.TYPE_NULL);
-                etOtro.setFocusable(false);
-                etOtro.setFocusableInTouchMode(false);
-                etOtro = spDataMotivo[position];
-                //others = false;
-            }else{
-                etOtro.setVisibility(View.VISIBLE);
-                etOtro.setEnabled(true);
-                etOtro.setInputType(InputType.TYPE_CLASS_TEXT);
-                etOtro.setFocusable(true);
-                etOtro.setFocusableInTouchMode(true);
-
-               *///others = true;
         } else if (sp.getId() == R.id.gasto_spTo){
             motivo = cursorMotivo.getString(cursorMotivo.getColumnIndex(DBMan.DBMotivo.Motivo));
 
@@ -212,8 +194,11 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         return true;
     }
     public void guardar(){
-        Principal.newMove(cant, idCuenta, coment, motivo, moneda,-1);
+        long idMove = Principal.newMove(cant, idCuenta, coment, motivo, moneda,-1);
         Principal.newMoveCuenta(cant,idCuenta);
+        if(idViaje >= 0) {
+            Principal.updateMoveTrip((int) idMove, idViaje, cant);
+        }
     }
     public void guardarDif(){
         Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();

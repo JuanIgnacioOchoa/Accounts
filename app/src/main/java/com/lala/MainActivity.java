@@ -104,9 +104,6 @@ public class MainActivity extends AppCompatActivity {
                     case 0:{
                         Intent i = new Intent(cont,NewAccount.class);
                         startActivity(i);
-                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-
                         break;
                     }
                     default:{
@@ -150,9 +147,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                         builder.show();
-                        Snackbar.make(view, "Replace asdasd your asd action", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                        break;
                     }
                 }
 
@@ -219,6 +213,10 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(id == R.id.Reportes){
             Intent i = new Intent(this, Reportes.class);
+            startActivity(i);
+        }
+        else if(id == R.id.action_trips){
+            Intent i = new Intent(this, TripsMainActivity.class);
             startActivity(i);
         }
         else if(id == R.id.new_moneda){

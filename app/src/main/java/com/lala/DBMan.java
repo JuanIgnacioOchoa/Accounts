@@ -24,6 +24,7 @@ public class DBMan {
         public static final String IdMoneda = "IdMoneda";
         public static final String Cambio = "Cambio";
         public static final String Traspaso = "Traspaso";
+        public static final String IdTrip = "IdTrip";
     }
     public static class DBMotivo{
         public static final String TABLE_NAME = "Motivo";
@@ -39,7 +40,17 @@ public class DBMan {
         public static final String Moneda2    = "IdMoneda2";
         public static final String Cambio     = "Tipo_de_cambio";
     }
-
+    public static class DBViaje{
+        public static final String TABLE_NAME = "Trips";
+        public static final String Nombre = "Nombre";
+        public static final String Descripcion = "Descripcion";
+        public static final String FechaCreacion = "FechaCreacion";
+        public static final String FechaCierre = "FechaCierre";
+        public static final String FechaInicio = "FechaInicio";
+        public static final String FechaFin = "FechaFin";
+        public static final String CantTotal = "Total";
+        public static final String IdMoneda = "IdMoneda";
+    }
 
 
 }

@@ -41,13 +41,9 @@ public class NewAccount extends AppCompatActivity {
             public void onClick(View v) {
                 if(!EditTextError.checkError(etCuenta)&&!EditTextError.checkError(etCantidad)){
                     try {
-                        Toast.makeText(getApplicationContext(),"1",Toast.LENGTH_LONG).show();
                         Double cantidad = Double.parseDouble(etCantidad.getText().toString());
-                        Toast.makeText(getApplicationContext(),"2",Toast.LENGTH_LONG).show();
                         String cuenta = etCuenta.getText().toString();
-                        Toast.makeText(getApplicationContext(),"3",Toast.LENGTH_LONG).show();
                         int moneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"));
-                        Toast.makeText(getApplicationContext(),"4",Toast.LENGTH_LONG).show();
                         Principal.insertTotales(cuenta,cantidad,moneda);
                         finish();
                     } catch (Exception e){

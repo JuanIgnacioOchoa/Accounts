@@ -10,6 +10,10 @@
         android:title="Motives"
         android:orderInCategory="100"
         />
+    <item android:id="@+id/action_trips"
+        android:title="Viajes"
+        android:orderInCategory="100"
+        />
     <item android:id="@+id/new_moneda"
         android:title="Nueva Moneda"
         android:orderInCategory="100"

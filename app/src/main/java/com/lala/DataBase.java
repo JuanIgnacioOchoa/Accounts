@@ -50,6 +50,10 @@ public class DataBase extends SQLiteOpenHelper {
                 "FOREIGN KEY(IdMoneda1) REFERENCES Moneda(_id), FOREIGN KEY(IdMoneda2) REFERENCES Moneda(_id) )");
         db.execSQL("CREATE TABLE Moneda (_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , " +
                 "Moneda VARCHAR(5) NOT NULL  UNIQUE)");
+        db.execSQL("CREATE TABLE Trips ( _id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL " +
+                ", Nombre varchar ( 50 ) NOT NULL , Descripcion varchar ( 250 ) , FechaCreacion DATETIME NOT NULL DEFAULT CURRENT_DATE ," +
+                " FechaCierre DATETIME, FechaInicio DATETIME, FechaFin DATETIME, Total DOUBLE NOT NULL DEFAULT 0.0," +
+                " IdMoneda INTEGER NOT NULL, FOREIGN KEY(IdMoneda) REFERENCES Moneda(_id) )");
         //db.execSQL(ManagerSettings.CREATE_TABLE);
         //db.delete(ManagerMotivo.TABLE_NAME,null,null);
     }

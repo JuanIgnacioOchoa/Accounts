@@ -123,8 +123,8 @@ public class Principal {
                 "when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' " +
                 "when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' else '' " +
                 "end ||'-'|| strftime('%d-%Y', Fecha))  as Fecha, Fecha as nFecha, " +
-                "IdTotales, Comment, IdMotivo, IdMoneda, Cambio, Traspaso " +
-                "FROM Movimiento WHERE _id = ?",new String[]{""+id});
+                "IdTotales, Comment, IdMotivo, IdMoneda, Cambio, Traspaso " + ", " + DBMan.DBMovimientos.IdTrip +
+                " FROM Movimiento WHERE _id = ?",new String[]{""+id});
     }
     public static void eliminarMov(int id) {
         deshacerMov(id);
@@ -702,6 +702,12 @@ public class Principal {
         return db.rawQuery("SELECT * FROM " + DBMan.DBViaje.TABLE_NAME + " order by " + DBMan.DBViaje.FechaCreacion +
                 " desc", null);
     }
+    public static Cursor getTrip(int _id){
+        Cursor c = db.rawQuery("SELECT * FROM " + DBMan.DBViaje.TABLE_NAME + " WHERE _id == " + _id
+                , null);
+        c.moveToFirst();
+        return c;
+    }
     public static Cursor getMovesByTrips(int idTrip){
         return db.rawQuery("SELECT * FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE " + DBMan.DBMovimientos.IdTrip +
                 " == ?", new String[]{idTrip+""});
@@ -738,16 +744,34 @@ public class Principal {
         //try {
             db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " + DBMan.DBMovimientos.IdTrip +
                     " = ? " + " WHERE _id == ?", new String[]{idTrip+"", idMove+""});
-            Cursor c = db.rawQuery("SELECT " + DBMan.DBViaje.CantTotal + " FROM " + DBMan.DBViaje.TABLE_NAME +
-                    " WHERE _id == ?",new String[]{idTrip+""});
+            Cursor c = db.rawQuery("SELECT " + DBMan.DBMovimientos.IdMoneda + " FROM " + DBMan.DBMovimientos.TABLE_NAME +
+                    " WHERE _id = " + idMove, null);
             c.moveToFirst();
-            Double cantActual = c.getDouble(c.getColumnIndex(DBMan.DBViaje.CantTotal));
-            db.execSQL("UPDATE " + DBMan.DBViaje.TABLE_NAME + " SET " + DBMan.DBViaje.CantTotal +
-                    " = " + (cantActual + cantidad) + " WHERE _id == " + idTrip);
+            int monedaMove = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMoneda));
+            c = db.rawQuery("SELECT " + DBMan.DBViaje.IdMoneda + " FROM " + DBMan.DBViaje.TABLE_NAME +
+                    " WHERE _id = " + idTrip, null);
+            c.moveToFirst();
+            int monedaViaje = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMoneda));
+            if(monedaMove == monedaViaje) {
+                c = db.rawQuery("SELECT " + DBMan.DBViaje.CantTotal + " FROM " + DBMan.DBViaje.TABLE_NAME +
+                        " WHERE _id == ?",new String[]{idTrip+""});
+                c.moveToFirst();
+                Double cantActual = c.getDouble(c.getColumnIndex(DBMan.DBViaje.CantTotal));
+                db.execSQL("UPDATE " + DBMan.DBViaje.TABLE_NAME + " SET " + DBMan.DBViaje.CantTotal +
+                        " = " + (cantActual + cantidad) + " WHERE _id == " + idTrip);
+            }
             return true;
         //} catch (Exception e){
         //    return false;
         //}
+    }
+
+    public static boolean updateTrip(int _id, String name, String descripcion, String fechaInic, String fechaFin, int moneda){
+        db.execSQL("UPDATE " + DBMan.DBViaje.TABLE_NAME + " SET " + DBMan.DBViaje.Nombre + " = \"" + name +
+                "\", " + DBMan.DBViaje.Descripcion + " = \"" + descripcion + "\", " + DBMan.DBViaje.FechaInicio + " = \"" + fechaInic +
+                "\", " + DBMan.DBViaje.FechaFin + " = \"" + fechaFin + "\", " + DBMan.DBViaje.IdMoneda + " = \"" + moneda +
+                "\" WHERE _id = " + _id);
+        return true;
     }
 
 

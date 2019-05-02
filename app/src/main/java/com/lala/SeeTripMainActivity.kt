@@ -37,6 +37,8 @@ class SeeTripMainActivity : AppCompatActivity() {
     private var editable:Boolean = false;
     private var instance: NumberFormat = NumberFormat.getInstance()
     private val calendar = Calendar.getInstance()
+    private lateinit var cursorTrip:Cursor
+    private lateinit var cursorMoneda:Cursor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class SeeTripMainActivity : AppCompatActivity() {
         _id = intent.getIntExtra("_id", 0)
         cont = applicationContext
         setTitle("$title($_id)")
+        cursorTrip = Principal.getTrip(_id)
         etNombre = findViewById<EditText>(R.id.ET_TR_Nombre)
         etDesc = findViewById<EditText>(R.id.ET_TR_Desc)
         tvFechaInic = findViewById<TextView>(R.id.TV_TR_FechaInic)
@@ -57,13 +60,32 @@ class SeeTripMainActivity : AppCompatActivity() {
         etNombre.isEnabled = false
         etDesc.isEnabled = false
         spMoneda.isEnabled = false
-        val cursor = Principal.getMovesByTrips(_id)
-        val adapter = myAdapter(applicationContext, cursor)
+        val cursorMoves = Principal.getMovesByTrips(_id)
+        val adapter = myAdapter(applicationContext, cursorMoves)
         lvMovimientos.setAdapter(adapter)
         lvMovimientos.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val i = Intent(applicationContext, SeeTripMainActivity::class.java)
-            val a = cursor.getInt(cursor.getColumnIndex("_id"))
-            Toast.makeText(cont, "$a", Toast.LENGTH_LONG).show()
+            val i = Intent(applicationContext, seeMove::class.java)
+            val id = cursorMoves.getInt(cursorMoves.getColumnIndex("_id"))
+            i.putExtra("id", id)
+            i.putExtra("idTrip", _id)
+            startActivity(i)
+        }
+        cursorMoneda = Principal.getMoneda();
+        spMoneda.adapter = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
+        etNombre.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre)))
+        etDesc.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Descripcion)))
+        tvFechaFin.text = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaFin))
+        tvFechaInic.text = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaInicio))
+        var j = 0
+        while (j < spMoneda.adapter.count) {
+            val value = spMoneda.getItemAtPosition(j) as Cursor
+            val id = value.getInt(value.getColumnIndex("_id"))
+            val idMoneda = cursorTrip.getInt(cursorTrip.getColumnIndex(DBMan.DBViaje.IdMoneda))
+            if (id == idMoneda) {
+                spMoneda.setSelection(j)
+                spMoneda.adapter.count + 1
+            }
+            j++
         }
         //TODO hide keyboard
         //SetOnClickListeners
@@ -121,9 +143,9 @@ class SeeTripMainActivity : AppCompatActivity() {
                 spMoneda.isEnabled = true
                 editable = true
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    fab.setImageDrawable(resources.getDrawable(R.drawable.check, cont.getTheme()))
+                    editFab.setImageDrawable(resources.getDrawable(R.drawable.check, cont.getTheme()))
                 } else
-                    fab.setImageDrawable(resources.getDrawable(R.drawable.check))
+                    editFab.setImageDrawable(resources.getDrawable(R.drawable.check))
             } else{
                 etNombre.isEnabled = false
                 etDesc.isEnabled = false
@@ -131,9 +153,11 @@ class SeeTripMainActivity : AppCompatActivity() {
                 editable = false
                 //TODO
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    fab.setImageDrawable(resources.getDrawable(R.drawable.check, cont.getTheme()))
+                    editFab.setImageDrawable(resources.getDrawable(R.drawable.check, cont.getTheme()))
                 } else
-                    fab.setImageDrawable(resources.getDrawable(R.drawable.check))
+                    editFab.setImageDrawable(resources.getDrawable(R.drawable.check))
+                val moneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
+                Principal.updateTrip(_id, etNombre.text.toString(), etDesc.text.toString(), fechaInic, fechaFin, moneda)
             }
         }
         tvFechaInic.setOnClickListener{

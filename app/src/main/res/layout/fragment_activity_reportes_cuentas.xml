@@ -18,8 +18,9 @@
 
         <ListView
             android:id="@+id/listView"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView10"
             android:layout_alignParentBottom="true" />
 
         <TextView
@@ -28,8 +29,9 @@
             android:text="Gasto"
             android:id="@+id/textView9"
             android:width="110dp"
-            android:layout_above="@+id/listView"
+            android:layout_below="@+id/textView15"
             android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -41,8 +43,10 @@
             android:width="110dp"
             android:layout_alignBottom="@+id/textView9"
             android:layout_toStartOf="@+id/textView9"
+            android:layout_below="@+id/textView15"
             android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,8 +56,10 @@
             android:layout_alignBottom="@+id/textView10"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/textView10"
+            android:layout_below="@+id/textView15"
             android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
 
         <Spinner
             android:layout_width="wrap_content"

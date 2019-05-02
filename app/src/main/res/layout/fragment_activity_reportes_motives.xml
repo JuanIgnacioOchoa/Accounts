@@ -14,12 +14,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="left|top">
+        android:layout_below="@id/textView10"
+        android:layout_alignParentBottom="true" >
 
         <ListView
             android:id="@+id/listView"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView10"
             android:layout_alignParentBottom="true" />
 
         <TextView
@@ -28,7 +30,8 @@
             android:text="Gasto"
             android:id="@+id/textView9"
             android:width="110dp"
-            android:layout_above="@+id/listView"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/textView15"
             android:layout_alignParentEnd="true"
             android:textSize="18dp"
             android:textStyle="bold" />
@@ -39,6 +42,8 @@
             android:text="Ingreso"
             android:id="@+id/textView10"
             android:width="110dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/textView15"
             android:layout_alignBottom="@+id/textView9"
             android:layout_toStartOf="@+id/textView9"
             android:textSize="18dp"
@@ -49,6 +54,8 @@
             android:layout_height="wrap_content"
             android:text="Motivos"
             android:id="@+id/textView11"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/textView15"
             android:layout_alignBottom="@+id/textView10"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/textView10"

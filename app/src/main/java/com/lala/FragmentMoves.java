@@ -119,8 +119,6 @@ public class FragmentMoves extends Fragment{
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int motivo = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMotivo));
-                Toast.makeText(getContext(), motivo+"", Toast.LENGTH_SHORT);
                 Intent i = new Intent(getContext(), seeMove.class);
                 i.putExtra("id", c.getInt(c.getColumnIndex("_id")));
                 startActivity(i);

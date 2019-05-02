@@ -39,9 +39,10 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
     private NumberFormat instance;
     private Double cantidad, nCantidad, cambio, nCambio;
     private String comment, nComment, date, nDate;
-    private boolean edit = false;
+    private boolean edit = false, gasto;
     private Context context = this;
     private Calendar calendar;
+    private int idViaje;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +54,9 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         c = Principal.getData(id);
         c.moveToFirst();
         calendar = Calendar.getInstance();
+        String title = "";
 
+        idViaje = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdTrip));
 
         idMoneda = c.getInt(c.getColumnIndex("IdMoneda"));
         nIdMoneda = idMoneda;
@@ -80,6 +83,18 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         tvCambio = (TextView) findViewById(R.id.see_move_tvCambio);
         etFecha = (EditText) findViewById(R.id.see_move_date);
 
+        cantidad = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cantidad));
+        gasto = (cantidad < 0);
+        if(idViaje > 0){
+            title = Principal.getTripNameById(idViaje) + " ";
+        }
+        if(gasto){
+            this.setTitle("Gasto " + title + "(-)");
+            etCantidad.setTextColor(Color.RED);
+        } else{
+            this.setTitle("Ingreso " + title + "(+)");
+            etCantidad.setTextColor(Color.rgb(11, 79, 34));
+        }
 
         etCambio.setFocusable(false);
         etCambio.setEnabled(false);
@@ -229,7 +244,6 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         }
 
         //spCuenta.setSelection(idCuenta -1);
-        cantidad = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cantidad));
         nCantidad = cantidad;
         date = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
         nDate = c.getString(c.getColumnIndex("nFecha"));;

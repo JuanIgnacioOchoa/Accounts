@@ -33,11 +33,11 @@
         android:id="@+id/space4" />
 
     <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="340dp"
         android:id="@+id/listView_see_acc"
-        android:layout_alignEnd="@+id/see_acc_tvCurr"
-        android:layout_below="@+id/space4" />
+        android:layout_width="wrap_content"
+        android:layout_height="669dp"
+        android:layout_below="@+id/space4"
+        android:layout_alignEnd="@+id/see_acc_tvCurr" />
 
     <TextView
         android:text=""

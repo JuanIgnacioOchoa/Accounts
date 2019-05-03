@@ -32,7 +32,8 @@
             app:tabIndicatorHeight="4dp"
             android:background="#DCDCDC"/>
 
-
+        <include layout="@layout/content_reportes">
+        </include>
 
     </android.support.design.widget.AppBarLayout>
 

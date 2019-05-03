@@ -32,13 +32,6 @@
             app:tabIndicatorHeight="4dp"
             android:background="#DCDCDC"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="hola juanito3"
-            android:id="@+id/holajuanito3"
-            android:background="#DCDCDC"/>
-
 
 
     </android.support.design.widget.AppBarLayout>
@@ -52,12 +45,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/add" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="hola juanito"
-        android:id="@+id/holajuanito"/>
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -65,11 +52,7 @@
         android:paddingTop="30dp"
         android:paddingBottom="60dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="hola juanito2"
-            android:id="@+id/holajuanito2"/>
+
     </android.support.v4.view.ViewPager>
 
 </android.support.design.widget.CoordinatorLayout>

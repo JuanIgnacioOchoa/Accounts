@@ -24,7 +24,7 @@ public class DBMan {
         public static final String IdMoneda = "IdMoneda";
         public static final String Cambio = "Cambio";
         public static final String Traspaso = "Traspaso";
-        public static final String IdTrip = "IdTrip";
+        public static final String IdTrip = "IdViaje";
     }
     public static class DBMotivo{
         public static final String TABLE_NAME = "Motivo";

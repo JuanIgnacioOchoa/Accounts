@@ -19,8 +19,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -32,15 +34,17 @@ public class Reportes extends AppCompatActivity{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-
+    private Cursor cursorMoneda;
     private NumberFormat instance;
     private TextView TVGanancia,TVGasto, TVIngreso, TVPorcentaje;
     private Double gasto, ingreso, ganancia, porcentaje;
-    private Spinner spMonth, spYear;
+    private Spinner spMonth, spYear, spMoneda;
     private Calendar calendar;
     private String year;
     private String month;
+    private SimpleCursorAdapter simpleCursorAdapter;
     private Fragment fragmentReportesCuentas, getFragmentReportesMotives;
+    private int idMoneda = 1;
     private final String[] months = new String[]{"Ene","Feb","Mar", "Abr", "May", "Jun", "Jul", "Ago" ,"Sep", "Oct","Nov", "Dic"};
 
 
@@ -72,6 +76,7 @@ public class Reportes extends AppCompatActivity{
         TVPorcentaje = (TextView) findViewById(R.id.Porcentaje);
         spYear       = (Spinner)  findViewById(R.id.spYear);
         spMonth      = (Spinner)  findViewById(R.id.spMonth);
+        spMoneda       = (Spinner)  findViewById(R.id.spMoneda);
 
         instance = NumberFormat.getInstance();
         instance.setMinimumFractionDigits(2);
@@ -105,15 +110,20 @@ public class Reportes extends AppCompatActivity{
         }
         final ArrayAdapter<String> spAdapterYear= new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1, years);
 
+        cursorMoneda = Principal.getMoneda();
+        int[] to = new int[] {android.R.id.text1};
+        String[] from = new String[]{"Moneda"};
+        simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorMoneda,from,to,0);
         //calendar.get(Calendar.MONTH) + 1;
         //calendar.get(Calendar.YEAR);
         spMonth.setAdapter(spAdapteMonth);
         spYear.setAdapter(spAdapterTimeLapse);
+        spMoneda.setAdapter(simpleCursorAdapter);
         spMonth.setSelection(0);
         spYear.setSelection(1);
 
-        gasto = Principal.getGastoTotal(1);
-        ingreso = Principal.getIngresoTotal(1);
+        gasto = Principal.getGastoTotal(idMoneda);
+        ingreso = Principal.getIngresoTotal(idMoneda);
         ganancia = ingreso + gasto;
 
         TVGasto.setText(instance.format(Principal.round(gasto, 2)));
@@ -198,7 +208,7 @@ public class Reportes extends AppCompatActivity{
                         TVGasto.setText(instance.format(gasto));
                         TVGanancia.setText(instance.format(ganancia));
                         ((FragmentReportesCuentas)fragmentReportesCuentas).updateAdapter(month,year);
-                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(month,year);
+                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, month,year);
                         break;
                     case 2:
                         year = spAdapterYear.getItem(position);
@@ -220,7 +230,7 @@ public class Reportes extends AppCompatActivity{
                         TVGasto.setText(instance.format(gasto));
                         TVGanancia.setText(instance.format(ganancia));
                         ((FragmentReportesCuentas)fragmentReportesCuentas).updateAdapter(null,year);
-                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(null,year);
+                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, null,year);
                         break;
                     default:
                 }
@@ -253,6 +263,35 @@ public class Reportes extends AppCompatActivity{
             }
         });
 
+        spMoneda.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                idMoneda = (int) id;
+                gasto    = Principal.round(Principal.getGastoTotalMonthly(idMoneda,month, year),2);
+                ingreso  = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year),2);
+                ganancia = ingreso + gasto;
+                if(ganancia  <= 0){
+                    porcentaje = (ganancia / -gasto) * 100;
+                    TVGanancia.setTextColor(Color.RED );
+                    TVPorcentaje.setTextColor(Color.RED );
+                }else{
+                    porcentaje = (ganancia / ingreso) * 100;
+                    TVGanancia.setTextColor(Color.rgb(11,79,34));
+                    TVPorcentaje.setTextColor(Color.rgb(11,79,34));
+                }
+                TVPorcentaje.setText("     " + instance.format(Principal.round(porcentaje,2)) + "%");
+                TVIngreso.setText(instance.format(ingreso));
+                TVGasto.setText(instance.format(gasto));
+                TVGanancia.setText(instance.format(ganancia));
+                //((FragmentReportesCuentas)fragmentReportesCuentas).updateAdapter(month,year);
+                ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, month,year); // TODO colocar moneda
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

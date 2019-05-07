@@ -31,6 +31,7 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
     private myAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private static Fragment fragmentProfileUniqueInstance;
+    private int idMoneda = 0;
     @SuppressLint("ValidFragment")
     private FragmentReportesMotives(){
 
@@ -83,14 +84,16 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
         startActivity(i);
     }
 
-    public void updateAdapter(String month, String year){
+    public void updateAdapter(int idMoneda, String month, String year){
         this.month = month;
         this.year = year;
+        this.idMoneda = idMoneda;
+        //TODO colocar moneda
         if(month == null){
-            c = Principal.getSumByMotivesYear(1,year);
+            c = Principal.getSumByMotivesYear(idMoneda,year);
             this.year = "";
         } else{
-            c = Principal.getSumByMotivesMonth(1,month,year);
+            c = Principal.getSumByMotivesMonth(idMoneda,month,year);
         }
         adapter.changeCursor(c);
     }

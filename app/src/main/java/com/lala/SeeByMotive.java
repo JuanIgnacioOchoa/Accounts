@@ -68,13 +68,14 @@ public class SeeByMotive extends AppCompatActivity {
             String comment = cursor.getString((cursor.getColumnIndex(DBMan.DBMovimientos.Comment)));
             String cuenta = cursor.getString((cursor.getColumnIndex("Cuenta")));
             String Fecha = cursor.getString((cursor.getColumnIndex(DBMan.DBMovimientos.Fecha)));
+            String moneda = Principal.getIdMoneda(cursor.getInt(cursor.getColumnIndex(DBMan.DBMovimientos.IdMoneda)));
             cant = Principal.round(cant, 2);
             TextView TVCantidad = (TextView) view.findViewById(R.id.Cantidad);
             TextView TVComentario = (TextView) view.findViewById(R.id.Comentario);
             TextView TVCuenta = (TextView) view.findViewById(R.id.Cuenta);
             TextView TVFecha = (TextView) view.findViewById(R.id.Fecha);
             if(cant < 0) TVCantidad.setTextColor(Color.RED); else TVCantidad.setTextColor(Color.rgb(11,79,34));
-            TVCantidad.setText("$" + instance.format(cant));
+            TVCantidad.setText("$" + instance.format(cant) + moneda);
             TVComentario.setText(comment);
             TVCuenta.setText(cuenta);
             TVFecha.setText(Fecha);

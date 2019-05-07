@@ -50,6 +50,8 @@ public class FragmentReportesCuentas extends Fragment {
         //Cast to each element from Fragment
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_activity_moves_swipeRefreshLayout);
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setRefreshing(false);
         lv = (ListView) view.findViewById(R.id.listView);
 
 

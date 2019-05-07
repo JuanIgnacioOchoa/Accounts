@@ -26,34 +26,51 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE " + TOTALES + "(_id INTEGER PRIMARY KEY  NOT NULL  UNIQUE , " +
-                "Cuenta VARCHAR(20) NOT NULL , Cantidad DOUBLE NOT NULL ," +
-                "IdMoneda INTEGER NOT NULL  DEFAULT 1, " +
-                "FOREIGN KEY (IdMoneda) REFERENCES Moneda(_id))");
-        db.execSQL("CREATE TABLE Motivo (_id INTEGER PRIMARY KEY  NOT NULL , " +
-                "Motivo VARCHAR(50) NOT NULL )");
-        db.execSQL("CREATE TABLE Movimiento (_id INTEGER PRIMARY KEY  NOT NULL , " +
-                "Cantidad DOUBLE NOT NULL ,Fecha DATETIME NOT NULL  DEFAULT CURRENT_DATE, " +
-                "IdTotales INTEGER NOT NULL, " +
-                "IdMotivo INTEGER NOT NULL, IdMoneda INTEGER NOT NULL, " +
-                "Comment VARCHAR(255),"+
-                "FOREIGN KEY (IdMotivo) REFERENCES Motivo(_id), " +
-                " FOREIGN KEY (IdMoneda) REFERENCES Moneda(_id), " +
-                "FOREIGN KEY (IdTotales) REFERENCES Totales(_id))");
-        db.execSQL("CREATE TABLE MovTotales (_id INTEGER PRIMARY KEY  NOT NULL ," +
-                "IdTotales INTEGER NOT NULL , IdMov INTEGER NOT NULL ," +
-                "Cant INTEGER NOT NULL," +
-                "FOREIGN KEY(IdTotales) REFERENCES Totales(_id)," +
-                "FOREIGN KEY(IdMov) REFERENCES Movimientos(_id) )");
-        db.execSQL("CREATE TABLE CambioMoneda(_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, " +
-                "IdMoneda1 INTEGER NOT NULL, IdMoneda2 INTEGER  NOT NULL, Tipo_de_cambio DOUBLE NOT NULL, " +
-                "FOREIGN KEY(IdMoneda1) REFERENCES Moneda(_id), FOREIGN KEY(IdMoneda2) REFERENCES Moneda(_id) )");
-        db.execSQL("CREATE TABLE Moneda (_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , " +
-                "Moneda VARCHAR(5) NOT NULL  UNIQUE)");
+        db.execSQL("CREATE TABLE \"Moneda\" (" +
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , " +
+                "\"Moneda\" VARCHAR(5) NOT NULL UNIQUE , " +
+                "\"Active\" INTEGER NOT NULL DEFAULT 1)");
         db.execSQL("CREATE TABLE Trips ( _id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL " +
                 ", Nombre varchar ( 50 ) NOT NULL , Descripcion varchar ( 250 ) , FechaCreacion DATETIME NOT NULL DEFAULT CURRENT_DATE ," +
                 " FechaCierre DATETIME, FechaInicio DATETIME, FechaFin DATETIME, Total DOUBLE NOT NULL DEFAULT 0.0," +
                 " IdMoneda INTEGER NOT NULL, FOREIGN KEY(IdMoneda) REFERENCES Moneda(_id) )");
+        db.execSQL("CREATE TABLE \"Totales\" (" +
+                "\"_id\" INTEGER PRIMARY KEY NOT NULL ," +
+                "\"Cuenta\" VARCHAR(20) NOT NULL ," +
+                "\"CantidadInicial\" DOUBLE NOT NULL ," +
+                "\"CurrentCantidad\" DOUBLE NOT NULL ," +
+                "\"IdMoneda\" INTEGER NOT NULL DEFAULT (1) ," +
+                "\"Activa\" BOOL NOT NULL DEFAULT (1) ," +
+                "\"Tipo\" INTEGER DEFAULT (1) )");
+        db.execSQL("CREATE TABLE \"Motivo\" (" +
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , " +
+                "\"Motivo\" VARCHAR(50) NOT NULL UNIQUE , " +
+                "\"Active\" BOOL NOT NULL DEFAULT 1)");
+        db.execSQL("CREATE TABLE \"Movimiento\" ( " +
+                "_id INTEGER NOT NULL, " +
+                "Cantidad DOUBLE NOT NULL, " +
+                "Fecha DATETIME NOT NULL DEFAULT CURRENT_DATE, " +
+                "IdTotales INTEGER NOT NULL, " +
+                "IdMotivo INTEGER NOT NULL, " +
+                "IdMoneda INTEGER NOT NULL, " +
+                "Cambio DOUEBLE, " +
+                "Traspaso INTEGER, " +
+                "comment varchar ( 255 ), " +
+                "IdViaje INTEGER, " +
+                "PRIMARY KEY(_id), " +
+                "FOREIGN KEY(IdMoneda) REFERENCES Moneda(_id), " +
+                "FOREIGN KEY(IdTotales) REFERENCES Totales(_id), " +
+                "FOREIGN KEY(Traspaso) REFERENCES Totales(_id), " +
+                "FOREIGN KEY(IdMotivo) REFERENCES Motivo(_id), " +
+                "FOREIGN KEY(IdViaje) REFERENCES Trips(_id))");
+        db.execSQL("CREATE TABLE \"TiposCuentas\" (" +
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , " +
+                "\"Tipo\" VARCHAR NOT NULL )");
+        db.execSQL("CREATE TABLE CambioMoneda(_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, " +
+                "IdMoneda1 INTEGER NOT NULL, IdMoneda2 INTEGER  NOT NULL, Tipo_de_cambio DOUBLE NOT NULL, " +
+                "FOREIGN KEY(IdMoneda1) REFERENCES Moneda(_id), FOREIGN KEY(IdMoneda2) REFERENCES Moneda(_id) )");
+
+
         //db.execSQL(ManagerSettings.CREATE_TABLE);
         //db.delete(ManagerMotivo.TABLE_NAME,null,null);
     }

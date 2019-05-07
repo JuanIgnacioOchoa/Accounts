@@ -21,9 +21,6 @@ public class NewMotive extends AppCompatActivity {
     private EditText etMotivo;
     private ListView listView;
     private Cursor c;
-    private SimpleCursorAdapter simpleCursorAdapter;
-    private String[] from ;
-    private int[] to;
     private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

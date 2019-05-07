@@ -29,10 +29,12 @@ public class DBMan {
     public static class DBMotivo{
         public static final String TABLE_NAME = "Motivo";
         public static final String Motivo = "Motivo";
+        public static final String Activo = "Active";
     }
     public static class DBMoneda{
         public static final String TABLE_NAME = "Moneda";
         public static final String Moneda = "Moneda";
+        public static final String Activo = "Active";
     }
     public static class DBCambioMoneda{
         public static final String TABLE_NAME = "CambioMoneda";
@@ -51,6 +53,15 @@ public class DBMan {
         public static final String CantTotal = "Total";
         public static final String IdMoneda = "IdMoneda";
     }
+    public static class DBPrestamo{
 
+    }
+    public static class DBPrestamoDetalle{
 
+    }
+    public static class DBPersona{
+        public static final String TABLE_NAME = "Personas";
+        public static final String Nombre = "Nombre";
+        public static final String Activo = "Active";
+    }
 }

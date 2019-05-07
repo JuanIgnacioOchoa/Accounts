@@ -1,11 +1,11 @@
-//Nuevos 
+//Nuevos año
 SELECT 
-    Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, table1.IdViaje, trip.Nombre as Viaje, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1 
+    Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (0) as isViaje
     FROM(
         SELECT 
-            sum(Cantidad ) as Gasto, IdMotivo, IdViaje
+            sum(Cantidad ) as Gasto, IdMotivo
             FROM Movimiento 
-            WHERE  IdMoneda == ? and strftime('%Y',Fecha) == ? and Cantidad < 0 GROUP BY IdMotivo, IdViaje
+            WHERE  IdMoneda == ? and strftime('%Y',Fecha) == ? and IdViaje is null and Cantidad < 0 GROUP BY IdMotivo
         union
         SELECT 
             SUM( CASE WHEN (
@@ -13,79 +13,149 @@ SELECT
                     Totales.idMoneda 
                     FROM Totales, Movimiento 
                     WHERE Totales._id == IdTotales and Cambio > 0) == ? 
-            then Cantidad * Cambio end) as Gasto, IdMotivo, IdViaje
+            then Cantidad * Cambio end) as Gasto, IdMotivo
             FROM Movimiento 
-            WHERE Cantidad < 0 and strftime('%Y',Fecha) ==  ? GROUP BY IdMotivo, IdViaje
+            WHERE Cantidad < 0 and strftime('%Y',Fecha) ==  ? and IdViaje is null GROUP BY IdMotivo
         ) as table1 
 LEFT OUTER JOIN (
 SELECT 
-    SUM(Ingreso) as Ingreso, IdMotivo2, IdViaje
+    SUM(Ingreso) as Ingreso, IdMotivo2
     FROM (
         SELECT 
-            sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2, IdViaje
+            sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2
             FROM Movimiento 
-            WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? 
-            Group BY IdMotivo2, IdViaje
+            WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and IdViaje is null
+            Group BY IdMotivo2
         union
         SELECT SUM( CASE WHEN (
             SELECT Totales.idMoneda 
             FROM Totales, Movimiento 
             WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda
-        then Cantidad * -1 end) as Ingreso, IdMotivo as IdMotivo2, IdViaje
+        then Cantidad * -1 end) as Ingreso, IdMotivo as IdMotivo2
         FROM Movimiento 
-        WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and Cambio IS NOT NULL Group BY IdMotivo2, IdViaje
+        WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == ?  and Cambio IS NOT NULL and IdViaje is null Group BY IdMotivo2
         ) as table3, Motivo
-    WHERE table3.IdMotivo2 == Motivo._id GROUP BY IdMotivo2, IdViaje
-) as table2 on table1.IdMotivo = table2.IdMotivo2
-left outer join (
-	SELECT _id, Nombre
-	FROM Trips
-) as trip on table1.IdViaje == Trip._id ,  Motivo
-WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo, Viaje ORDER BY count1 DESC
-
-
-//
+    WHERE table3.IdMotivo2 == Motivo._id GROUP BY IdMotivo2
+) as table2 on table1.IdMotivo = table2.IdMotivo2 ,  Motivo
+WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo 
+union
 SELECT 
-    Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, table1.IdViaje, trip.Nombre as Viaje, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1 
+    Trips._id as _id, SUM(Gasto) as Gasto, Ingreso , Trips.Nombre as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (1) as isViaje
     FROM(
         SELECT 
-            sum(Cantidad ) as Gasto, IdMotivo, IdViaje
+            sum(Cantidad ) as Gasto, IdViaje
             FROM Movimiento 
-            WHERE  IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? and Cantidad < 0 GROUP BY IdMotivo, IdViaje
+            WHERE  IdMoneda == ? and strftime('%Y',Fecha) == ? and Cantidad < 0 GROUP BY IdViaje
         union
         SELECT 
             SUM( CASE WHEN (
                 SELECT 
-                    Totales.idMoneda
+                    Totales.IdMoneda 
                     FROM Totales, Movimiento 
                     WHERE Totales._id == IdTotales and Cambio > 0) == ? 
-                then Cantidad * Cambio end) as Gasto,
-                IdMotivo, IdViaje
+            then Cantidad * Cambio end) as Gasto, IdViaje
             FROM Movimiento 
-            WHERE Cantidad < 0 and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ?  GROUP BY IdMotivo, IdViaje
+            WHERE Cantidad < 0 and strftime('%Y',Fecha) ==  ? GROUP BY IdViaje
         ) as table1 
 LEFT OUTER JOIN (
 SELECT 
-    SUM(Ingreso) as Ingreso, IdMotivo2, IdViaje
+    SUM(Ingreso) as Ingreso, IdViaje
     FROM (
         SELECT 
-            sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2, IdViaje
-            FROM Movimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? Group BY IdMotivo2, IdViaje
+            sum(Cantidad ) as Ingreso, IdViaje
+            FROM Movimiento 
+            WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? 
+            Group BY IdViaje
+        union
+        SELECT SUM( CASE WHEN (
+            SELECT Totales.idMoneda 
+            FROM Totales, Movimiento 
+            WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda
+        then Cantidad * -1 end) as Ingreso, IdViaje
+        FROM Movimiento 
+        WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and Cambio IS NOT NULL Group BY IdViaje
+        ) as table3, Trips
+    WHERE table3.IdViaje == Trips._id GROUP BY IdViaje
+) as table2 on table1.IdViaje = table2.IdViaje ,  Trips
+WHERE table1.IdViaje == Trips._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC
+
+//mes y año
+SELECT 
+    Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (0) as isViaje
+    FROM(
+        SELECT 
+            sum(Cantidad ) as Gasto, IdMotivo
+            FROM Movimiento 
+            WHERE  IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ? and IdViaje is null and Cantidad < 0 GROUP BY IdMotivo
         union
         SELECT 
-        SUM( CASE WHEN (
-            SELECT 
-                Totales.idMoneda 
-                FROM Totales, Movimiento 
-                WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda
-            then Cantidad * -1 end) as Ingreso, IdMotivo as IdMotivo2, IdViaje
+            SUM( CASE WHEN (
+                SELECT 
+                    Totales.idMoneda 
+                    FROM Totales, Movimiento 
+                    WHERE Totales._id == IdTotales and Cambio > 0) == ? 
+            then Cantidad * Cambio end) as Gasto, IdMotivo
             FROM Movimiento 
-            WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? and Cambio IS NOT NULL Group BY IdMotivo2, IdViaje
-        ) as table3, Motivo 
-    WHERE table3.IdMotivo2 == Motivo._id GROUP BY IdMotivo2, IdViaje
-) as table2 on table1.IdMotivo = table2.IdMotivo2 
-left outer join (
-	SELECT _id, Nombre
-	FROM Trips
-) as trip on table1.IdViaje == Trip._id ,  Motivo
-WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo, Viaje ORDER BY count1 DESC
+            WHERE Cantidad < 0 and strftime('%Y',Fecha) ==  ? and strftime('%m',Fecha) ==  ? and IdViaje is null GROUP BY IdMotivo
+        ) as table1 
+LEFT OUTER JOIN (
+SELECT 
+    SUM(Ingreso) as Ingreso, IdMotivo2
+    FROM (
+        SELECT 
+            sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo2
+            FROM Movimiento 
+            WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ? and IdViaje is null
+            Group BY IdMotivo2
+        union
+        SELECT SUM( CASE WHEN (
+            SELECT Totales.idMoneda 
+            FROM Totales, Movimiento 
+            WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda
+        then Cantidad * -1 end) as Ingreso, IdMotivo as IdMotivo2
+        FROM Movimiento 
+        WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ?and Cambio IS NOT NULL and IdViaje is null Group BY IdMotivo2
+        ) as table3, Motivo
+    WHERE table3.IdMotivo2 == Motivo._id GROUP BY IdMotivo2
+) as table2 on table1.IdMotivo = table2.IdMotivo2 ,  Motivo
+WHERE table1.IdMotivo == Motivo._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo 
+union
+SELECT 
+    Trips._id as _id, SUM(Gasto) as Gasto, Ingreso , Trips.Nombre as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (1) as isViaje
+    FROM(
+        SELECT 
+            sum(Cantidad ) as Gasto, IdViaje
+            FROM Movimiento 
+            WHERE  IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ? and Cantidad < 0 GROUP BY IdViaje
+        union
+        SELECT 
+            SUM( CASE WHEN (
+                SELECT 
+                    Totales.IdMoneda 
+                    FROM Totales, Movimiento 
+                    WHERE Totales._id == IdTotales and Cambio > 0) == ? 
+            then Cantidad * Cambio end) as Gasto, IdViaje
+            FROM Movimiento 
+            WHERE Cantidad < 0 and strftime('%Y',Fecha) ==  ? and strftime('%m',Fecha) ==  ? GROUP BY IdViaje
+        ) as table1 
+LEFT OUTER JOIN (
+SELECT 
+    SUM(Ingreso) as Ingreso, IdViaje
+    FROM (
+        SELECT 
+            sum(Cantidad ) as Ingreso, IdViaje
+            FROM Movimiento 
+            WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ?
+            Group BY IdViaje
+        union
+        SELECT SUM( CASE WHEN (
+            SELECT Totales.idMoneda 
+            FROM Totales, Movimiento 
+            WHERE Totales._id == IdTotales and Cambio > 0) <> Movimiento.IdMoneda
+        then Cantidad * -1 end) as Ingreso, IdViaje
+        FROM Movimiento 
+        WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) ==  ? and Cambio IS NOT NULL Group BY IdViaje
+        ) as table3, Trips
+    WHERE table3.IdViaje == Trips._id GROUP BY IdViaje
+) as table2 on table1.IdViaje = table2.IdViaje ,  Trips
+WHERE table1.IdViaje == Trips._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC

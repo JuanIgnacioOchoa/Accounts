@@ -125,7 +125,7 @@ public class FragmentMoves extends Fragment{
 
             }
         });
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        /*swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 Timer timer = new Timer();
@@ -142,8 +142,9 @@ public class FragmentMoves extends Fragment{
                 }, 1000);
 
             }
-        });
-
+        });*/
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
 

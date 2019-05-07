@@ -12,10 +12,15 @@
         android:label="Cuentas"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".NewPersonasActivity"></activity>
+        <activity
+            android:name=".PrestamoActivity"
+            android:label="@string/title_activity_prestamo"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SeeTripMainActivity"
             android:label="@string/title_activity_see_trip_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CreateTrip"
             android:label="@string/title_activity_create_trip"

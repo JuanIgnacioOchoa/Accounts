@@ -889,7 +889,17 @@ public class Principal {
     }
 
 
-
+    //Personas
+    public static Cursor getPeopleAll(){
+        return db.rawQuery("SELECT Personas._id, Personas.Nombre, Personas.Active, COUNT(Personas.Nombre) as Cuenta FROM Personas LEFT JOIN " +
+                "Prestamos on Prestamos.IdPersona = Personas._id and date('now','-1 month') <= date('now') " +
+                " GROUP BY Personas._id ORDER by Active DESC, Fecha DESC, Cuenta DESC ",null);
+    }
+    public static boolean insertPersona(String persona){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPersona.Nombre,persona);
+        return (db.insert(DBMan.DBPersona.TABLE_NAME,null, contentValues)> 0);
+    }
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.

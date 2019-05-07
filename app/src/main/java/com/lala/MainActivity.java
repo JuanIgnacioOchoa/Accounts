@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    public Button BtnVer, BtnGasto, BtnIngreso, BtnMov;
     public final Context cont = this;
     private File AppDir;
     private final int version = 1;
@@ -164,17 +163,6 @@ public class MainActivity extends AppCompatActivity {
         //ManagerTotal managerTotal = new ManagerTotal(this);
         //MyDate prueba = new MyDate("22-2-2015");
 
-
-
-        BtnVer = (Button) findViewById(R.id.MVer);
-        BtnGasto = (Button) findViewById(R.id.MGasto);
-        BtnIngreso = (Button) findViewById(R.id.MIngreso);
-        BtnMov = (Button) findViewById(R.id.MMovimiemto);
-        //BtnVer.setOnClickListener(this);
-        //BtnGasto.setOnClickListener(this);
-        //BtnIngreso.setOnClickListener(this);
-        //BtnMov.setOnClickListener(this);
-
         //upload("temp.db", AppDir, "application/x-sqlite3");
     }
 
@@ -217,6 +205,10 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(id == R.id.action_trips){
             Intent i = new Intent(this, TripsMainActivity.class);
+            startActivity(i);
+        }
+        else if(id == R.id.action_prestamo){
+            Intent i = new Intent(this, PrestamoActivity.class);
             startActivity(i);
         }
         else if(id == R.id.new_moneda){

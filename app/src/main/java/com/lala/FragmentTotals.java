@@ -88,6 +88,7 @@ public class FragmentTotals extends Fragment {
                 startActivity(i);
             }
         });
+        /*
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -105,8 +106,9 @@ public class FragmentTotals extends Fragment {
                 }, 1000);
 
             }
-        });
-
+        });*/
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
     public void onResume(){
         super.onResume();

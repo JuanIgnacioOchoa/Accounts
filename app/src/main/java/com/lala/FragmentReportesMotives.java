@@ -50,6 +50,8 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
         //Cast to each element from Fragment
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_activity_moves_swipeRefreshLayout);
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setRefreshing(false);
         lv = (ListView) view.findViewById(R.id.listView);
 
         return view;
@@ -91,7 +93,6 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
         //TODO colocar moneda
         if(month == null){
             c = Principal.getSumByMotivesYear(idMoneda,year);
-            this.year = "";
         } else{
             c = Principal.getSumByMotivesMonth(idMoneda,month,year);
         }

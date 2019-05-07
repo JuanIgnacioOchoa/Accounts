@@ -10,4 +10,8 @@
     <string name="title_activity_trips_main">TripsMainActivity</string>
     <string name="title_activity_create_trip">CreateTrip</string>
     <string name="title_activity_see_trip_main">SeeTripMainActivity</string>
+    <string name="title_activity_prestamo">PrestamoActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -38,7 +38,7 @@ public class Reportes extends AppCompatActivity{
     private NumberFormat instance;
     private TextView TVGanancia,TVGasto, TVIngreso, TVPorcentaje;
     private Double gasto, ingreso, ganancia, porcentaje;
-    private Spinner spMonth, spYear, spMoneda;
+    private Spinner spMonth, spTimeLapse, spMoneda;
     private Calendar calendar;
     private String year;
     private String month;
@@ -74,7 +74,7 @@ public class Reportes extends AppCompatActivity{
         TVGasto      = (TextView) findViewById(R.id.CGasto);
         TVIngreso    = (TextView) findViewById(R.id.CIngreso);
         TVPorcentaje = (TextView) findViewById(R.id.Porcentaje);
-        spYear       = (Spinner)  findViewById(R.id.spYear);
+        spTimeLapse       = (Spinner)  findViewById(R.id.spYear);
         spMonth      = (Spinner)  findViewById(R.id.spMonth);
         spMoneda       = (Spinner)  findViewById(R.id.spMoneda);
 
@@ -117,10 +117,10 @@ public class Reportes extends AppCompatActivity{
         //calendar.get(Calendar.MONTH) + 1;
         //calendar.get(Calendar.YEAR);
         spMonth.setAdapter(spAdapteMonth);
-        spYear.setAdapter(spAdapterTimeLapse);
+        spTimeLapse.setAdapter(spAdapterTimeLapse);
         spMoneda.setAdapter(simpleCursorAdapter);
         spMonth.setSelection(0);
-        spYear.setSelection(1);
+        spTimeLapse.setSelection(1);
 
         gasto = Principal.getGastoTotal(idMoneda);
         ingreso = Principal.getIngresoTotal(idMoneda);
@@ -146,7 +146,7 @@ public class Reportes extends AppCompatActivity{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                switch (spYear.getSelectedItemPosition()) {
+                switch (spTimeLapse.getSelectedItemPosition()) {
                     case 0:
                         break;
                     case 1:
@@ -243,13 +243,14 @@ public class Reportes extends AppCompatActivity{
             }
         });
 
-        spYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spTimeLapse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
                         break;
                     case 1:
+                        spMonth.setAdapter(spAdapteMonth);
                         break;
                     case 2:
                         spMonth.setAdapter(spAdapterYear);

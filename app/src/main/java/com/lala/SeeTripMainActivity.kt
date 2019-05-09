@@ -38,6 +38,8 @@ class SeeTripMainActivity : AppCompatActivity() {
     private var instance: NumberFormat = NumberFormat.getInstance()
     private val calendar = Calendar.getInstance()
     private lateinit var cursorTrip:Cursor
+    private lateinit var cursorMoves:Cursor
+    private lateinit var adapterMoves:myAdapter
     private lateinit var cursorMoneda:Cursor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,9 +62,9 @@ class SeeTripMainActivity : AppCompatActivity() {
         etNombre.isEnabled = false
         etDesc.isEnabled = false
         spMoneda.isEnabled = false
-        val cursorMoves = Principal.getMovesByTrips(_id)
-        val adapter = myAdapter(applicationContext, cursorMoves)
-        lvMovimientos.setAdapter(adapter)
+        cursorMoves = Principal.getMovesByTrips(_id)
+        adapterMoves = myAdapter(applicationContext, cursorMoves)
+        lvMovimientos.setAdapter(adapterMoves)
         lvMovimientos.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val i = Intent(applicationContext, seeMove::class.java)
             val id = cursorMoves.getInt(cursorMoves.getColumnIndex("_id"))
@@ -83,7 +85,7 @@ class SeeTripMainActivity : AppCompatActivity() {
             val idMoneda = cursorTrip.getInt(cursorTrip.getColumnIndex(DBMan.DBViaje.IdMoneda))
             if (id == idMoneda) {
                 spMoneda.setSelection(j)
-                spMoneda.adapter.count + 1
+                j = spMoneda.adapter.count + 1
             }
             j++
         }
@@ -220,9 +222,15 @@ class SeeTripMainActivity : AppCompatActivity() {
         })
 
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
     inner class myAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
         override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
             return LayoutInflater.from(context).inflate(R.layout.list_movimientos, parent, false)
+            cursorMoves = Principal.getMovesByTrips(_id)
+            adapterMoves = myAdapter(applicationContext, cursorMoves)
         }
 
         override fun bindView(view: View, context: Context, cursor: Cursor) {

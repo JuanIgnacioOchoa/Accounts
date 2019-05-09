@@ -61,8 +61,6 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
     @Override
     public void onResume(){
         super.onResume();
-
-
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState){

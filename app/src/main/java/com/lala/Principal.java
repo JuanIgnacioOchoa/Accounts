@@ -57,7 +57,7 @@ public class Principal {
     public static Cursor getTotales(){
         return db.rawQuery("SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda LEFT JOIN " +
                 "Movimiento on Movimiento.IdTotales= Totales._id and date('now','-1 month') <= date('now') " +
-                "WHERE Activa == 1 and Totales.IdMoneda == Moneda._id GROUP BY Totales._id ORDER by Fecha DESC, Count DESC" ,null);
+                "WHERE Activa == 1 and Totales.IdMoneda == Moneda._id and Totales._id > 20 GROUP BY Totales._id ORDER by Fecha DESC, Count DESC" ,null);
     }
     public static Cursor getTotales(int id){
         return db.rawQuery("SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda LEFT JOIN " +
@@ -81,6 +81,13 @@ public class Principal {
                 "and Totales._id = ?",new String[]{String.valueOf(cuenta)});
         c.moveToFirst();
         return c.getString(c.getColumnIndex("Moneda"));
+    }
+    public static int getIdMonedaTotales(int cuenta){
+        Cursor c = db.rawQuery("SELECT IdMoneda " +
+                "FROM Totales " +
+                "WHERE Totales._id = ?",new String[]{String.valueOf(cuenta)});
+        c.moveToFirst();
+        return c.getInt(c.getColumnIndex("IdMoneda"));
     }
     public static String getCuentaTotales(int cuenta){
         Cursor c = db.rawQuery("SELECT Cuenta " +
@@ -635,6 +642,16 @@ public class Principal {
         db.execSQL("UPDATE CambioMoneda SET Tipo_de_cambio = " + cambio +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
     }
 
+    public static void actualizarTipoDeCambio(int moneda1,int moneda2, double cambio){
+        Cursor c = db.rawQuery("SELECT CambioMoneda._id " +
+                "FROM CambioMoneda " +
+                "JOIN Moneda Moneda1 ON Moneda1._id = CambioMoneda.IdMoneda1 " +
+                "JOIN Moneda Moneda2 ON Moneda2._id = CambioMoneda.IdMoneda2 " +
+                "WHERE CambioMoneda.IdMoneda1 = ? and CambioMoneda.IdMoneda2 = ?", new String[]{moneda1+"",moneda2+""});
+        c.moveToFirst();
+        db.execSQL("UPDATE CambioMoneda SET Tipo_de_cambio = " + cambio +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
+    }
+
     //Traspaso
     public static void newTraspaso(int cuentaFrom, int cuentaTo, double cantidad, double cambio, String comment){
         ContentValues contentValues = new ContentValues();
@@ -895,11 +912,73 @@ public class Principal {
                 "Prestamos on Prestamos.IdPersona = Personas._id and date('now','-1 month') <= date('now') " +
                 " GROUP BY Personas._id ORDER by Active DESC, Fecha DESC, Cuenta DESC ",null);
     }
-    public static boolean insertPersona(String persona){
+    public static long insertPersona(String persona){
+        Cursor c = db.rawQuery("Select _id FROM " + DBMan.DBPersona.TABLE_NAME +
+                " WHERE " + DBMan.DBPersona.Nombre + " == \"" + persona + "\"", null);
+        if(c.getCount() > 0){
+            c.moveToFirst();
+            return c.getInt(c.getColumnIndex("_id"));
+        }
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBPersona.Nombre,persona);
-        return (db.insert(DBMan.DBPersona.TABLE_NAME,null, contentValues)> 0);
+        return (db.insert(DBMan.DBPersona.TABLE_NAME,null, contentValues));
     }
+    public static void updateActivePeople(int act, int id){
+        db.execSQL("UPDATE " + DBMan.DBPersona.TABLE_NAME + " SET " +
+                "Active = " + act + " WHERE _id = " + id);
+    }
+    public static void updateNamePeople(String nombre, int id){
+        db.execSQL("UPDATE " + DBMan.DBPersona.TABLE_NAME + " SET " +
+                DBMan.DBPersona.Nombre + " = '" + nombre + "' WHERE _id = " + id);
+    }
+    public static Cursor getPersonas(){
+        return db.rawQuery("SELECT Personas._id, Personas.Nombre, COUNT(Personas.Nombre) as Count FROM Personas LEFT JOIN " +
+                "Prestamos on Prestamos.IdPersona= Personas._id and date('now','-1 month') <= date('now') " +
+                "WHERE Active == 1 GROUP BY Personas._id union \n" +
+                " select -1 as _id, \"Otro\" as Nombre, (select coalesce(MAX(_id),1) + 1 From Personas) as Count\n" +
+                " order by Count" ,null);
+    }
+
+
+    //Prestamos
+    public static boolean createPrestamo(double cant, int cuenta, int moneda, int persona, String desc, double cambio){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPrestamo.IdTotales, cuenta);
+        contentValues.put(DBMan.DBPrestamo.Cantidad, cant);
+        contentValues.put(DBMan.DBPrestamo.IdPersona, persona);
+        contentValues.put(DBMan.DBPrestamo.IdMoneda, moneda);
+        contentValues.put(DBMan.DBPrestamo.Comment, desc);
+        contentValues.put(DBMan.DBPrestamo.Cambio, cambio);
+        long a = db.insert(DBMan.DBPrestamo.TABLE_NAME,null,contentValues);
+        if(a >= 0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    public static Cursor getPrestamos(){
+        return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamo.TABLE_NAME + " order by " + DBMan.DBPrestamo.Fecha +
+                " desc", null);
+    }
+    public static String getNombrePrestamoById(int id){
+        try {
+            Cursor c = db.rawQuery("SELECT " + DBMan.DBPersona.Nombre + " FROM " + DBMan.DBPersona.TABLE_NAME +
+                    " WHERE _id == " + id, null);
+            c.moveToFirst();
+            String nombre = c.getString(c.getColumnIndex(DBMan.DBPersona.Nombre));
+            return nombre;
+        } catch (Exception e){
+            return "Not find";
+        }
+    }
+    public static Cursor getCursorPrestamo(int id){
+        Cursor c = db.rawQuery("SELECT * FROM Prestamos Where _id == ?", new String[]{id +""});
+        c.moveToFirst();
+        return c;
+    }
+
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.

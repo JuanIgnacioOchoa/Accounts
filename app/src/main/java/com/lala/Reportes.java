@@ -96,7 +96,7 @@ public class Reportes extends AppCompatActivity{
             else calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) -1);
         }
         monthsYearList.add(months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.YEAR));
-        String[] monthsYear = monthsYearList.toArray(new String[monthsYearList.size()]);
+        final String[] monthsYear = monthsYearList.toArray(new String[monthsYearList.size()]);
         final ArrayAdapter<String> spAdapteMonth = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1, monthsYear);
         Date date = new Date();
         Calendar calendar = new GregorianCalendar();
@@ -142,6 +142,22 @@ public class Reportes extends AppCompatActivity{
         }
         TVPorcentaje.setText("     " + instance.format(Principal.round(porcentaje,2)) + "%");
 
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                setEnabledSpinner(i == 0);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
         spMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -191,8 +207,8 @@ public class Reportes extends AppCompatActivity{
                                 month = "12";
                                 break;
                         }
-                        gasto    = Principal.round(Principal.getGastoTotalMonthly(1,month, year),2);
-                        ingreso  = Principal.round(Principal.getIngresoTotalMonthly(1, month, year),2);
+                        gasto    = Principal.round(Principal.getGastoTotalMonthly(idMoneda,month, year),2);
+                        ingreso  = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year),2);
                         ganancia = ingreso + gasto;
                         if(ganancia  <= 0){
                             porcentaje = (ganancia / -gasto) * 100;
@@ -213,8 +229,8 @@ public class Reportes extends AppCompatActivity{
                     case 2:
                         year = spAdapterYear.getItem(position);
                         month = null;
-                        gasto    = Principal.round(Principal.getGastoTotalYearly(1, year),2);
-                        ingreso  = Principal.round(Principal.getIngresoTotalYearly(1, year),2);
+                        gasto    = Principal.round(Principal.getGastoTotalYearly(idMoneda, year),2);
+                        ingreso  = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year),2);
                         ganancia = ingreso + gasto;
                         if(ganancia  <= 0){
                             porcentaje = (ganancia / -gasto) * 100;
@@ -268,8 +284,13 @@ public class Reportes extends AppCompatActivity{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 idMoneda = (int) id;
-                gasto    = Principal.round(Principal.getGastoTotalMonthly(idMoneda,month, year),2);
-                ingreso  = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year),2);
+                if(month == null){
+                    gasto = Principal.round(Principal.getGastoTotalYearly(idMoneda, year), 2);
+                    ingreso = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year), 2);
+                } else {
+                    gasto = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year), 2);
+                    ingreso = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year), 2);
+                }
                 ganancia = ingreso + gasto;
                 if(ganancia  <= 0){
                     porcentaje = (ganancia / -gasto) * 100;
@@ -284,7 +305,7 @@ public class Reportes extends AppCompatActivity{
                 TVIngreso.setText(instance.format(ingreso));
                 TVGasto.setText(instance.format(gasto));
                 TVGanancia.setText(instance.format(ganancia));
-                //((FragmentReportesCuentas)fragmentReportesCuentas).updateAdapter(month,year);
+
                 ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, month,year); // TODO colocar moneda
             }
 
@@ -293,6 +314,15 @@ public class Reportes extends AppCompatActivity{
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    public void setEnabledSpinner(boolean e){
+        spMoneda.setEnabled(e);
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

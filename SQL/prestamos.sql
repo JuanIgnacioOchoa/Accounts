@@ -11,7 +11,8 @@ CREATE TABLE "Prestamos"
     "IdTotales" INTEGER NOT NULL, 
     "IdMoneda" INTEGER NOT NULL, 
     "Comment" varchar ( 255 ), 
-    "IdPersona" INTEGER NOT NULL, 
+    "IdPersona" INTEGER NOT NULL,
+    "Cambio" DOUBLE,
     PRIMARY KEY("_id"), 
     FOREIGN KEY("IdMoneda") REFERENCES "Moneda"("_id"), 
     FOREIGN KEY("IdTotales") REFERENCES "Totales"("_id"), 
@@ -28,3 +29,8 @@ CREATE TABLE "PrestamosDetalle"
     FOREIGN KEY("IdMoneda") REFERENCES "Moneda"("_id"), 
     FOREIGN KEY("IdTotales") REFERENCES "Totales"("_id"), 
     FOREIGN KEY("IdPrestamo") REFERENCES "Prestamos"("_id"))
+
+insert into Totales 
+(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)
+values
+(1, "Prestamos", 0, 0, 1, 0, 1)

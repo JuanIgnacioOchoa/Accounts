@@ -12,7 +12,15 @@
         android:label="Cuentas"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NewPersonasActivity"></activity>
+        <activity
+            android:name=".seePrestamoActivity"
+            android:label="@string/title_activity_see_prestamo"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".NewPrestamoActivity"
+            android:label="@string/title_activity_new_prestamo"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".NewPersonasActivity" />
         <activity
             android:name=".PrestamoActivity"
             android:label="@string/title_activity_prestamo"

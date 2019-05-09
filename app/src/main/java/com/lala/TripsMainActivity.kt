@@ -23,6 +23,7 @@ class TripsMainActivity : AppCompatActivity() {
 
     private var instance: NumberFormat = NumberFormat.getInstance()
     private var cursorTrips: Cursor = Principal.getTrips()
+    private lateinit var listView: ListView
     private var adapter: myAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +35,10 @@ class TripsMainActivity : AppCompatActivity() {
             val intent = Intent(this, CreateTrip::class.java)
             startActivity(intent)
         }
-        val listView = findViewById<ListView>(R.id.listView_Trips)
+        listView = findViewById<ListView>(R.id.listView_Trips)
         instance.minimumFractionDigits = 2
         adapter = myAdapter(applicationContext, cursorTrips)
-        listView.setAdapter(adapter)
+        listView.adapter = adapter
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val i = Intent(applicationContext, SeeTripMainActivity::class.java)
             i.putExtra("_id", cursorTrips.getInt(cursorTrips.getColumnIndex("_id")))
@@ -46,6 +47,12 @@ class TripsMainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        cursorTrips = Principal.getTrips()
+        adapter = myAdapter(applicationContext, cursorTrips)
+        listView.adapter = adapter
+    }
     inner class myAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
         override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
             return LayoutInflater.from(context).inflate(R.layout.list_trips, parent, false)

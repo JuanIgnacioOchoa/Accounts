@@ -1,6 +1,7 @@
 package com.lala;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -31,6 +32,7 @@ public class FragmentReportesCuentas extends Fragment {
     private myAdapter adapter;
     private Cursor c;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private static Spinner spMoneda;
     private static Fragment fragmentProfileUniqueInstance;
     @SuppressLint("ValidFragment")
     private FragmentReportesCuentas(){
@@ -62,8 +64,6 @@ public class FragmentReportesCuentas extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-
-
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
@@ -90,6 +90,7 @@ public class FragmentReportesCuentas extends Fragment {
             }
         });
     }
+
 
     public void updateAdapter(String month, String year){
         this.year = year;

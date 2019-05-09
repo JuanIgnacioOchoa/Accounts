@@ -54,7 +54,14 @@ public class DBMan {
         public static final String IdMoneda = "IdMoneda";
     }
     public static class DBPrestamo{
-
+        public static final String TABLE_NAME = "PRESTAMOS";
+        public static final String Cantidad = "Cantidad";
+        public static final String Fecha = "Fecha";
+        public static final String IdTotales = "IdTotales";
+        public static final String IdMoneda = "IdMoneda";
+        public static final String Comment = "Comment";
+        public static final String IdPersona = "IdPersona";
+        public static final String Cambio = "Cambio";
     }
     public static class DBPrestamoDetalle{
 

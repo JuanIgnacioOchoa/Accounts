@@ -1,6 +1,11 @@
 package com.lala
 
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.database.Cursor
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
@@ -9,16 +14,21 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
+import android.support.v4.widget.CursorAdapter
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ImageSpan
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.AdapterView
+import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_prestamo.*
+import java.text.DateFormatSymbols
+import java.text.NumberFormat
+import java.util.*
 
 class PrestamoActivity : AppCompatActivity() {
     private lateinit var  mSectionsPagerAdapter: SectionsPagerAdapter
@@ -39,12 +49,29 @@ class PrestamoActivity : AppCompatActivity() {
         val tabLayout = findViewById<View>(R.id.tabs) as TabLayout
         tabLayout.setupWithViewPager(mViewPager)
 
-        fab.setOnClickListener { view ->
-            when(mViewPager.currentItem){
-                0 -> Toast.makeText(applicationContext, "0", Toast.LENGTH_LONG).show()
-                1 -> Toast.makeText(applicationContext, "1", Toast.LENGTH_LONG).show()
-                else -> Toast.makeText(applicationContext, "2", Toast.LENGTH_LONG).show()
+        fab.setOnClickListener {
+            val colors = arrayOf<CharSequence>("Prestar")
+
+            // Initialize a new instance of
+            val builder = AlertDialog.Builder(this@PrestamoActivity)
+
+            // Set the alert dialog title
+            builder.setTitle("Choose an option")
+
+            builder.setItems(colors) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        val i = Intent(applicationContext, NewPrestamoActivity::class.java)
+                        i.putExtra("Prestado", true)
+                        startActivity(i)
+                    }
+                }
+                // the user clicked on colors[which]
             }
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+            // Display the alert dialog on app interface
+            dialog.show()
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -63,7 +90,7 @@ class PrestamoActivity : AppCompatActivity() {
     }
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        private val imageResId = intArrayOf(R.drawable.plus2, R.drawable.minus2, R.drawable.plus_minus2)
+        private val imageResId = intArrayOf(R.drawable.plus_minus2, R.drawable.plus2, R.drawable.minus2)
 
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
@@ -91,4 +118,5 @@ class PrestamoActivity : AppCompatActivity() {
         }
 
     }
+
 }

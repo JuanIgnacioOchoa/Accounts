@@ -55,27 +55,26 @@ class NewPersonasActivity : AppCompatActivity() {
                     act = 1
                 else
                     act = 0
-                Principal.updateActiveMotive(act, id)
-                adapter.changeCursor(Principal.getMotiveAll())
+                Principal.updateActivePeople(act, id)
+                adapter.changeCursor(Principal.getPeopleAll())
 
                 //Toast.makeText(context, "act: "+ act + " _id: " + id,Toast.LENGTH_SHORT).show();
             }
             etPersona.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                 if (!hasFocus) {
                     val m = etPersona.text.toString()
-                    Principal.updateNameMotive(m, id)
-                    adapter.changeCursor(Principal.getMotiveAll())
-                    //Toast.makeText(context, "Motivo: " + m + " _id: " + id,Toast.LENGTH_SHORT).show();
+                    Principal.updateNamePeople(m, id)
+                    adapter.changeCursor(Principal.getPeopleAll())
                 }
             }
             // Extract properties from cursor
             //int id = 0;
             //id = 0;
-            val motivo = cursor.getString(cursor.getColumnIndex(DBMan.DBPersona.Nombre))
+            val nombre = cursor.getString(cursor.getColumnIndex(DBMan.DBPersona.Nombre))
             val active = cursor.getInt(cursor.getColumnIndex("Active"))
             // Populate fields with extracted properties
             //Toast.makeText(context,fecha + " aa",Toast.LENGTH_SHORT).show();
-            etPersona.setText(motivo)
+            etPersona.setText(nombre)
             cbActivo.isChecked = (active == 1)
         }
     }

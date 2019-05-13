@@ -40,16 +40,13 @@
         android:layout_toEndOf="@+id/textView3" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="230dp"
         android:hint="Comentario o descripcion"
         android:gravity="center"
         android:backgroundTint="#FFFFFF"
         android:id="@+id/gasto_etComment"
-
-        android:layout_below="@+id/new_move_otro"
-        android:layout_alignEnd="@+id/new_move_otro"
-        android:layout_toEndOf="@+id/space3" />
+        android:layout_below="@+id/new_move_otro" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -106,6 +103,17 @@
         android:id="@+id/gasto_spMoneda"
         android:layout_alignBottom="@+id/gasto_etCantidad"
         android:layout_toEndOf="@+id/gasto_etCantidad" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/gasto_spTo"
+        android:layout_alignStart="@id/gasto_spTo"
+        android:layout_alignTop="@id/textView2"
+        android:layout_alignBottom="@id/textView2"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:textSize="20dp"
+        android:id="@+id/TVPersona"/>
 
 
 </RelativeLayout>

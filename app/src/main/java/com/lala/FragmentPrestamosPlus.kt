@@ -23,8 +23,8 @@ import java.text.NumberFormat
 
 class FragmentPrestamosPlus : Fragment() {
     private var instance: NumberFormat = NumberFormat.getInstance()
-    private val cursorPrestamos = Principal.getPrestamos()
-
+    private var cursorPrestamos = Principal.getPrestamos()
+    private lateinit var listView:ListView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,7 +39,7 @@ class FragmentPrestamosPlus : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val listView = view.findViewById<ListView>(R.id.LV_Prestamo)
+        listView = view.findViewById<ListView>(R.id.LV_Prestamo)
         instance.minimumFractionDigits = 2
         val adapter = context?.let { myAdapter(it,cursorPrestamos) }
 
@@ -53,11 +53,19 @@ class FragmentPrestamosPlus : Fragment() {
             startActivity(i)
         }
     }
+    fun actualizar(){
+        cursorPrestamos = Principal.getPrestamos()
+        val adapter = context?.let { myAdapter(it,cursorPrestamos) }
+        if(::listView.isInitialized) {
+            listView.adapter = adapter
+        }
+    }
     companion object {
         fun newInstance(): FragmentPrestamosPlus{
             return FragmentPrestamosPlus()
         }
     }
+
     inner class myAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
         override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
             return LayoutInflater.from(context).inflate(R.layout.list_prestamo, parent, false)

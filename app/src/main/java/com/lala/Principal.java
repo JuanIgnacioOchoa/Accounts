@@ -57,7 +57,16 @@ public class Principal {
     public static Cursor getTotales(){
         return db.rawQuery("SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda LEFT JOIN " +
                 "Movimiento on Movimiento.IdTotales= Totales._id and date('now','-1 month') <= date('now') " +
-                "WHERE Activa == 1 and Totales.IdMoneda == Moneda._id and Totales._id > 20 GROUP BY Totales._id ORDER by Fecha DESC, Count DESC" ,null);
+                "WHERE Activa == 1 and Totales.IdMoneda == Moneda._id and Totales._id > 20 GROUP BY Totales._id ORDER by Count DESC" ,null);
+    }
+    public static Cursor getTotalesWithPrestamo(){
+        return db.rawQuery("SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda LEFT JOIN " +
+                "Movimiento on Movimiento.IdTotales= Totales._id and date('now','-1 month') <= date('now') " +
+                "WHERE Activa == 1 and Totales.IdMoneda == Moneda._id and Totales._id > 20 GROUP BY Totales._id " +
+                "union\n" +
+                "SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda\n" +
+                "where Totales.IdMoneda == Moneda._id and Totales._id == 1\n" +
+                "ORDER by Count DESC",null);
     }
     public static Cursor getTotales(int id){
         return db.rawQuery("SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda LEFT JOIN " +
@@ -830,8 +839,6 @@ public class Principal {
                 " = " + cantidad +" WHERE _id = " + idCuenta);
     }
 
-
-
     //GetFirst use date
     public static Calendar getFirstDate(){
         Cursor c = db.rawQuery("SELECT Fecha FROM Movimiento WHERE _id = 1", new String[]{});
@@ -966,7 +973,37 @@ public class Principal {
                 " select -1 as _id, \"Otro\" as Nombre, (select coalesce(MAX(_id),1) + 1 From Personas) as Count\n" +
                 " order by Count" ,null);
     }
-
+    public static void deshacesPrestamo(int id){
+        Double cantidad;
+        Cursor c = db.rawQuery("SELECT _id, " + DBMan.DBPrestamo.Cantidad +", " +
+                DBMan.DBPrestamo.IdTotales + ", " + DBMan.DBPrestamo.Cambio + " FROM " +
+                DBMan.DBPrestamo.TABLE_NAME + " WHERE _id = ?", new String[]{id+""});
+        c.moveToFirst();
+        String cambio = c.getString(c.getColumnIndex(DBMan.DBPrestamo.Cambio));
+        cantidad = c.getDouble(c.getColumnIndex(DBMan.DBPrestamo.Cantidad));
+        if(cambio != null) cantidad = cantidad * Double.parseDouble(cambio);
+        int idCuenta = c.getInt(c.getColumnIndex(DBMan.DBPrestamo.IdTotales));
+        Cursor cCuenta = (db.rawQuery("SELECT "+ DBMan.DBTotales.CantidadActual + " " +
+                "FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{""+idCuenta}));
+        cCuenta.moveToFirst();
+        Double cantidadCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
+        cantidad = cantidadCuenta - cantidad;
+        db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
+                " = " + cantidad +" WHERE _id = " + idCuenta);
+    }
+    public static void updatePrestamo(int id, double cant, double cambio, int idCuenta, int idMoneda, int idPersona, String comment){
+        db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET " + DBMan.DBPrestamo.Cantidad +
+                " = " + cant + ", " + DBMan.DBPrestamo.Cambio + " = " + cambio + ", " +
+                DBMan.DBPrestamo.IdTotales + " = " + idCuenta + ", " + DBMan.DBPrestamo.IdMoneda + " = " + idMoneda +
+                ", " + DBMan.DBPrestamo.IdPersona + " = " + idPersona + ", " + DBMan.DBPrestamo.Comment + " = \"" + comment + "\"" +
+                " WHERE _id == " + id);
+    }
+    public static String getPersonaNombreById(int id){
+        Cursor c = db.rawQuery("SELECT " + DBMan.DBPersona.Nombre + " FROM " + DBMan.DBPersona.TABLE_NAME +
+                " WHERE _id == " + id, null);
+        c.moveToFirst();
+        return c.getString(c.getColumnIndex(DBMan.DBPersona.Nombre));
+    }
 
     //Prestamos
     public static boolean createPrestamo(double cant, int cuenta, int moneda, int persona, String desc, double cambio){

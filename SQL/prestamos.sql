@@ -30,6 +30,7 @@ CREATE TABLE "PrestamosDetalle"
     FOREIGN KEY("IdTotales") REFERENCES "Totales"("_id"), 
     FOREIGN KEY("IdPrestamo") REFERENCES "Prestamos"("_id"))
 
+Alter table "Prestamos"
 insert into Totales 
 (_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)
 values

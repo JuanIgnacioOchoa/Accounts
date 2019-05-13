@@ -63,7 +63,7 @@ class NewPrestamoActivity : AppCompatActivity() {
             val moneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
             var cant = 0.0
             //try {
-                cant = (etCant.getText().toString().toDouble()) * -1
+                cant = (etCant.getText().toString().toDouble())
                 var descr = etComment.text.toString()
                 var persona = 0
                 val cuenta = cursorTotales.getInt(cursorTotales.getColumnIndex("_id"))
@@ -79,7 +79,6 @@ class NewPrestamoActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Monedas diferentes $moneda $monedaCuenta", Toast.LENGTH_SHORT).show()
                     val builder = AlertDialog.Builder(this@NewPrestamoActivity)
                     builder.setTitle("Tipo de cambio")
-
 // Set up the input
                     val input = EditText(applicationContext)
 // Specify the type of input expected;

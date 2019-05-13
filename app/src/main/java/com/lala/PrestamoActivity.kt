@@ -33,12 +33,13 @@ import java.util.*
 class PrestamoActivity : AppCompatActivity() {
     private lateinit var  mSectionsPagerAdapter: SectionsPagerAdapter
     private lateinit var mViewPager: ViewPager
+    private lateinit var fragmentPrestamosPlus:FragmentPrestamosPlus
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prestamo)
         setSupportActionBar(toolbar)
         title = ("Deudas/Prestamos")
-
+        fragmentPrestamosPlus = FragmentPrestamosPlus.newInstance()
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the sections adapter.
@@ -74,6 +75,11 @@ class PrestamoActivity : AppCompatActivity() {
             dialog.show()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        fragmentPrestamosPlus.actualizar()
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_prestamo, menu)
@@ -95,7 +101,7 @@ class PrestamoActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             when (position) {
-                0 -> return FragmentPrestamosPlus.newInstance()
+                0 -> return fragmentPrestamosPlus
                 1 -> return  FragmentPrestamosPlus.newInstance()
                 else -> return FragmentPrestamosPlus.newInstance()
             }

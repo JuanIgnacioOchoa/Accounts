@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
@@ -75,10 +76,15 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int isViaje = c.getInt(c.getColumnIndex("isViaje"));
+        Intent i;
+        if(isViaje==1){
+            i = new Intent(getContext(),SeeTripMainActivity.class);
+        } else{
+            i = new Intent(getContext(),SeeByMotive.class);
+        }
 
-        Intent i = new Intent(getContext(),SeeByMotive.class);
-
-        i.putExtra("id",(int) id);
+        i.putExtra("_id",(int) id);
         i.putExtra("month", month);
         i.putExtra("year", year);
         startActivity(i);

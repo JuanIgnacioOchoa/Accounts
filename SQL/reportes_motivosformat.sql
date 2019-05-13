@@ -1,5 +1,5 @@
 //Nuevos año
-						SELECT 
+SELECT 
     Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (0) as isViaje
     FROM(
         SELECT 
@@ -95,9 +95,9 @@ SELECT
 
 
 
-                        
+
 //mes y año
-						SELECT 
+SELECT 
     Motivo._id as _id, SUM(Gasto) as Gasto, Ingreso , Motivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (0) as isViaje
     FROM(
         SELECT 

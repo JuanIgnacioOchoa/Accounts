@@ -28,7 +28,7 @@ public class SeeByMotive extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_by_motive);
         Intent i = this.getIntent();
-        int id = i.getIntExtra("id", 0);
+        int id = i.getIntExtra("_id", 0);
         String month = i.getStringExtra("month");
         String year = i.getStringExtra("year");
         cursorMotives = Principal.getSumByMotive(id, month, year);

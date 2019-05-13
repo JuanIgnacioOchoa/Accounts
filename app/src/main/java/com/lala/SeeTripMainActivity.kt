@@ -45,12 +45,12 @@ class SeeTripMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_see_trip_main)
-        setSupportActionBar(toolbar)
-        title = intent.getStringExtra("title")
+        setSupportActionBar(toolbar)9
         _id = intent.getIntExtra("_id", 0)
-        cont = applicationContext
-        setTitle("$title($_id)")
         cursorTrip = Principal.getTrip(_id)
+        val nombre = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre))
+        cont = applicationContext
+        setTitle("$nombre($_id)")
         etNombre = findViewById<EditText>(R.id.ET_TR_Nombre)
         etDesc = findViewById<EditText>(R.id.ET_TR_Desc)
         tvFechaInic = findViewById<TextView>(R.id.TV_TR_FechaInic)

@@ -42,7 +42,6 @@ class TripsMainActivity : AppCompatActivity() {
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val i = Intent(applicationContext, SeeTripMainActivity::class.java)
             i.putExtra("_id", cursorTrips.getInt(cursorTrips.getColumnIndex("_id")))
-            i.putExtra("title", cursorTrips.getString(cursorTrips.getColumnIndex(DBMan.DBViaje.Nombre)))
             startActivity(i)
         }
     }

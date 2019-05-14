@@ -13,8 +13,10 @@ CREATE TABLE "Prestamos"
     "Comment" varchar ( 255 ), 
     "IdPersona" INTEGER NOT NULL,
     "Cambio" DOUBLE,
+    "IdMovimiento" INTEGER,
     PRIMARY KEY("_id"), 
-    FOREIGN KEY("IdMoneda") REFERENCES "Moneda"("_id"), 
+    FOREIGN KEY("IdMoneda") REFERENCES "Moneda"("_id"),
+    FOREIGN KEY("IdMovimiento") REFERENCES "Movimiento"("_id"), 
     FOREIGN KEY("IdTotales") REFERENCES "Totales"("_id"), 
     FOREIGN KEY("IdPersona") REFERENCES "Personas"("_id"))
 

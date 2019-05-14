@@ -67,10 +67,8 @@ class NewPrestamoActivity : AppCompatActivity() {
                 var descr = etComment.text.toString()
                 var persona = 0
                 val cuenta = cursorTotales.getInt(cursorTotales.getColumnIndex("_id"))
-                val personaSp = cursorPersonas.getInt(cursorPersonas.getColumnIndex("_id"))
-                if(personaSp == -1 && etPersona.text.toString().isEmpty()){
-                    persona = -1
-                } else{
+                persona = cursorPersonas.getInt(cursorPersonas.getColumnIndex("_id"))
+                if(persona == -1){
                     persona = Principal.insertPersona(etPersona.text.toString()).toInt()
                 }
                 val monedaCuenta = Principal.getIdMonedaTotales(cuenta)
@@ -93,7 +91,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                             descr = "#-# " + cant + " x " + tipoDeCambio + " = " + cant * tipoDeCambio
                         } else
                             descr += "  #-# " + cant + " x " + tipoDeCambio + " = " + instance.format(cant * tipoDeCambio)
-                        if(Principal.createPrestamo(cant, cuenta, moneda, persona, descr, tipoDeCambio)) {
+                        if(Principal.createPrestamo(cant, cuenta, moneda, persona, descr, tipoDeCambio, 0)) {
                             Principal.actualizarTipoDeCambio(moneda, monedaCuenta, tipoDeCambio)
                             Principal.newMoveCuenta(cant * tipoDeCambio, cuenta)
                             Toast.makeText(applicationContext, "Guardado con exito", Toast.LENGTH_LONG).show()
@@ -108,7 +106,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                     // Display the alert dialog on app interface
                     dialog.show()
                 } else {
-                    Principal.createPrestamo(cant, cuenta, moneda, persona, descr, 1.0)
+                    Principal.createPrestamo(cant, cuenta, moneda, persona, descr, 1.0, 0)
                     Principal.newMoveCuenta(cant, cuenta)
                     Toast.makeText(applicationContext, "Guardado con exito", Toast.LENGTH_LONG).show()
                     finish()

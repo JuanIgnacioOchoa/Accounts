@@ -147,6 +147,11 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                         Principal.actualizarMovimiento(id,nCantidad,nIdCuenta,nComment,nIdMotivo,nIdMoneda,nCambio,nDate);
                         if(!Principal.getIdMoneda(nIdMoneda).equals(Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta))))
                             Principal.actualizarTipoDeCambio(Principal.getIdMoneda(nIdMoneda),Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta)),nCambio);
+                        if(idCuenta == 1){
+                            if(nCambio <= 0.0 || nCambio == null)
+                                nCambio = 1.0;
+                            Principal.updatePrestamoFromMove(Principal.getIdPrestamoByMoveId(id), nCantidad, nCambio, idMoneda);
+                        }
                         finish();
                     } else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
 
@@ -175,7 +180,8 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                     spCuenta.setFocusable(true);
                     spMoneda.setFocusable(true);
                     spMotivo.setFocusable(true);
-                    spCuenta.setEnabled(true);
+                    if(idCuenta > 20)
+                        spCuenta.setEnabled(true);
                     spMotivo.setEnabled(true);
                     spMoneda.setEnabled(true);
 

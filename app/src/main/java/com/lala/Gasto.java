@@ -259,25 +259,37 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         return true;
     }
     public void guardar(){
+        if(idCuenta == 1){
+            if(coment == null)
+                coment = "%-%" + "Prestamos por " + motivo;
+            else
+                coment += "%-%" + "Prestamos por " + motivo;
+        }
         long idMove = Principal.newMove(cant, idCuenta, coment, motivo, moneda,-1);
         Principal.newMoveCuenta(cant,idCuenta);
         if(idViaje >= 0) {
             Principal.updateMoveTrip((int) idMove, idViaje, cant);
         }
         if(idCuenta == 1){
-            Principal.createPrestamo(cant, 1, Principal.getIdMoneda(moneda), idPersona, coment, 1.0);
+            Principal.createPrestamo(cant, 1, Principal.getIdMoneda(moneda), idPersona, coment, 1.0, idMove);
         }
     }
     public void guardarDif(){
         Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
         if(coment == null){
-            coment = "# " + cant + " x " + tipoDeCambio + " = " + cant*tipoDeCambio;
-        } else  coment += "  #-# " + cant + " x " + tipoDeCambio + " = " + instance.format(cant*tipoDeCambio);
-        Principal.newMove(cant,idCuenta,coment,motivo,moneda,tipoDeCambio);
+            coment = "#-#" + cant + " x " + tipoDeCambio + " = " + cant*tipoDeCambio+"#-#";
+        } else  coment += "  #-# " + cant + " x " + tipoDeCambio + " = " + instance.format(cant*tipoDeCambio)+"#-#";
+        if(idCuenta == 1){
+            coment += "%-%" + "Prestamos por " + motivo;
+        }
+        long idMove = Principal.newMove(cant,idCuenta,coment,motivo,moneda,tipoDeCambio);
         Principal.newMoveCuenta(cant*tipoDeCambio,idCuenta);
         Principal.actualizarTipoDeCambio(moneda,monedaCuenta,tipoDeCambio);
+        if(idViaje >= 0) {
+            Principal.updateMoveTrip((int) idMove, idViaje, cant);
+        }
         if(idCuenta == 1){
-            Principal.createPrestamo(cant, 1, Principal.getIdMoneda(moneda), idPersona, coment, tipoDeCambio);
+            Principal.createPrestamo(cant, 1, Principal.getIdMoneda(moneda), idPersona, coment, tipoDeCambio, idMove);
         }
     }
 }

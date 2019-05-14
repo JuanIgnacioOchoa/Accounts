@@ -111,7 +111,14 @@ public class Principal {
         Double priorCant = c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
         db.execSQL("UPDATE Totales SET CurrentCantidad = " +(priorCant + cantidad)+ " WHERE _id = " + id);
     }
-
+    public static void updateTotalesFromPrestamo(double cant, int idCuenta, int idMoneda){
+        Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME +
+                " WHERE _id == " + idCuenta, null);
+        c.moveToFirst();
+        double can = c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
+        db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME + " SET " + DBMan.DBTotales.CantidadActual + " = " + (can + cant) +
+                ", " + DBMan.DBTotales.Moneda + " = " + idMoneda + " WHERE _id = " +idCuenta);
+    }
     //Movimientos
     public static Cursor getMovimientos() {
         return db.rawQuery("SELECT * FROM Movimiento WHERE strftime('%Y',Fecha) = strftime('%Y', date('now'))and " +
@@ -470,6 +477,20 @@ public class Principal {
                         "                        ) as table2 on table1.IdViaje = table2.IdViaje ,  Trips\n" +
                         "                        WHERE table1.IdViaje == Trips._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC\n",
                 new String[]{Moneda+"", year, Moneda+"", year ,Moneda+"",year, Moneda+"",year, Moneda+"",year, Moneda+"", year ,Moneda+"",year, Moneda+"",year, Moneda+"",year});
+    }
+    public static int getIdPrestamoByMoveId(int id){
+        Cursor c = db.rawQuery("SELECT * FROM " + DBMan.DBPrestamo.TABLE_NAME + " WHERE " + DBMan.DBPrestamo.IdMovimiento + " == " +
+                id + " LIMIT 1", null);
+        if(c.getCount()<= 0){
+            return -1;
+        }
+        c.moveToFirst();
+        return c.getInt(c.getColumnIndex("_id"));
+    }
+    public static void updateMoveFromPrestamo(int idMove, double cantidad, double cambio, int idMoneda){
+        db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " +
+                DBMan.DBMovimientos.Cantidad + " = " + cantidad + ", " + DBMan.DBMovimientos.Cambio + " = " + cambio +
+                ", " + DBMan.DBMovimientos.IdMoneda + " = " + idMoneda + " WHERE _id = " + idMove);
     }
     public static Cursor getSumByMotive(int id, String month, String year){
         if(month == null){
@@ -1006,7 +1027,7 @@ public class Principal {
     }
 
     //Prestamos
-    public static boolean createPrestamo(double cant, int cuenta, int moneda, int persona, String desc, double cambio){
+    public static boolean createPrestamo(double cant, int cuenta, int moneda, int persona, String desc, double cambio, long idMove){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBPrestamo.IdTotales, cuenta);
         contentValues.put(DBMan.DBPrestamo.Cantidad, cant);
@@ -1014,6 +1035,7 @@ public class Principal {
         contentValues.put(DBMan.DBPrestamo.IdMoneda, moneda);
         contentValues.put(DBMan.DBPrestamo.Comment, desc);
         contentValues.put(DBMan.DBPrestamo.Cambio, cambio);
+        contentValues.put(DBMan.DBPrestamo.IdMovimiento, idMove);
         long a = db.insert(DBMan.DBPrestamo.TABLE_NAME,null,contentValues);
         if(a >= 0){
             return true;
@@ -1022,6 +1044,11 @@ public class Principal {
         }
     }
 
+    public static void updatePrestamoFromMove(int id, double cantidad, double cambio, int idMoneda){
+        db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET "
+                + DBMan.DBPrestamo.Cantidad + " = " + cantidad + ", " + DBMan.DBPrestamo.Cambio +
+                " = " + cambio + ", " + DBMan.DBPrestamo.IdMoneda + " = " + idMoneda + " WHERE _id == " + id);
+    }
     public static Cursor getPrestamos(){
         return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamo.TABLE_NAME + " order by " + DBMan.DBPrestamo.Fecha +
                 " desc", null);
@@ -1041,6 +1068,19 @@ public class Principal {
         Cursor c = db.rawQuery("SELECT * FROM Prestamos Where _id == ?", new String[]{id +""});
         c.moveToFirst();
         return c;
+    }
+    public static boolean insertPrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPrestamoDetalle.IdTotales, idTotales);
+        contentValues.put(DBMan.DBPrestamoDetalle.Cantidad, cantidad);
+        contentValues.put(DBMan.DBPrestamoDetalle.IdMoneda, idMoneda);
+        contentValues.put(DBMan.DBPrestamoDetalle.IdPrestamo, idPrestamo);
+        long a = db.insert(DBMan.DBPrestamoDetalle.TABLE_NAME,null,contentValues);
+        if(a >= 0){
+            return true;
+        } else{
+            return false;
+        }
     }
 
 

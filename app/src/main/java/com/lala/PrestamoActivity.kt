@@ -1,34 +1,20 @@
 package com.lala
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
-import android.support.v4.widget.CursorAdapter
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ImageSpan
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
-
 import kotlinx.android.synthetic.main.activity_prestamo.*
-import java.text.DateFormatSymbols
-import java.text.NumberFormat
-import java.util.*
 
 class PrestamoActivity : AppCompatActivity() {
     private lateinit var  mSectionsPagerAdapter: SectionsPagerAdapter

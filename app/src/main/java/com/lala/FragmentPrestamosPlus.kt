@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -85,12 +86,26 @@ class FragmentPrestamosPlus : Fragment() {
             val persona = Principal.getNombrePrestamoById(cursor.getInt(cursor.getColumnIndex(DBMan.DBPrestamo.IdPersona)))
             val cuenta = Principal.getCuentaTotales(cursor.getInt(cursor.getColumnIndex(DBMan.DBPrestamo.IdTotales)))
             val moneda = Principal.getIdMoneda(cursor.getInt(cursor.getColumnIndex(DBMan.DBPrestamo.IdMoneda)))
+            val idMov = cursor.getInt(cursor.getColumnIndex(DBMan.DBPrestamo.IdMovimiento))
 
             //set
+
             tvCantidad.text = "$ ${instance.format(cantidad)} $moneda"
             tvFecha.text = fecha
             tvPersona.text = persona
             tvCuenta.text = cuenta
+
+            if(idMov != null && idMov != 0){
+                tvCantidad.setTextColor(Color.RED)
+                tvFecha.setTextColor(Color.RED)
+                tvPersona.setTextColor(Color.RED)
+                tvCuenta.setTextColor(Color.RED)
+            }else{
+                tvCantidad.setTextColor(Color.rgb(11, 79, 34))
+                tvFecha.setTextColor(Color.rgb(11, 79, 34))
+                tvPersona.setTextColor(Color.rgb(11, 79, 34))
+                tvCuenta.setTextColor(Color.rgb(11, 79, 34))
+            }
         }
     }
 }

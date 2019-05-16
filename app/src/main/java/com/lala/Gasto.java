@@ -271,7 +271,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             Principal.updateMoveTrip((int) idMove, idViaje, cant);
         }
         if(idCuenta == 1){
-            Principal.createPrestamo(cant, 1, Principal.getIdMoneda(moneda), idPersona, coment, 1.0, idMove);
+            Principal.createPrestamo(cant * -1, 1, Principal.getIdMoneda(moneda), idPersona, coment, 1.0, idMove);
         }
     }
     public void guardarDif(){
@@ -289,7 +289,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             Principal.updateMoveTrip((int) idMove, idViaje, cant);
         }
         if(idCuenta == 1){
-            Principal.createPrestamo(cant, 1, Principal.getIdMoneda(moneda), idPersona, coment, tipoDeCambio, idMove);
+            Principal.createPrestamo(cant * -1, 1, Principal.getIdMoneda(moneda), idPersona, coment, tipoDeCambio, idMove);
         }
     }
 }

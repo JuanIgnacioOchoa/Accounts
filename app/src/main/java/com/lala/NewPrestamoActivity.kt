@@ -107,7 +107,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                     dialog.show()
                 } else {
                     Principal.createPrestamo(cant, cuenta, moneda, persona, descr, 1.0, 0)
-                    Principal.newMoveCuenta(cant, cuenta)
+                    Principal.newMoveCuenta(cant * -1, cuenta)
                     Toast.makeText(applicationContext, "Guardado con exito", Toast.LENGTH_LONG).show()
                     finish()
                 }

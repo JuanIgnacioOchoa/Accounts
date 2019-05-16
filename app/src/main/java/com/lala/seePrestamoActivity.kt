@@ -38,6 +38,7 @@ class seePrestamoActivity : AppCompatActivity() {
     private lateinit var spMonedas:Spinner
     private var cant = 0.0
     private var idMoneda = 0
+    private var idMove = 0
     private var idCuenta = 0
     private var idPersona = 0
     private var cambio = 1.0
@@ -73,6 +74,7 @@ class seePrestamoActivity : AppCompatActivity() {
         idPersona = cursorPrestamo.getInt(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.IdPersona))
         cambio = cursorPrestamo.getDouble(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Cambio))
         comment = cursorPrestamo.getString(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Comment))
+        idMove = cursorPrestamo.getInt(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.IdMovimiento))
 
         etCant.setText(instance.format(cant))
         etComment.setText(comment)
@@ -297,9 +299,9 @@ class seePrestamoActivity : AppCompatActivity() {
             layout.id = 1
             linear2.layoutParams = r2
             r2.addRule(RelativeLayout.BELOW, 1)
-            etCantidad.inputType = InputType.TYPE_CLASS_NUMBER
-            etCambio.inputType = InputType.TYPE_CLASS_NUMBER
-            etCantidad.setText((cant *-1).toString())
+            etCantidad.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            etCambio.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            etCantidad.setText((cant).toString())
             var j = 0
             while (j < spCuenta.adapter.count) {
                 val value = spCuenta.getItemAtPosition(j) as Cursor
@@ -336,8 +338,13 @@ class seePrestamoActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "No se puede agregar porque las monedas no coinciden",Toast.LENGTH_LONG).show()
                 } else {
                     val cambio = etCambio.text.toString().toDouble()
-                    Principal.updateTotalesFromPrestamo(cant * cambio, idCuenta)
-                    Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
+                    if(idMove != null && idMove != 0){
+                        Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
+                        Principal.updateTotalesFromPrestamo(cant * cambio * -1, idCuenta)
+                    } else {
+                        Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
+                        Principal.updateTotalesFromPrestamo(cant * cambio, idCuenta)
+                    }
                 }
             }
 

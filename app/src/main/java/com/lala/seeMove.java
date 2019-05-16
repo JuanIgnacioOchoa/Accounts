@@ -3,6 +3,7 @@ package com.lala;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -267,7 +268,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         }else{
             cambio = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
             nCambio = cambio;
-            etCambio.setText(instance.format(cambio));
+            etCambio.setText(cambio.toString());
         }
 
     }
@@ -332,7 +333,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
             String camb = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
             if(camb == null) nCambio = Double.parseDouble(Principal.getTipodeCambio(nIdMoneda,Principal.getMonedaId(nIdCuenta)));
             else nCambio = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
-            etCambio.setText(instance.format(nCambio));
+            etCambio.setText(nCambio.toString());
             etCambio.setVisibility(View.VISIBLE);
             tvCambio.setVisibility(View.VISIBLE);
         }
@@ -374,6 +375,32 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
             Principal.eliminarMov(id);
             Toast.makeText(context,"Movimiento ha sido eliminado", Toast.LENGTH_SHORT).show();
             finish();
+        } else if(idM == R.id.action_trip){
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Tipo de cambio");
+
+// Set up the input
+            final Spinner spinner = new Spinner(context);
+// Specify the type of input expected;
+            final Cursor c = Principal.getTrips();
+            SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,c,new String[]{DBMan.DBViaje.Nombre},to,0);
+            spinner.setAdapter(adapter);
+            builder.setView(spinner);
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Principal.addMoveToTrip(id, c.getInt(c.getColumnIndex("_id")));
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
         }
         return super.onOptionsItemSelected(item);
     }

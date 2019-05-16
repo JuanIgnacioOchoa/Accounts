@@ -2,15 +2,15 @@ package com.lala
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.widget.CursorAdapter
 import android.support.v7.app.AppCompatActivity
 import android.text.InputType
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_see_prestamo.fab
 import kotlinx.android.synthetic.main.activity_see_prestamo.toolbar
@@ -26,6 +26,8 @@ class seePrestamoActivity : AppCompatActivity() {
     private lateinit var cursorMoneda:Cursor
     private lateinit var cursorPersona:Cursor
     private lateinit var cursorCuenta:Cursor
+    private lateinit var cursorDetalle:Cursor
+    private lateinit var adapterList:myAdapter
     private var id = 0
     private lateinit var etCant:EditText
     private lateinit var etComment:EditText
@@ -45,6 +47,7 @@ class seePrestamoActivity : AppCompatActivity() {
     private lateinit var adapterCuenta: SimpleCursorAdapter
     private lateinit var adapterPersona: SimpleCursorAdapter
     private var editable = false
+    private lateinit var listView: ListView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_see_prestamo)
@@ -52,6 +55,7 @@ class seePrestamoActivity : AppCompatActivity() {
 
         id = intent.getIntExtra("_id", 0)
         cursorPrestamo = Principal.getCursorPrestamo(id)
+        cursorDetalle = Principal.getPrestamoDetalle(id)
         instance.minimumFractionDigits = 2
 
         etCant = findViewById(R.id.ETCantidad)
@@ -61,6 +65,7 @@ class seePrestamoActivity : AppCompatActivity() {
         spPersonas = findViewById(R.id.SPPersona)
         etPersona = findViewById(R.id.etPersona)
         etCambio = findViewById(R.id.etCambio)
+        listView = findViewById(R.id.listView)
 
         cant = cursorPrestamo.getDouble(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Cantidad))
         idMoneda = cursorPrestamo.getInt(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.IdMoneda))
@@ -72,6 +77,8 @@ class seePrestamoActivity : AppCompatActivity() {
         etCant.setText(instance.format(cant))
         etComment.setText(comment)
 
+        adapterList = myAdapter(applicationContext, cursorDetalle)
+        listView.adapter = adapterList
 
         cursorMoneda = Principal.getMoneda()
         cursorCuenta = Principal.getTotales()
@@ -98,6 +105,7 @@ class seePrestamoActivity : AppCompatActivity() {
         spPersonas.isEnabled = editable
         spCuentas.isEnabled = editable
         spMonedas.isEnabled = editable
+
 
 
         fab.setOnClickListener {
@@ -258,19 +266,19 @@ class seePrestamoActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this@seePrestamoActivity)
 
             // Set the alert dialog title
-            builder.setTitle("Choose an option")
-            val spinnerMon = Spinner(applicationContext)
+            builder.setTitle("Agregar Pago")
+            val tvMoneda = TextView(applicationContext)
             val spCuenta = Spinner(applicationContext)
-            val cursorMoneda = Principal.getMoneda()
             val cursorCuenta = Principal.getTotales()
-            val adapterMoneda = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
             val adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
-            spinnerMon.adapter = adapterMoneda
             spCuenta.adapter = adapterCuenta
             val etCantidad = EditText(applicationContext)
+            val etCambio = EditText(applicationContext)
             val layout = LinearLayout(applicationContext)
+            val linear2 = LinearLayout(applicationContext)
             val relativeLayout = RelativeLayout(applicationContext)
             layout.weightSum = 2f
+            linear2.weightSum = 2f
             val lp2 = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT,1f)
@@ -282,25 +290,17 @@ class seePrestamoActivity : AppCompatActivity() {
                     RelativeLayout.LayoutParams.WRAP_CONTENT)
             relativeLayout.layoutParams = rl
             spCuenta.layoutParams = lp2
-            spinnerMon.layoutParams = lp2
+            tvMoneda.layoutParams = lp2
+            etCantidad.layoutParams = lp2
+            etCambio.layoutParams = lp2
             layout.layoutParams = rl
             layout.id = 1
-            etCantidad.layoutParams = r2
+            linear2.layoutParams = r2
             r2.addRule(RelativeLayout.BELOW, 1)
             etCantidad.inputType = InputType.TYPE_CLASS_NUMBER
+            etCambio.inputType = InputType.TYPE_CLASS_NUMBER
             etCantidad.setText((cant *-1).toString())
             var j = 0
-            while (j < spinnerMon.adapter.count) {
-                val value = spinnerMon.getItemAtPosition(j) as Cursor
-                val id = value.getInt(value.getColumnIndex("_id"))
-                val idMoneda = cursorPrestamo.getInt(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.IdMoneda))
-                if (id == idMoneda) {
-                    spinnerMon.setSelection(j)
-                    j = spinnerMon.adapter.count + 1
-                }
-                j++
-            }
-            j = 0
             while (j < spCuenta.adapter.count) {
                 val value = spCuenta.getItemAtPosition(j) as Cursor
                 val id = value.getInt(value.getColumnIndex("_id"))
@@ -311,17 +311,42 @@ class seePrestamoActivity : AppCompatActivity() {
                 }
                 j++
             }
+            spCuenta.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                    var idMon = Principal.getIdMonedaTotales(id.toInt())
+                    tvMoneda.text = Principal.getIdMoneda(idMon)
+                    if (idMon != idMoneda) {
+                        etCambio.setText(Principal.getTipodeCambio(idMon, idMoneda))
+                        etCambio.visibility = View.VISIBLE
+                    } else {
+                        etCambio.setText("1.0")
+                        etCambio.visibility = View.GONE
+                    }
+                }
+            })
             builder.setPositiveButton("OK") { dialog, which ->
                 val cant = etCantidad.text.toString().toDouble()
-                val idMon = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
                 val idCuenta = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"))
-                Principal.updateTotalesFromPrestamo(cant, idCuenta, idMon)
-                Principal.insertPrestamoDetalle(cant, idCuenta, idMon, id)
+                val idMon = Principal.getIdMonedaTotales(idCuenta)
+                if(idMon != Principal.getIdMonedaTotales(idCuenta)){
+                    Toast.makeText(applicationContext, "No se puede agregar porque las monedas no coinciden",Toast.LENGTH_LONG).show()
+                } else {
+                    val cambio = etCambio.text.toString().toDouble()
+                    Principal.updateTotalesFromPrestamo(cant * cambio, idCuenta)
+                    Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
+                }
             }
+
             builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
             layout.addView(spCuenta)
-            layout.addView(spinnerMon)
-            relativeLayout.addView(etCantidad)
+            layout.addView(tvMoneda)
+            linear2.addView(etCantidad)
+            linear2.addView(etCambio)
+            relativeLayout.addView(linear2)
             relativeLayout.addView(layout)
             builder.setView(relativeLayout)
             // Finally, make the alert dialog using builder
@@ -330,5 +355,28 @@ class seePrestamoActivity : AppCompatActivity() {
             dialog.show()
         }
         return super.onOptionsItemSelected(item)
+    }
+    inner class myAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
+        override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
+            return LayoutInflater.from(context).inflate(R.layout.list_prestamo_detalle, parent, false)
+        }
+
+        override fun bindView(view: View, context: Context, cursor: Cursor) {
+            // Find fields to populate in inflated template
+            val tvFecha = view.findViewById<TextView>(R.id.TVFecha)
+            val tvCantidad = view.findViewById<TextView>(R.id.TVCant)
+            val tvCuenta = view.findViewById<TextView>(R.id.TVCuenta)
+
+            // Extract properties from cursor
+            val cantidad = cursor.getDouble(cursor.getColumnIndex(DBMan.DBPrestamoDetalle.Cantidad))
+            val fecha = cursor.getString(cursor.getColumnIndex(DBMan.DBPrestamoDetalle.Fecha))
+            val cuenta = Principal.getCuentaTotales(cursor.getInt(cursor.getColumnIndex(DBMan.DBPrestamoDetalle.IdTotales)))
+            val moneda = Principal.getIdMoneda(cursor.getInt(cursor.getColumnIndex(DBMan.DBPrestamoDetalle.IdMoneda)))
+
+            //set
+            tvCantidad.text = "$ ${instance.format(cantidad)} $moneda"
+            tvFecha.text = fecha
+            tvCuenta.text = cuenta
+        }
     }
 }

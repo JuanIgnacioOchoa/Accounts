@@ -5,4 +5,8 @@
         android:title="Eliminar"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id="@+id/action_trip"
+        android:title="Agregar a Viaje"
+        android:orderInCategory="99"
+        app:showAsAction="never" />
 </menu>

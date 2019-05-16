@@ -278,7 +278,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
         if(coment == null){
             coment = "#-#" + cant + " x " + tipoDeCambio + " = " + cant*tipoDeCambio+"#-#";
-        } else  coment += "  #-# " + cant + " x " + tipoDeCambio + " = " + instance.format(cant*tipoDeCambio)+"#-#";
+        } else  coment += "  #-# " + cant + " x " + tipoDeCambio + " = " + (cant*tipoDeCambio)+"#-#";
         if(idCuenta == 1){
             coment += "%-%" + "Prestamos por " + motivo;
         }

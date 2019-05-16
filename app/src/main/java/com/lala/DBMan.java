@@ -71,6 +71,7 @@ public class DBMan {
         public static final String IdTotales = "IdTotales";
         public static final String IdMoneda = "IdMoneda";
         public static final String IdPrestamo = "IdPrestamo";
+        public static final String Cambio = "Cambio";
     }
     public static class DBPersona{
         public static final String TABLE_NAME = "Personas";

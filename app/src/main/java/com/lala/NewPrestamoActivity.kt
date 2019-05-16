@@ -90,7 +90,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                         if (descr == null) {
                             descr = "#-# " + cant + " x " + tipoDeCambio + " = " + cant * tipoDeCambio
                         } else
-                            descr += "  #-# " + cant + " x " + tipoDeCambio + " = " + instance.format(cant * tipoDeCambio)
+                            descr += "  #-# " + cant + " x " + tipoDeCambio + " = " + (cant * tipoDeCambio)
                         if(Principal.createPrestamo(cant, cuenta, moneda, persona, descr, tipoDeCambio, 0)) {
                             Principal.actualizarTipoDeCambio(moneda, monedaCuenta, tipoDeCambio)
                             Principal.newMoveCuenta(cant * tipoDeCambio, cuenta)

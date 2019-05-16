@@ -201,7 +201,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
             tvCambio.setVisibility(View.INVISIBLE);
         } else {
             nCambio = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
-            etCambio.setText(instance.format(nCambio));
+            etCambio.setText((nCambio.toString()));
         }
 
     }

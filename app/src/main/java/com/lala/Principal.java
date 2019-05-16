@@ -111,13 +111,13 @@ public class Principal {
         Double priorCant = c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
         db.execSQL("UPDATE Totales SET CurrentCantidad = " +(priorCant + cantidad)+ " WHERE _id = " + id);
     }
-    public static void updateTotalesFromPrestamo(double cant, int idCuenta, int idMoneda){
+    public static void updateTotalesFromPrestamo(double cant, int idCuenta){
         Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME +
                 " WHERE _id == " + idCuenta, null);
         c.moveToFirst();
         double can = c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
         db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME + " SET " + DBMan.DBTotales.CantidadActual + " = " + (can + cant) +
-                ", " + DBMan.DBTotales.Moneda + " = " + idMoneda + " WHERE _id = " +idCuenta);
+                " WHERE _id = " +idCuenta);
     }
     //Movimientos
     public static Cursor getMovimientos() {
@@ -698,6 +698,13 @@ public class Principal {
                 "WHERE CambioMoneda.IdMoneda1 = ? and CambioMoneda.IdMoneda2 = ?", new String[]{moneda1,moneda2});
         c.moveToFirst();
         db.execSQL("UPDATE CambioMoneda SET Tipo_de_cambio = " + cambio +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
+        c = db.rawQuery("SELECT CambioMoneda._id " +
+                "FROM CambioMoneda " +
+                "JOIN Moneda Moneda1 ON Moneda1._id = CambioMoneda.IdMoneda1 " +
+                "JOIN Moneda Moneda2 ON Moneda2._id = CambioMoneda.IdMoneda2 " +
+                "WHERE CambioMoneda.IdMoneda1 = ? and CambioMoneda.IdMoneda2 = ?", new String[]{moneda2,moneda1});
+        c.moveToFirst();
+        db.execSQL("UPDATE CambioMoneda SET Tipo_de_cambio = " + (1/cambio) +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
     }
 
     public static void actualizarTipoDeCambio(int moneda1,int moneda2, double cambio){
@@ -960,6 +967,10 @@ public class Principal {
                 "\" WHERE _id = " + _id);
         return true;
     }
+    public static void addMoveToTrip(int idMove, int idTrip){
+        db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " + DBMan.DBMovimientos.IdTrip +
+                " = " +idTrip + " WHERE _id == " + idMove);
+    }
 
 
     //Personas
@@ -1069,10 +1080,11 @@ public class Principal {
         c.moveToFirst();
         return c;
     }
-    public static boolean insertPrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo){
+    public static boolean insertPrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBPrestamoDetalle.IdTotales, idTotales);
         contentValues.put(DBMan.DBPrestamoDetalle.Cantidad, cantidad);
+        contentValues.put(DBMan.DBPrestamoDetalle.Cambio, cambio);
         contentValues.put(DBMan.DBPrestamoDetalle.IdMoneda, idMoneda);
         contentValues.put(DBMan.DBPrestamoDetalle.IdPrestamo, idPrestamo);
         long a = db.insert(DBMan.DBPrestamoDetalle.TABLE_NAME,null,contentValues);
@@ -1082,7 +1094,9 @@ public class Principal {
             return false;
         }
     }
-
+    public static Cursor getPrestamoDetalle(int idPrestamo){
+        return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamoDetalle.TABLE_NAME + " WHERE " + DBMan.DBPrestamoDetalle.IdPrestamo + " == " + idPrestamo, null);
+    }
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

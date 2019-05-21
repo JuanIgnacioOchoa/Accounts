@@ -69,8 +69,45 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE CambioMoneda(_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, " +
                 "IdMoneda1 INTEGER NOT NULL, IdMoneda2 INTEGER  NOT NULL, Tipo_de_cambio DOUBLE NOT NULL, " +
                 "FOREIGN KEY(IdMoneda1) REFERENCES Moneda(_id), FOREIGN KEY(IdMoneda2) REFERENCES Moneda(_id) )");
+        db.execSQL("CREATE TABLE \"Personas\" \n" +
+                "\t(\"_id\" INTEGER NOT NULL, \n" +
+                "\t\"Nombre\" varchar (50), \n" +
+                "\t\"Active\" BOOL not null DEFAULT 1, \n" +
+                "\tPRIMARY KEY(\"_id\"))");
+        db.execSQL("CREATE TABLE \"Prestamos\" \n" +
+                "    ( \"_id\" INTEGER NOT NULL, \n" +
+                "    \"Cantidad\" DOUBLE NOT NULL, \n" +
+                "    \"Fecha\" DATETIME NOT NULL DEFAULT CURRENT_DATE, \n" +
+                "    \"IdTotales\" INTEGER NOT NULL, \n" +
+                "    \"IdMoneda\" INTEGER NOT NULL, \n" +
+                "    \"Comment\" varchar ( 255 ), \n" +
+                "    \"IdPersona\" INTEGER NOT NULL,\n" +
+                "    \"Cambio\" DOUBLE,\n" +
+                "    \"IdMovimiento\" INTEGER,\n" +
+                "    \"Cerrada\" BOOL not null DEFAULT 0,\n" +
+                "    PRIMARY KEY(\"_id\"), \n" +
+                "    FOREIGN KEY(\"IdMoneda\") REFERENCES \"Moneda\"(\"_id\"),\n" +
+                "    FOREIGN KEY(\"IdMovimiento\") REFERENCES \"Movimiento\"(\"_id\"), \n" +
+                "    FOREIGN KEY(\"IdTotales\") REFERENCES \"Totales\"(\"_id\"), \n" +
+                "    FOREIGN KEY(\"IdPersona\") REFERENCES \"Personas\"(\"_id\"))");
 
+        db.execSQL("CREATE TABLE \"PrestamosDetalle\" \n" +
+                "    ( \"_id\" INTEGER NOT NULL, \n" +
+                "    \"Cantidad\" DOUBLE NOT NULL, \n" +
+                "    \"Fecha\" DATETIME NOT NULL DEFAULT CURRENT_DATE, \n" +
+                "    \"IdTotales\" INTEGER NOT NULL, \n" +
+                "    \"IdMoneda\" INTEGER NOT NULL,\n" +
+                "    \"Cambio\" DOUBLE, \n" +
+                "    \"IdPrestamo\" varchar ( 255 ), \n" +
+                "    PRIMARY KEY(\"_id\"), \n" +
+                "    FOREIGN KEY(\"IdMoneda\") REFERENCES \"Moneda\"(\"_id\"), \n" +
+                "    FOREIGN KEY(\"IdTotales\") REFERENCES \"Totales\"(\"_id\"), \n" +
+                "    FOREIGN KEY(\"IdPrestamo\") REFERENCES \"Prestamos\"(\"_id\"))");
 
+        db.execSQL("insert into Totales \n" +
+                "(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)\n" +
+                "values\n" +
+                "(1, \"Prestamos\", 0, 0, 1, 0, 1)");
         //db.execSQL(ManagerSettings.CREATE_TABLE);
         //db.delete(ManagerMotivo.TABLE_NAME,null,null);
     }

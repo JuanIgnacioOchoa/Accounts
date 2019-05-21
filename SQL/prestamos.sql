@@ -34,8 +34,11 @@ CREATE TABLE "PrestamosDetalle"
     FOREIGN KEY("IdTotales") REFERENCES "Totales"("_id"), 
     FOREIGN KEY("IdPrestamo") REFERENCES "Prestamos"("_id"))
 
-Alter table "Prestamos"
 insert into Totales 
 (_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)
 values
 (1, "Prestamos", 0, 0, 1, 0, 1)
+insert into Totales 
+(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)
+values
+(20, "Prestamos", 0, 0, 1, 0, 1)

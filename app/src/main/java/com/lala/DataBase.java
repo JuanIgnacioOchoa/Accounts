@@ -98,7 +98,7 @@ public class DataBase extends SQLiteOpenHelper {
                 "    \"IdTotales\" INTEGER NOT NULL, \n" +
                 "    \"IdMoneda\" INTEGER NOT NULL,\n" +
                 "    \"Cambio\" DOUBLE, \n" +
-                "    \"IdPrestamo\" varchar ( 255 ), \n" +
+                "    \"IdPrestamo\" INTEGER NOT NULL, \n" +
                 "    PRIMARY KEY(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdMoneda\") REFERENCES \"Moneda\"(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdTotales\") REFERENCES \"Totales\"(\"_id\"), \n" +
@@ -108,6 +108,26 @@ public class DataBase extends SQLiteOpenHelper {
                 "(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)\n" +
                 "values\n" +
                 "(1, \"Prestamos\", 0, 0, 1, 0, 1)");
+        db.execSQL("insert into Totales \n" +
+                "(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)\n" +
+                "values\n" +
+                "(20, \"xxxxx\", 0, 0, 1, 0, 1)");
+        db.execSQL("insert into Motivo \n" +
+                "(_id, Motivo, Active) \n" +
+                "values \n" +
+                "(1, \"Traspaso\", 0)");
+        db.execSQL("insert into Motivo \n" +
+                "(_id, Motivo, Active) \n" +
+                "values \n" +
+                "(2, \"Retiro\", 0)");
+        db.execSQL("insert into Motivo \n" +
+                "(_id, Motivo, Active) \n" +
+                "values \n" +
+                "(3, \"RetiroMonedaDiferente\", 0)");
+        db.execSQL("insert into Motivo \n" +
+                "(_id, Motivo, Active) \n" +
+                "values \n" +
+                "(15, \"xxxxx\", 0)");
         //db.execSQL(ManagerSettings.CREATE_TABLE);
         //db.delete(ManagerMotivo.TABLE_NAME,null,null);
     }

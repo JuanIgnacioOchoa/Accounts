@@ -13,9 +13,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".SplashScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="Cuentas"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="com.google.android.apps.drive.APP_ID"
+                android:value="id=576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
+
+            <intent-filter>
+                <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
+
+                <data android:mimeType="application/vnd.google-apps.drive-sdk.576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
+                <data android:mimeType="application/x-sqlite3" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".seePrestamoActivity"
             android:label="@string/title_activity_see_prestamo"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NewPrestamoActivity"
             android:label="@string/title_activity_new_prestamo"
@@ -41,24 +63,7 @@
             android:name=".MainActivity"
             android:label="Cuentas"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="com.google.android.apps.drive.APP_ID"
-                android:value="id=576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
-
-            <intent-filter>
-                <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
-
-                <data android:mimeType="application/vnd.google-apps.drive-sdk.576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
-                <data android:mimeType="application/x-sqlite3" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".NewAccount" />
         <activity
             android:name=".NewMotive"

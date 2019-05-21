@@ -3,8 +3,11 @@ package com.lala;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -64,7 +67,7 @@ public class Principal {
                 "Movimiento on Movimiento.IdTotales= Totales._id and date('now','-1 month') <= date('now') " +
                 "WHERE Activa == 1 and Totales.IdMoneda == Moneda._id and Totales._id > 20 GROUP BY Totales._id " +
                 "union\n" +
-                "SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, COUNT(Totales.Cuenta) as Count , Totales.CurrentCantidad FROM Totales, Moneda\n" +
+                "SELECT Totales._id, Moneda.Moneda, Totales.Cuenta, (-1) as Count , Totales.CurrentCantidad FROM Totales, Moneda\n" +
                 "where Totales.IdMoneda == Moneda._id and Totales._id == 1\n" +
                 "ORDER by Count DESC",null);
     }
@@ -618,7 +621,7 @@ public class Principal {
     public static Cursor getMotiveAll(){
         return db.rawQuery("SELECT Motivo._id, Motivo.Motivo, Motivo.Active, COUNT(Motivo.Motivo) as Cuenta FROM Motivo LEFT JOIN " +
                 "Movimiento on Movimiento.IdMotivo = Motivo._id and date('now','-1 month') <= date('now') " +
-                "WHERE Motivo._id > 2 GROUP BY Motivo._id ORDER by Active DESC, Fecha DESC, Cuenta DESC ",null);
+                "WHERE Motivo._id > 15 GROUP BY Motivo._id ORDER by Active DESC, Fecha DESC, Cuenta DESC ",null);
     }
     public static Cursor getMotive(int id){
         return db.rawQuery("SELECT Motivo._id, Motivo.Motivo, COUNT(Motivo.Motivo) as Cuenta FROM Motivo LEFT JOIN " +
@@ -1107,6 +1110,18 @@ public class Principal {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
+
+    public static boolean hasPermissions(Context context, String... allPermissionNeeded)
+    {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && context != null && allPermissionNeeded != null)
+            for (String permission : allPermissionNeeded)
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED)
+                    return false;
+        return true;
     }
 }
 /*

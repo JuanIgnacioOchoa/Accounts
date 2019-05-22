@@ -1026,12 +1026,12 @@ public class Principal {
         db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
                 " = " + cantidad +" WHERE _id = " + idCuenta);
     }
-    public static void updatePrestamo(int id, double cant, double cambio, int idCuenta, int idMoneda, int idPersona, String comment){
+    public static void updatePrestamo(int id, double cant, double cambio, int idCuenta, int idMoneda, int idPersona, String comment, String fecha){
         db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET " + DBMan.DBPrestamo.Cantidad +
                 " = " + cant + ", " + DBMan.DBPrestamo.Cambio + " = " + cambio + ", " +
                 DBMan.DBPrestamo.IdTotales + " = " + idCuenta + ", " + DBMan.DBPrestamo.IdMoneda + " = " + idMoneda +
                 ", " + DBMan.DBPrestamo.IdPersona + " = " + idPersona + ", " + DBMan.DBPrestamo.Comment + " = \"" + comment + "\"" +
-                " WHERE _id == " + id);
+                ", " + DBMan.DBPrestamo.Fecha + " = \"" + fecha + "\"" + " WHERE _id == " + id);
     }
     public static String getPersonaNombreById(int id){
         Cursor c = db.rawQuery("SELECT " + DBMan.DBPersona.Nombre + " FROM " + DBMan.DBPersona.TABLE_NAME +

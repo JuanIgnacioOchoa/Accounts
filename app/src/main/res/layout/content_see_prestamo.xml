@@ -91,11 +91,35 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/SPPersona"
         android:layout_alignEnd="@id/SPPersona"
-        android:layout_below="@id/SPPersona"
+        android:layout_below="@id/TVDate"
         android:id="@+id/etCambio"
         android:inputType="numberDecimal"
         android:layout_marginTop="10dp"
         android:visibility="gone"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha:"
+        android:id="@+id/TVFecha"
+        android:layout_below="@id/TVPersona"
+        android:layout_alignBottom="@id/TVDate"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        android:gravity="center_vertical"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:id="@+id/TVDate"
+        android:layout_below="@id/SPPersona"
+        android:layout_alignStart="@+id/SPPersona"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentEnd="true"
+        android:hint="Fecha"
+        android:textSize="18sp"
+        android:gravity="center_vertical"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

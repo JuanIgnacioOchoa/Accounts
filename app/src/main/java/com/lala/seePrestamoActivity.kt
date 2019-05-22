@@ -2,9 +2,12 @@ package com.lala
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.widget.CursorAdapter
@@ -17,7 +20,8 @@ import kotlinx.android.synthetic.main.activity_see_prestamo.toolbar
 import java.lang.Exception
 import java.text.NumberFormat
 import android.widget.RelativeLayout
-
+import java.text.DateFormatSymbols
+import java.util.*
 
 
 class seePrestamoActivity : AppCompatActivity() {
@@ -33,6 +37,7 @@ class seePrestamoActivity : AppCompatActivity() {
     private lateinit var etComment:EditText
     private lateinit var etCambio:EditText
     private lateinit var etPersona:EditText
+    private lateinit var tvFecha:TextView
     private lateinit var spPersonas:Spinner
     private lateinit var spCuentas:Spinner
     private lateinit var spMonedas:Spinner
@@ -43,12 +48,14 @@ class seePrestamoActivity : AppCompatActivity() {
     private var idPersona = 0
     private var cambio = 1.0
     private var comment:String? = ""
+    private var fecha:String? = ""
     private val instance = NumberFormat.getInstance()
     private lateinit var adapterMoneda: SimpleCursorAdapter
     private lateinit var adapterCuenta: SimpleCursorAdapter
     private lateinit var adapterPersona: SimpleCursorAdapter
     private var editable = false
     private lateinit var listView: ListView
+    private val calendar = Calendar.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_see_prestamo)
@@ -66,6 +73,7 @@ class seePrestamoActivity : AppCompatActivity() {
         spPersonas = findViewById(R.id.SPPersona)
         etPersona = findViewById(R.id.etPersona)
         etCambio = findViewById(R.id.etCambio)
+        tvFecha = findViewById(R.id.TVDate)
         listView = findViewById(R.id.listView)
 
         cant = cursorPrestamo.getDouble(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Cantidad))
@@ -75,9 +83,11 @@ class seePrestamoActivity : AppCompatActivity() {
         cambio = cursorPrestamo.getDouble(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Cambio))
         comment = cursorPrestamo.getString(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Comment))
         idMove = cursorPrestamo.getInt(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.IdMovimiento))
+        fecha = cursorPrestamo.getString(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.Fecha))
 
         etCant.setText(instance.format(cant))
         etComment.setText(comment)
+        tvFecha.setText(fecha)
 
         adapterList = myAdapter(applicationContext, cursorDetalle)
         listView.adapter = adapterList
@@ -115,6 +125,7 @@ class seePrestamoActivity : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     fab.setImageDrawable(resources.getDrawable(R.drawable.check, applicationContext.theme))
                 }
+                tvFecha.setTextColor(Color.BLACK)
             } else {
                 //TODO actualizar prestamo, agregar verificacion de datos
                 val cantidad = etCant.text.toString().toDouble()
@@ -138,11 +149,13 @@ class seePrestamoActivity : AppCompatActivity() {
                 }
                 Principal.deshacesPrestamo(id)
                 Principal.newMoveCuenta(cantidad * cam, idCuenta)
-                Principal.updatePrestamo(id, cantidad, cam, idCuenta, idMoneda, idPersona, comment)
+                Principal.updatePrestamo(id, cantidad, cam, idCuenta, idMoneda, idPersona, comment, fecha)
                 val idMove = cursorPrestamo.getInt(cursorPrestamo.getColumnIndex(DBMan.DBPrestamo.IdMovimiento))
                 if(idMove != 0){
                     Principal.updateMoveFromPrestamo(idMove, cantidad, cam, idMoneda)
                 }
+                tvFecha.setTextColor(Color.GRAY)
+                finish()
             }
             editable = !editable
             etComment.isEnabled = editable
@@ -253,6 +266,29 @@ class seePrestamoActivity : AppCompatActivity() {
                 j = spPersonas.adapter.count + 1
             }
             j++
+        }
+        tvFecha.setOnClickListener{
+            if(!editable){
+                return@setOnClickListener
+            }
+            val alertDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                val dfs = DateFormatSymbols()
+                val months = dfs.months
+                val date = months[monthOfYear].substring(0, 3) + "-" + dayOfMonth.toString() + "-" + year.toString()
+                tvFecha.setText(date)
+                val m: String
+                val d: String
+                if (dayOfMonth < 10)
+                    d = "0$dayOfMonth"
+                else
+                    d = "" + dayOfMonth
+                if (monthOfYear < 9)
+                    m = "0" + (monthOfYear + 1)
+                else
+                    m = (monthOfYear + 1).toString() + ""
+                fecha = "$year-$m-$d"
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+            alertDialog.show()
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

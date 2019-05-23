@@ -1063,9 +1063,66 @@ public class Principal {
                 + DBMan.DBPrestamo.Cantidad + " = " + cantidad + ", " + DBMan.DBPrestamo.Cambio +
                 " = " + cambio + ", " + DBMan.DBPrestamo.IdMoneda + " = " + idMoneda + " WHERE _id == " + id);
     }
-    public static Cursor getPrestamos(){
-        return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamo.TABLE_NAME + " order by " + DBMan.DBPrestamo.Fecha +
-                " desc", null);
+    public static Cursor getPrestamosPlus(boolean isCeros){
+        String s = " ";
+        if(isCeros){
+            s = " and Cantidad <> 0 ";
+        }
+        return db.rawQuery("select * from (\n" +
+                "\tselect p._id, p.Fecha, Totales.Cuenta, Moneda.Moneda, Comment, Personas.Nombre, p.Cambio, p.IdMovimiento, p.Cerrada,\n" +
+                "\t\t(p.Cantidad - coalesce(pd.Cantidad, 0)) as Cantidad from Prestamos as p\n" +
+                "\tleft join(\n" +
+                "\tselect _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from PrestamosDetalle group by IdPrestamo\n" +
+                "\t) as pd on p._id = pd.IdPrestamo, Personas, Moneda, Totales\n" +
+                "\tWhere Personas._id = p.IdPersona and Moneda._id = p.IdMoneda and Totales._id = p.IdTotales \n" +
+                ") WHERE IdMovimiento = 0" + s + "order by Fecha desc", null);
+    }
+    public static Cursor getPrestamosMinus(boolean isCeros){
+        String s = " ";
+        if(isCeros){
+            s = " and Cantidad <> 0 ";
+        }
+        return db.rawQuery("select * from (\n" +
+                "\tselect p._id, p.Fecha, Totales.Cuenta, Moneda.Moneda, Comment, Personas.Nombre, p.Cambio, p.IdMovimiento, p.Cerrada,\n" +
+                "\t\t(p.Cantidad - coalesce(pd.Cantidad, 0)) as Cantidad from Prestamos as p\n" +
+                "\tleft join(\n" +
+                "\tselect _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from PrestamosDetalle group by IdPrestamo\n" +
+                "\t) as pd on p._id = pd.IdPrestamo, Personas, Moneda, Totales\n" +
+                "\tWhere Personas._id = p.IdPersona and Moneda._id = p.IdMoneda and Totales._id = p.IdTotales \n" +
+                ") WHERE IdMovimiento <> 0" + s + "order by Fecha desc", null);
+    }
+    public static Cursor getPrestamosByPeople(boolean checked){
+        String s = " ";
+        if(checked){
+            s = " and Cantidad <> 0 ";
+        }
+        return db.rawQuery("\n" +
+                "SELECT Personas._id, Personas.Nombre, Moneda.Moneda, SUM(Cantidad * b) as Cantidad, Fecha FROM(\n" +
+                "\tSELECT *, (1) as b FROM(\n" +
+                "\t\t(\n" +
+                "\t\tselect (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(\n" +
+                "\t\t\t(select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from Prestamos where IdMovimiento = 0 group by IdPersona, IdMoneda) as table1\n" +
+                "\t\t\tleft join (\n" +
+                "\t\t\tselect sum(pd.Cantidad * pd.Cambio) as CantidadMenos, p.IdPersona, p.IdMoneda\n" +
+                "\t\t\tfrom Prestamos as p, PrestamosDetalle as pd \n" +
+                "\t\t\twhere p._id = pd.IdPrestamo and p.IdMovimiento = 0\n" +
+                "\t\t\tgroup by p.IdPersona, p.IdMoneda) as table2 on table1.IdPersona = table2.IdPersona and table1.IdMoneda = table2.IdMoneda)\n" +
+                "\t\t) as table1\n" +
+                "\t)\n" +
+                "\tunion all\n" +
+                "\tSELECT *, (-1) as b FROM(\n" +
+                "\t\t(\n" +
+                "\t\tselect (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(\n" +
+                "\t\t\t(select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from Prestamos where IdMovimiento <> 0 group by IdPersona, IdMoneda) as table1\n" +
+                "\t\t\tleft join (\n" +
+                "\t\t\tselect sum(pd.Cantidad * pd.Cambio) as CantidadMenos, p.IdPersona, p.IdMoneda\n" +
+                "\t\t\tfrom Prestamos as p, PrestamosDetalle as pd \n" +
+                "\t\t\twhere p._id = pd.IdPrestamo and p.IdMovimiento <> 0\n" +
+                "\t\t\tgroup by p.IdPersona, p.IdMoneda) as table2 on table1.IdPersona = table2.IdPersona and table1.IdMoneda = table2.IdMoneda)\n" +
+                "\t\t) as table2\n" +
+                "\t)\n" +
+                "\t), Personas, Moneda \n" +
+                "\twhere IdPersona = Personas._id and IdMoneda = Moneda._id" + s + "group by IdPersona, IdMoneda order by Fecha desc", null);
     }
     public static String getNombrePrestamoById(int id){
         try {
@@ -1096,6 +1153,14 @@ public class Principal {
         } else{
             return false;
         }
+    }
+    public static void CerrarPrestamo(int id){
+        db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET " + DBMan.DBPrestamo.Cerrada + " = 1 WHERE _id = " + id);
+    }
+    public static double getSumPrestamoDetalle(int idPrestamo){
+        Cursor c = db.rawQuery("select sum(Cantidad * Cambio) as Cantidad from PrestamosDetalle Where IdPrestamo = ? group by IdPrestamo", new String[]{idPrestamo+""});
+        c.moveToFirst();
+        return c.getDouble(c.getColumnIndex(DBMan.DBPrestamoDetalle.Cantidad));
     }
     public static Cursor getPrestamoDetalle(int idPrestamo){
         return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamoDetalle.TABLE_NAME + " WHERE " + DBMan.DBPrestamoDetalle.IdPrestamo + " == " + idPrestamo, null);

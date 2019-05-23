@@ -93,7 +93,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                             descr += "  #-# " + cant + " x " + tipoDeCambio + " = " + (cant * tipoDeCambio)
                         if(Principal.createPrestamo(cant, cuenta, moneda, persona, descr, tipoDeCambio, 0)) {
                             Principal.actualizarTipoDeCambio(moneda, monedaCuenta, tipoDeCambio)
-                            Principal.newMoveCuenta(cant * tipoDeCambio, cuenta)
+                            Principal.newMoveCuenta(cant * tipoDeCambio * -1, cuenta)
                             Toast.makeText(applicationContext, "Guardado con exito", Toast.LENGTH_LONG).show()
                             //guardarDif()
                             finish()

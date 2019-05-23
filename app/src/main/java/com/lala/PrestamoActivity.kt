@@ -14,18 +14,29 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ImageSpan
 import android.view.*
+import android.widget.CheckBox
+import android.widget.SimpleCursorAdapter
+import android.widget.Spinner
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_prestamo.*
 
 class PrestamoActivity : AppCompatActivity() {
     private lateinit var  mSectionsPagerAdapter: SectionsPagerAdapter
     private lateinit var mViewPager: ViewPager
     private lateinit var fragmentPrestamosPlus:FragmentPrestamosPlus
+    private lateinit var fragmentPrestamosMinus: FragmentPrestamosMinus
+    private lateinit var fragmentPrestamosPeople:FragmentPrestamoPeople
+    private lateinit var cbCeros:CheckBox
+    private lateinit var spMoneda: Spinner
+    private val cursorMoneda = Principal.getMoneda()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prestamo)
         setSupportActionBar(toolbar)
         title = ("Deudas/Prestamos")
         fragmentPrestamosPlus = FragmentPrestamosPlus.newInstance()
+        fragmentPrestamosPeople = FragmentPrestamoPeople.newInstance()
+        fragmentPrestamosMinus = FragmentPrestamosMinus.newInstance()
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the sections adapter.
@@ -33,6 +44,11 @@ class PrestamoActivity : AppCompatActivity() {
         mViewPager.adapter = mSectionsPagerAdapter
         mViewPager.offscreenPageLimit = 3
 
+        cbCeros = findViewById(R.id.CBceros)
+        spMoneda = findViewById(R.id.spMoneda)
+
+        val adapterMoneda = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
+        spMoneda.adapter = adapterMoneda
         val tabLayout = findViewById<View>(R.id.tabs) as TabLayout
         tabLayout.setupWithViewPager(mViewPager)
 
@@ -60,11 +76,19 @@ class PrestamoActivity : AppCompatActivity() {
             // Display the alert dialog on app interface
             dialog.show()
         }
+        cbCeros.setOnCheckedChangeListener { buttonView, isChecked ->
+            fragmentPrestamosPlus.actualizar(!cbCeros.isChecked)
+            fragmentPrestamosPeople.actualizar(!cbCeros.isChecked)
+            fragmentPrestamosMinus.actualizar(!cbCeros.isChecked)
+        }
+
     }
 
     override fun onResume() {
         super.onResume()
-        fragmentPrestamosPlus.actualizar()
+        fragmentPrestamosPlus.actualizar(!cbCeros.isChecked)
+        fragmentPrestamosPeople.actualizar(!cbCeros.isChecked)
+        fragmentPrestamosMinus.actualizar(!cbCeros.isChecked)
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -82,14 +106,14 @@ class PrestamoActivity : AppCompatActivity() {
     }
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        private val imageResId = intArrayOf(R.drawable.plus_minus2, R.drawable.plus2, R.drawable.minus2)
+        private val imageResId = intArrayOf(R.drawable.people2, R.drawable.plus2, R.drawable.minus2)
 
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             when (position) {
-                0 -> return fragmentPrestamosPlus
-                1 -> return  FragmentPrestamosPlus.newInstance()
-                else -> return FragmentPrestamosPlus.newInstance()
+                0 -> return fragmentPrestamosPeople
+                1 -> return  fragmentPrestamosPlus
+                else -> return fragmentPrestamosMinus
             }
         }
 

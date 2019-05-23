@@ -77,7 +77,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 }
                 else if (verificarDatos()){
                     monedaCuenta = Principal.getMonedaTotales(idCuenta);
-                    if(!monedaCuenta.equals(moneda)){
+                    if(!monedaCuenta.equals(moneda) && idCuenta != 1){
                         Toast.makeText(context, "Monedas diferentes " + moneda + " " + monedaCuenta, Toast.LENGTH_SHORT).show();
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle("Tipo de cambio");
@@ -289,7 +289,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             Principal.updateMoveTrip((int) idMove, idViaje, cant);
         }
         if(idCuenta == 1){
-            Principal.createPrestamo(cant * -1, 1, Principal.getIdMoneda(moneda), idPersona, coment, tipoDeCambio, idMove);
+            Principal.createPrestamo(cant * -1, 1, Principal.getIdMoneda(moneda), idPersona, coment, 1.0, idMove);
         }
     }
 }

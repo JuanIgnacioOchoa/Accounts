@@ -151,7 +151,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                         if(idCuenta == 1){
                             if(nCambio <= 0.0 || nCambio == null)
                                 nCambio = 1.0;
-                            Principal.updatePrestamoFromMove(Principal.getIdPrestamoByMoveId(id), nCantidad, nCambio, idMoneda);
+                            Principal.updatePrestamoFromMove(Principal.getIdPrestamoByMoveId(id), nCantidad, 1.0, idMoneda);
                         }
                         finish();
                     } else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
@@ -325,10 +325,12 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
     public void tipoDeCambio(){
         if(Principal.getMonedaId(nIdCuenta)== nIdMoneda){
             Toast.makeText(this,""+Principal.getMonedaId(nIdCuenta) + " = " + nIdMoneda, Toast.LENGTH_LONG).show();
-            etCambio.setVisibility(View.GONE);
-            tvCambio.setVisibility(View.GONE);
             nCambio = -1.0;
-
+            if(nIdCuenta != 1) {
+                etCambio.setVisibility(View.GONE);
+                tvCambio.setVisibility(View.GONE);
+                nCambio = 1.0;
+            }
         }else{
             String camb = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
             if(camb == null) nCambio = Double.parseDouble(Principal.getTipodeCambio(nIdMoneda,Principal.getMonedaId(nIdCuenta)));

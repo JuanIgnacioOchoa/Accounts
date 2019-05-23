@@ -26,9 +26,9 @@
             app:tabIndicatorHeight="4dp"
             android:background="#DCDCDC"/>
 
-    </android.support.design.widget.AppBarLayout>
+        <include layout="@layout/content_prestamo" />
 
-    <include layout="@layout/content_prestamo" />
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

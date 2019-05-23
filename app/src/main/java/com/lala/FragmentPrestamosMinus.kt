@@ -22,9 +22,9 @@ import java.text.NumberFormat
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-class FragmentPrestamosPlus : Fragment() {
+class FragmentPrestamosMinus : Fragment() {
     private var instance: NumberFormat = NumberFormat.getInstance()
-    private var cursorPrestamos = Principal.getPrestamosPlus(false)
+    private var cursorPrestamos = Principal.getPrestamosMinus(false)
     private lateinit var listView:ListView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,15 +55,15 @@ class FragmentPrestamosPlus : Fragment() {
         }
     }
     fun actualizar(boolean: Boolean){
-        cursorPrestamos = Principal.getPrestamosPlus(boolean)
+        cursorPrestamos = Principal.getPrestamosMinus(boolean)
         val adapter = context?.let { myAdapter(it,cursorPrestamos) }
         if(::listView.isInitialized) {
             listView.adapter = adapter
         }
     }
     companion object {
-        fun newInstance(): FragmentPrestamosPlus{
-            return FragmentPrestamosPlus()
+        fun newInstance(): FragmentPrestamosMinus{
+            return FragmentPrestamosMinus()
         }
     }
 

@@ -87,6 +87,7 @@ class seePrestamoActivity : AppCompatActivity() {
 
         etCant.setText(instance.format(cant))
         etComment.setText(comment)
+        etCambio.setText(cambio.toString())
         tvFecha.setText(fecha)
 
         adapterList = myAdapter(applicationContext, cursorDetalle)
@@ -376,10 +377,14 @@ class seePrestamoActivity : AppCompatActivity() {
                     val cambio = etCambio.text.toString().toDouble()
                     if(idMove != null && idMove != 0){
                         Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
-                        Principal.updateTotalesFromPrestamo(cant * cambio * -1, idCuenta)
+                        Principal.updateTotalesFromPrestamo(cant * -1, idCuenta)
                     } else {
                         Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
-                        Principal.updateTotalesFromPrestamo(cant * cambio, idCuenta)
+                        Principal.updateTotalesFromPrestamo(cant, idCuenta)
+                    }
+                    val cantPagada = Principal.getSumPrestamoDetalle(this.id)
+                    if(this.cant == cantPagada){
+                        Principal.CerrarPrestamo(this.id)
                     }
                 }
             }

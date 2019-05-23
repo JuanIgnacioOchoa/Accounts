@@ -63,6 +63,7 @@ public class DBMan {
         public static final String IdPersona = "IdPersona";
         public static final String Cambio = "Cambio";
         public static final String IdMovimiento = "IdMovimiento";
+        public static final String Cerrada = "Cerrada";
     }
     public static class DBPrestamoDetalle{
         public static final String TABLE_NAME = "PrestamosDetalle";

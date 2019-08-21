@@ -1167,6 +1167,11 @@ public class Principal {
             return false;
         }
     }
+    public static void updatePrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio, int _id){
+        db.execSQL("UPDATE " + DBMan.DBPrestamoDetalle.TABLE_NAME + " SET " + DBMan.DBPrestamoDetalle.Cantidad + " = ?, " +
+                DBMan.DBPrestamoDetalle.IdTotales + " = ?, " + DBMan.DBPrestamoDetalle.IdMoneda + " = ?, " + DBMan.DBPrestamoDetalle.IdPrestamo + " = ?, " +
+                DBMan.DBPrestamoDetalle.Cambio + " = ? WHERE _id = ?", new String[]{cantidad+"", idTotales+"", idMoneda+"", idPrestamo+"", cambio+"", _id+""});
+    }
     public static void CerrarPrestamo(int id){
         db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET " + DBMan.DBPrestamo.Cerrada + " = 1 WHERE _id = " + id);
     }

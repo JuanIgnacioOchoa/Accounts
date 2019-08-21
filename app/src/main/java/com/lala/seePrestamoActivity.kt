@@ -119,7 +119,113 @@ class seePrestamoActivity : AppCompatActivity() {
         spCuentas.isEnabled = editable
         spMonedas.isEnabled = editable
 
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            Toast.makeText(applicationContext, "$id", Toast.LENGTH_LONG).show()
+            val oldCant = cursorDetalle.getDouble(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.Cantidad))
+            val oldCambio = cursorDetalle.getDouble(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.Cambio))
+            val oldCuenta = cursorDetalle.getInt(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.IdTotales))
+            val oldMoneda = cursorDetalle.getInt(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.IdMoneda))
+            val builder = AlertDialog.Builder(this@seePrestamoActivity)
 
+            // Set the alert dialog title
+            builder.setTitle("Agregar Pago")
+            val tvMoneda = TextView(applicationContext)
+            val spCuenta = Spinner(applicationContext)
+            val cursorCuenta = Principal.getTotales()
+            val adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
+            spCuenta.adapter = adapterCuenta
+            val etCantidad = EditText(applicationContext)
+            val etCambio = EditText(applicationContext)
+            val layout = LinearLayout(applicationContext)
+            val linear2 = LinearLayout(applicationContext)
+            val relativeLayout = RelativeLayout(applicationContext)
+            layout.weightSum = 2f
+            linear2.weightSum = 2f
+            val lp2 = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,1f)
+            val rl = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+            val r2 = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+            relativeLayout.layoutParams = rl
+            spCuenta.layoutParams = lp2
+            tvMoneda.layoutParams = lp2
+            etCantidad.layoutParams = lp2
+            etCambio.layoutParams = lp2
+            layout.layoutParams = rl
+            layout.id = 2
+            linear2.layoutParams = r2
+            r2.addRule(RelativeLayout.BELOW, 2)
+            etCantidad.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            etCambio.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            etCantidad.setText(oldCant.toString())
+            etCambio.setText(oldCambio.toString())
+            var j = 0
+            while (j < spCuenta.adapter.count) {
+                val value = spCuenta.getItemAtPosition(j) as Cursor
+                val id = value.getInt(value.getColumnIndex("_id"))
+                if (id == idCuenta) {
+                    spCuenta.setSelection(j)
+                    j = spCuenta.adapter.count + 1
+                }
+                j++
+            }
+            spCuenta.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                    var idMon = Principal.getIdMonedaTotales(id.toInt())
+                    tvMoneda.text = Principal.getIdMoneda(idMon)
+                    if (idMon != idMoneda) {
+                        if(idMon == oldMoneda){
+                            etCambio.setText(oldCambio.toString())
+                        } else {
+                            etCambio.setText(Principal.getTipodeCambio(idMon, idMoneda))
+                        }
+                        etCambio.visibility = View.VISIBLE
+                    } else {
+                        etCambio.setText("1.0")
+                        etCambio.visibility = View.GONE
+                    }
+                }
+            })
+            builder.setPositiveButton("OK") { dialog, which ->
+                val cant = etCantidad.text.toString().toDouble()
+                val idCuenta = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"))
+                val idMon = Principal.getIdMonedaTotales(idCuenta)
+                if(idMon != Principal.getIdMonedaTotales(idCuenta)){
+                    Toast.makeText(applicationContext, "No se puede modificar porque las monedas no coinciden",Toast.LENGTH_LONG).show()
+                } else {
+                    val cambio = etCambio.text.toString().toDouble()
+                    Principal.updatePrestamoDetalle(cant, idCuenta, idMon, this.id, cambio, id.toInt())
+                    if(idMove != null && idMove != 0){
+                        Principal.updateTotalesFromPrestamo(oldCant, idCuenta)
+                        Principal.updateTotalesFromPrestamo(cant * -1, idCuenta)
+                    } else {
+                        Principal.updateTotalesFromPrestamo(oldCant *-1, idCuenta)
+                        Principal.updateTotalesFromPrestamo(cant, idCuenta)
+                    }
+                }
+            }
+
+            builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+            layout.addView(spCuenta)
+            layout.addView(tvMoneda)
+            linear2.addView(etCantidad)
+            linear2.addView(etCambio)
+            relativeLayout.addView(linear2)
+            relativeLayout.addView(layout)
+            builder.setView(relativeLayout)
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+            // Display the alert dialog on app interface
+            dialog.show()
+        }
 
         fab.setOnClickListener {
             if(!editable){
@@ -381,10 +487,6 @@ class seePrestamoActivity : AppCompatActivity() {
                     } else {
                         Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
                         Principal.updateTotalesFromPrestamo(cant, idCuenta)
-                    }
-                    val cantPagada = Principal.getSumPrestamoDetalle(this.id)
-                    if(this.cant == cantPagada){
-                        Principal.CerrarPrestamo(this.id)
                     }
                 }
             }

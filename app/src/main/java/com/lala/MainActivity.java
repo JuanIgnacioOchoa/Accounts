@@ -106,10 +106,15 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                     default:{
-                        final CharSequence colors[] = new CharSequence[] {"Gasto", "Ingreso", "Traspaso","Retiro"};
+                        final CharSequence colors[] = new CharSequence[] {
+                                getResources().getString(R.string.outcome),
+                                getResources().getString(R.string.income),
+                                getResources().getString(R.string.transfer),
+                                getResources().getString(R.string.withrawal)
+                        };
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(cont);
-                        builder.setTitle("Choose an option");
+                        builder.setTitle(getResources().getString(R.string.choose_option));
                         builder.setItems(colors, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -213,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(id == R.id.new_moneda){
             AlertDialog.Builder builder = new AlertDialog.Builder(cont);
-            builder.setTitle("Moneda");
+            builder.setTitle(getString(R.string.currency));
 // Set up the input
             final EditText input = new EditText(cont);
 // Specify the type of input expected;
@@ -223,15 +228,15 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(!EditTextError.checkError(input)){
+                    if(!EditTextError.checkError(input, getString(R.string.required_field))){
                         String moneda = input.getText().toString();
                         if(moneda.length()==3){
                             Principal.guardarMoneda(moneda);
-                        }else Toast.makeText(cont,"La moneda tiene que ser de tres caracteres",Toast.LENGTH_SHORT).show();
+                        }else Toast.makeText(cont,getString(R.string.chars_currency),Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();

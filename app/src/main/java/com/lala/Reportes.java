@@ -45,7 +45,7 @@ public class Reportes extends AppCompatActivity{
     private SimpleCursorAdapter simpleCursorAdapter;
     private Fragment fragmentReportesCuentas, getFragmentReportesMotives;
     private int idMoneda = 1;
-    private final String[] months = new String[]{"Ene","Feb","Mar", "Abr", "May", "Jun", "Jul", "Ago" ,"Sep", "Oct","Nov", "Dic"};
+    private String[] months ;
 
 
     @Override
@@ -78,12 +78,31 @@ public class Reportes extends AppCompatActivity{
         spMonth      = (Spinner)  findViewById(R.id.spMonth);
         spMoneda       = (Spinner)  findViewById(R.id.spMoneda);
 
+        months = new String[]{
+                getString(R.string.jan),
+                getString(R.string.feb),
+                getString(R.string.mar),
+                getString(R.string.apr),
+                getString(R.string.may),
+                getString(R.string.jun),
+                getString(R.string.jul),
+                getString(R.string.aug),
+                getString(R.string.sep),
+                getString(R.string.oct),
+                getString(R.string.nov),
+                getString(R.string.dec)};
+
         instance = NumberFormat.getInstance();
         instance.setMinimumFractionDigits(2);
         calendar = Calendar.getInstance();
 
 
-        ArrayAdapter<String> spAdapterTimeLapse = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, new String[]{"Weekly", "Monthly", "Yearly"});
+        ArrayAdapter<String> spAdapterTimeLapse = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
+                new String[]{
+                        getString(R.string.weekly),
+                        getString(R.string.monthly),
+                        getString(R.string.yearly)
+        });
         Calendar focus = Principal.getFirstDate();
 
         ArrayList<String> monthsYearList = new ArrayList<>();
@@ -169,41 +188,49 @@ public class Reportes extends AppCompatActivity{
                         String s = spAdapteMonth.getItem(position);
                         year = s.substring(4,8);
                         month = s.substring(0,3);
-                        switch (month){
-                            case "Ene":
+                        String x = months[0];
+                        int monthCount = 0;
+                        Toast.makeText(getApplicationContext(), month, Toast.LENGTH_LONG).show();
+                        while(!(month.equals(x)) || monthCount >= 12){
+                            monthCount++;
+                            x = months[monthCount];
+                        }
+                        Toast.makeText(getApplicationContext(), " " + monthCount, Toast.LENGTH_LONG).show();
+                        switch (monthCount){
+                            case 0:
                                 month = "01";
                                 break;
-                            case "Feb":
+                            case 1:
                                 month = "02";
                                 break;
-                            case "Mar":
+                            case 2:
                                 month = "03";
                                 break;
-                            case "Abr":
+                            case 3:
                                 month = "04";
                                 break;
-                            case "May":
+                            case 4:
                                 month = "05";
                                 break;
-                            case "Jun":
+                            case 5:
                                 month = "06";
                                 break;
-                            case "Jul":
+                            case 6:
                                 month = "07";
                                 break;
-                            case "Ago":
+                            case 7:
                                 month = "08";
                                 break;
-                            case "Sep":
+                            case 8:
                                 month = "09";
                                 break;
-                            case "Oct":
+                            case 9:
                                 month = "10";
                                 break;
-                            case "Nov":
+                            case 10:
                                 month = "11";
                                 break;
-                            case "Dic":
+                            case 11:
                                 month = "12";
                                 break;
                         }

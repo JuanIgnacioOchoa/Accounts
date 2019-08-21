@@ -73,14 +73,14 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 //Toast.makeText(context, cuenta, Toast.LENGTH_SHORT).show();
 
                 Toast.makeText(context, motivo, Toast.LENGTH_SHORT).show();
-                if(EditTextError.checkError(etCantidad)){
+                if(EditTextError.checkError(etCantidad, getString(R.string.required_field))){
                 }
                 else if (verificarDatos()){
                     monedaCuenta = Principal.getMonedaTotales(idCuenta);
                     if(!monedaCuenta.equals(moneda) && idCuenta != 1){
-                        Toast.makeText(context, "Monedas diferentes " + moneda + " " + monedaCuenta, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, getString(R.string.dif_curr) + " " + moneda + " " + monedaCuenta, Toast.LENGTH_SHORT).show();
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle("Tipo de cambio");
+                        builder.setTitle(getString(R.string.currency_change));
 
 // Set up the input
                         final EditText input = new EditText(context);
@@ -97,7 +97,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                                 finish();
                             }
                         });
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -110,7 +110,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                         finish();
                     }
                 }
-                else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(context, getString(R.string.err_data), Toast.LENGTH_SHORT).show();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -127,10 +127,10 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         });
 
         if(gasto){
-            this.setTitle("Gasto " + title + "(-)");
+            this.setTitle(getString(R.string.outcome) + " " + title + "(-)");
             etCantidad.setTextColor(Color.RED);
         } else{
-            this.setTitle("Ingreso " + title + "(+)");
+            this.setTitle(getString(R.string.income) + " " + title + "(+)");
             etCantidad.setTextColor(Color.rgb(11, 79, 34));
         }
         cursorMotivo = Principal.getMotive();
@@ -169,7 +169,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             idCuenta = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"));
             if(idCuenta == 1){
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Quien te presta");
+                builder.setTitle(getString(R.string.who_lend));
 
 // Set up the input
                 final Spinner spinner = new Spinner(context);
@@ -215,10 +215,10 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                         spCuenta.setVisibility(View.INVISIBLE);
                         tvPersona.setVisibility(View.VISIBLE);
                         tvPersona.setText(Principal.getPersonaNombreById(idPersona));
-                        ((TextView)findViewById(R.id.textView2)).setText("Persona");
+                        ((TextView)findViewById(R.id.textView2)).setText(getString(R.string.person_));
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -248,7 +248,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         }catch (Exception e){
             return false;
         }
-        if(EditTextError.checkError(etComment)){
+        if(EditTextError.checkError(etComment, getString(R.string.required_field))){
             coment = null;
             etComment.setError(null);
         }
@@ -261,9 +261,9 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     public void guardar(){
         if(idCuenta == 1){
             if(coment == null)
-                coment = "%-%" + "Prestamos por " + motivo;
+                coment = "%-%" +  getString(R.string.loans_for) + " " + motivo;
             else
-                coment += "%-%" + "Prestamos por " + motivo;
+                coment += "%-%" + getString(R.string.loans_for) + " " + motivo;
         }
         long idMove = Principal.newMove(cant, idCuenta, coment, motivo, moneda,-1);
         Principal.newMoveCuenta(cant,idCuenta);
@@ -275,12 +275,12 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         }
     }
     public void guardarDif(){
-        Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, getString(R.string.err_data), Toast.LENGTH_SHORT).show();
         if(coment == null){
             coment = "#-#" + cant + " x " + tipoDeCambio + " = " + cant*tipoDeCambio+"#-#";
         } else  coment += "  #-# " + cant + " x " + tipoDeCambio + " = " + (cant*tipoDeCambio)+"#-#";
         if(idCuenta == 1){
-            coment += "%-%" + "Prestamos por " + motivo;
+            coment += "%-%" + getString(R.string.loans_for) + " " + motivo;
         }
         long idMove = Principal.newMove(cant,idCuenta,coment,motivo,moneda,tipoDeCambio);
         Principal.newMoveCuenta(cant*tipoDeCambio,idCuenta);

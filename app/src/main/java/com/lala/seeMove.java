@@ -90,10 +90,10 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
             title = Principal.getTripNameById(idViaje) + " ";
         }
         if(gasto){
-            this.setTitle("Gasto " + title + "(-)");
+            this.setTitle(getString(R.string.outcome) + " " + title + "(-)");
             etCantidad.setTextColor(Color.RED);
         } else{
-            this.setTitle("Ingreso " + title + "(+)");
+            this.setTitle(getString(R.string.income) + " " + title + "(+)");
             etCantidad.setTextColor(Color.rgb(11, 79, 34));
         }
 
@@ -143,7 +143,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
             @Override
             public void onClick(View view) {
                 if (edit) {
-                    if (EditTextError.checkError(etCantidad)) {
+                    if (EditTextError.checkError(etCantidad, getString(R.string.required_field))) {
                     } else if (verificarDatos()) {
                         Principal.actualizarMovimiento(id,nCantidad,nIdCuenta,nComment,nIdMotivo,nIdMoneda,nCambio,nDate);
                         if(!Principal.getIdMoneda(nIdMoneda).equals(Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta))))
@@ -154,7 +154,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                             Principal.updatePrestamoFromMove(Principal.getIdPrestamoByMoveId(id), nCantidad, 1.0, idMoneda);
                         }
                         finish();
-                    } else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
+                    } else Toast.makeText(context, getString(R.string.err_data), Toast.LENGTH_SHORT).show();
 
                 } else{
                     edit = true;
@@ -291,7 +291,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         }catch (Exception e){
             return false;
         }
-        if(EditTextError.checkError(etComentario)){
+        if(EditTextError.checkError(etComentario, getString(R.string.required_field))){
             nComment = null;
             etComentario.setError(null);
         }
@@ -375,11 +375,11 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         int idM = item.getItemId();
         if(idM == R.id.action_delete){
             Principal.eliminarMov(id);
-            Toast.makeText(context,"Movimiento ha sido eliminado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,getString(R.string.del_move), Toast.LENGTH_SHORT).show();
             finish();
         } else if(idM == R.id.action_trip){
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Tipo de cambio");
+            builder.setTitle(getString(R.string.currency_change));
 
 // Set up the input
             final Spinner spinner = new Spinner(context);
@@ -395,7 +395,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                     Principal.addMoveToTrip(id, c.getInt(c.getColumnIndex("_id")));
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();

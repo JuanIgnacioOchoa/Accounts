@@ -33,7 +33,7 @@ class PrestamoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prestamo)
         setSupportActionBar(toolbar)
-        title = ("Deudas/Prestamos")
+        title = (getString(R.string.title_activity_prestamo))
         fragmentPrestamosPlus = FragmentPrestamosPlus.newInstance()
         fragmentPrestamosPeople = FragmentPrestamoPeople.newInstance()
         fragmentPrestamosMinus = FragmentPrestamosMinus.newInstance()
@@ -59,7 +59,7 @@ class PrestamoActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this@PrestamoActivity)
 
             // Set the alert dialog title
-            builder.setTitle("Choose an option")
+            builder.setTitle(getString(R.string.choose_option))
 
             builder.setItems(colors) { dialog, which ->
                 when (which) {

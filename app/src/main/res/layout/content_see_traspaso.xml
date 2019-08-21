@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="From:"
+        android:text="@string/from_"
         android:id="@+id/textView2"
         android:gravity="center_vertical"
         android:textSize="20dp"

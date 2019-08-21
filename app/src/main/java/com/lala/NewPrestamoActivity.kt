@@ -35,8 +35,8 @@ class NewPrestamoActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         prestado = intent.getBooleanExtra("Prestado", false)
         when (prestado){
-            true -> title = "Presto a:"
-            false -> title = "Me presta:"
+            true -> title = getString(R.string.loans_by)
+            false -> title = getString(R.string.lend_to)
         }
         instance.minimumFractionDigits = 2
         etCant = findViewById(R.id.ETCantidad)
@@ -74,9 +74,9 @@ class NewPrestamoActivity : AppCompatActivity() {
                 val monedaCuenta = Principal.getIdMonedaTotales(cuenta)
                 if(moneda != monedaCuenta){
                     //Monedas diferentes
-                    Toast.makeText(applicationContext, "Monedas diferentes $moneda $monedaCuenta", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "${getString(R.string.dif_curr)} $moneda $monedaCuenta", Toast.LENGTH_SHORT).show()
                     val builder = AlertDialog.Builder(this@NewPrestamoActivity)
-                    builder.setTitle("Tipo de cambio")
+                    builder.setTitle(getString(R.string.currency_change))
 // Set up the input
                     val input = EditText(applicationContext)
 // Specify the type of input expected;
@@ -94,12 +94,12 @@ class NewPrestamoActivity : AppCompatActivity() {
                         if(Principal.createPrestamo(cant, cuenta, moneda, persona, descr, tipoDeCambio, 0)) {
                             Principal.actualizarTipoDeCambio(moneda, monedaCuenta, tipoDeCambio)
                             Principal.newMoveCuenta(cant * tipoDeCambio * -1, cuenta)
-                            Toast.makeText(applicationContext, "Guardado con exito", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, getString(R.string.succes_saved), Toast.LENGTH_LONG).show()
                             //guardarDif()
                             finish()
                         }
                     }
-                    builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+                    builder.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
 
                     // Finally, make the alert dialog using builder
                     val dialog: AlertDialog = builder.create()
@@ -108,7 +108,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                 } else {
                     Principal.createPrestamo(cant, cuenta, moneda, persona, descr, 1.0, 0)
                     Principal.newMoveCuenta(cant * -1, cuenta)
-                    Toast.makeText(applicationContext, "Guardado con exito", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, getString(R.string.succes_saved), Toast.LENGTH_LONG).show()
                     finish()
                 }
 

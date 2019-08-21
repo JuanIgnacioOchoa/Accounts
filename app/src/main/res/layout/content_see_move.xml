@@ -16,7 +16,7 @@
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:id="@+id/see_move_etCantidad"
-        android:hint="Cantidad $$"
+        android:hint="@string/ammount_m"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
@@ -43,7 +43,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cuenta:"
+        android:text="@string/account_"
         android:id="@+id/textView2"
         android:gravity="center_vertical"
         android:textSize="20dp"
@@ -67,7 +67,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Motivo:"
+        android:text="@string/motive_"
         android:id="@+id/textView3"
         android:layout_alignTop="@+id/see_move_spMotivo"
         android:layout_alignBottom="@+id/see_move_spMotivo"
@@ -81,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/see_move_otro"
-        android:hint="  Motivo"
+        android:hint="@string/motive_hint"
         android:layout_below="@+id/see_move_spMotivo"
         android:layout_alignEnd="@+id/see_move_spMotivo"
         android:layout_toEndOf="@+id/space2" />
@@ -89,7 +89,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tipo de Cambio"
+        android:text="@string/currency_change"
         android:id="@+id/see_move_tvCambio"
         android:gravity="center_vertical"
         android:textSize="15dp"
@@ -113,7 +113,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="250dp"
-        android:hint="Comentario o descripcion"
+        android:hint="@string/comment_or_desc_hint"
         android:gravity="center"
         android:backgroundTint="#FFFFFF"
         android:id="@+id/see_move_etComment"

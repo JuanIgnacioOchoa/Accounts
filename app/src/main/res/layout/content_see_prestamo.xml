@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="numberSigned"
-            android:hint="Cantidad $$"
+            android:hint="@string/ammount_m"
             android:layout_marginRight="-20dp"
             android:id="@+id/ETCantidad"/>
         <Spinner
@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cuenta:"
+        android:text="@string/account_"
         android:layout_below="@id/linear1"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="10dp"
@@ -49,7 +49,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Persona:"
+        android:text="@string/person_"
         android:id="@+id/TVPersona"
         android:layout_below="@id/TVCuenta"
         android:layout_alignBottom="@id/SPPersona"
@@ -69,7 +69,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:hint="Comentario o descripcion"
+        android:hint="@string/comment_or_desc_hint"
         android:lines="5"
         android:gravity="center"
         android:backgroundTint="#FFFFFF"
@@ -99,7 +99,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fecha:"
+        android:text="@string/date_"
         android:id="@+id/TVFecha"
         android:layout_below="@id/TVPersona"
         android:layout_alignBottom="@id/TVDate"
@@ -116,7 +116,7 @@
         android:layout_alignStart="@+id/SPPersona"
         android:layout_marginEnd="10dp"
         android:layout_alignParentEnd="true"
-        android:hint="Fecha"
+        android:hint="@string/date_hint"
         android:textSize="18sp"
         android:gravity="center_vertical"/>
 

@@ -27,7 +27,7 @@ class NewPersonasActivity : AppCompatActivity() {
         listView = findViewById(R.id.new_motive_list)
 
         bAgregar.setOnClickListener {
-            if (!EditTextError.checkError(etPersona)) {
+            if (!EditTextError.checkError(etPersona, getString(R.string.required_field))) {
                 Principal.insertPersona(etPersona.text.toString())
                 c = Principal.getPeopleAll()
                 adapter = MyAdapter(context, c)

@@ -26,7 +26,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
-        android:hint="Fecha Inicio"
+        android:hint="@string/start_date"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         android:gravity="center_vertical"/>
@@ -43,7 +43,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
         android:layout_toRightOf="@id/TV_TR_FechaInic"
-        android:hint="Fecha Final"
+        android:hint="@string/end_date"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         android:gravity="center_vertical"/>
@@ -59,5 +59,5 @@
         android:layout_below="@id/TV_TR_FechaInic"
         android:lines="5"
         android:id="@+id/ET_TR_Desc"
-        android:hint="Descripcion del Viaje"/>
+        android:hint="@string/trip_desc"/>
 </RelativeLayout>

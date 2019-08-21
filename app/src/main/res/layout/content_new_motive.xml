@@ -23,7 +23,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Agregar"
+        android:text="@string/_new"
         android:id="@+id/new_motivo_bAgregar"
         android:layout_below="@+id/new_motivo_etMotivo"
         android:layout_centerHorizontal="true"

@@ -8,14 +8,14 @@ public class DBMan {
     public static final String Id = "_id";
 
     public static class DBTotales{
-        public static final String TABLE_NAME = "Totales";
+        public static final String TABLE_NAME = "AccountsTotales";
         public static final String Cuenta = "Cuenta";
         public static final String CantidadActual = "CurrentCantidad";
         public static final String CantidadInicial = "CantidadInicial";
         public static final String Moneda = "IdMoneda";
     }
     public static class DBMovimientos{
-        public static final String TABLE_NAME = "Movimiento";
+        public static final String TABLE_NAME = "AccountsMovimiento";
         public static final String Cantidad = "Cantidad";
         public static final String Fecha = "Fecha";
         public static final String IdTotales = "IdTotales";
@@ -27,23 +27,23 @@ public class DBMan {
         public static final String IdTrip = "IdViaje";
     }
     public static class DBMotivo{
-        public static final String TABLE_NAME = "Motivo";
+        public static final String TABLE_NAME = "AccountsMotivo";
         public static final String Motivo = "Motivo";
         public static final String Activo = "Active";
     }
     public static class DBMoneda{
-        public static final String TABLE_NAME = "Moneda";
+        public static final String TABLE_NAME = "AccountsMoneda";
         public static final String Moneda = "Moneda";
         public static final String Activo = "Active";
     }
     public static class DBCambioMoneda{
-        public static final String TABLE_NAME = "CambioMoneda";
+        public static final String TABLE_NAME = "AccountsCambioMoneda";
         public static final String Moneda1    = "IdMoneda1";
         public static final String Moneda2    = "IdMoneda2";
         public static final String Cambio     = "Tipo_de_cambio";
     }
     public static class DBViaje{
-        public static final String TABLE_NAME = "Trips";
+        public static final String TABLE_NAME = "AccountsTrips";
         public static final String Nombre = "Nombre";
         public static final String Descripcion = "Descripcion";
         public static final String FechaCreacion = "FechaCreacion";
@@ -54,7 +54,7 @@ public class DBMan {
         public static final String IdMoneda = "IdMoneda";
     }
     public static class DBPrestamo{
-        public static final String TABLE_NAME = "PRESTAMOS";
+        public static final String TABLE_NAME = "AccountsPrestamos";
         public static final String Cantidad = "Cantidad";
         public static final String Fecha = "Fecha";
         public static final String IdTotales = "IdTotales";
@@ -66,7 +66,7 @@ public class DBMan {
         public static final String Cerrada = "Cerrada";
     }
     public static class DBPrestamoDetalle{
-        public static final String TABLE_NAME = "PrestamosDetalle";
+        public static final String TABLE_NAME = "AccountsPrestamosDetalle";
         public static final String Cantidad = "Cantidad";
         public static final String Fecha = "Fecha";
         public static final String IdTotales = "IdTotales";
@@ -75,7 +75,7 @@ public class DBMan {
         public static final String Cambio = "Cambio";
     }
     public static class DBPersona{
-        public static final String TABLE_NAME = "Personas";
+        public static final String TABLE_NAME = "AccountsPersonas";
         public static final String Nombre = "Nombre";
         public static final String Activo = "Active";
     }

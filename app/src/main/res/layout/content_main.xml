@@ -29,7 +29,7 @@
         android:layout_below="@+id/MIngreso"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="39dp"
-        android:text="Movimiento" />
+        android:text="@string/move" />
 
     <Button
         android:id="@+id/MIngreso"
@@ -38,7 +38,7 @@
         android:layout_below="@+id/MGasto"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
-        android:text="Ingreso" />
+        android:text="@string/income" />
 
     <Button
         android:id="@+id/MGasto"
@@ -47,5 +47,5 @@
         android:layout_below="@+id/MVer"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="Gasto" />
+        android:text="@string/outcome" />
 </RelativeLayout>

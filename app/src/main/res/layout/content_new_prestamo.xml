@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="numberSigned"
-            android:hint="Cantidad $$"
+            android:hint="@string/ammount_m"
             android:layout_marginRight="-20dp"
             android:id="@+id/ETCantidad"/>
         <Spinner
@@ -32,7 +32,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cuenta:"
+        android:text="@string/account_"
         android:layout_below="@id/linear1"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="10dp"
@@ -51,7 +51,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Persona:"
+        android:text="@string/person_"
         android:id="@+id/TVPersona"
         android:layout_below="@id/TVCuenta"
         android:layout_alignBottom="@id/SPPersona"
@@ -71,7 +71,7 @@
     <EditText
     android:layout_width="match_parent"
     android:layout_height="230dp"
-    android:hint="Comentario o descripcion"
+    android:hint="@string/comment_or_desc_hint"
     android:lines="5"
     android:gravity="center"
     android:backgroundTint="#FFFFFF"

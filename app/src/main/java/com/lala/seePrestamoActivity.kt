@@ -305,7 +305,7 @@ class seePrestamoActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this@seePrestamoActivity)
 
             // Set the alert dialog title
-            builder.setTitle("Agregar Pago")
+            builder.setTitle(getString(R.string.add_payment))
             val tvMoneda = TextView(applicationContext)
             val spCuenta = Spinner(applicationContext)
             val cursorCuenta = Principal.getTotales()
@@ -372,7 +372,7 @@ class seePrestamoActivity : AppCompatActivity() {
                 val idCuenta = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"))
                 val idMon = Principal.getIdMonedaTotales(idCuenta)
                 if(idMon != Principal.getIdMonedaTotales(idCuenta)){
-                    Toast.makeText(applicationContext, "No se puede agregar porque las monedas no coinciden",Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, getString(R.string.err_add_dif_curr),Toast.LENGTH_LONG).show()
                 } else {
                     val cambio = etCambio.text.toString().toDouble()
                     if(idMove != null && idMove != 0){
@@ -389,7 +389,7 @@ class seePrestamoActivity : AppCompatActivity() {
                 }
             }
 
-            builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+            builder.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
             layout.addView(spCuenta)
             layout.addView(tvMoneda)
             linear2.addView(etCantidad)

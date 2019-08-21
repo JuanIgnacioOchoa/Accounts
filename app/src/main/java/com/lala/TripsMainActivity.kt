@@ -30,7 +30,7 @@ class TripsMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trips_main)
         setSupportActionBar(toolbar)
-        setTitle("Viajes")
+        setTitle(getString(R.string.title_activity_trips_main))
         fab.setOnClickListener { view ->
             val intent = Intent(this, CreateTrip::class.java)
             startActivity(intent)
@@ -74,11 +74,11 @@ class TripsMainActivity : AppCompatActivity() {
             //set
             var fecha = ""
             if(fechaInic == null && fechaFin == null){
-                fecha = "Not Defined - Not Defined"
+                fecha = getString(R.string.not_defined) + " - " + getString(R.string.not_defined)
             } else if(fechaFin == null){
-                fecha = "$fechaInic - Not Defined"
+                fecha = "$fechaInic - ${getString(R.string.not_defined)}"
             } else if(fechaInic == null){
-                fecha = "Not Defined - $fechaFin"
+                fecha = "${getString(R.string.not_defined)} - $fechaFin"
             } else{
                 fecha = "$fechaInic - $fechaFin"
             }

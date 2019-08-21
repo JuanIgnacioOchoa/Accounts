@@ -36,7 +36,7 @@ public class NewMotive extends AppCompatActivity {
         bAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!EditTextError.checkError(etMotivo)) {
+                if (!EditTextError.checkError(etMotivo, getString(R.string.required_field))) {
                     Principal.insertMotive(etMotivo.getText().toString());
                     c = Principal.getMotiveAll();
                     adapter = new myAdapter(context,c);

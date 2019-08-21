@@ -42,8 +42,8 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Intent i = getIntent();
         Retiro = i.getBooleanExtra("Retiro",false);
-        if(Retiro) this.setTitle("Retiro");
-        else this.setTitle("Traspaso");
+        if(Retiro) this.setTitle(getString(R.string.withrawal));
+        else this.setTitle(getString(R.string.transfer));
         Toast.makeText(context,Retiro+"",Toast.LENGTH_SHORT).show();
         spFromCuenta = (Spinner) findViewById(R.id.traspaso_spFrom);
         spToCuenta = (Spinner) findViewById(R.id.traspaso_spTo);
@@ -75,16 +75,15 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             @Override
             public void onClick(View view) {
 
-                if(EditTextError.checkError(etCantidad)){
+                if(EditTextError.checkError(etCantidad, getString(R.string.required_field))){
                 }
                 else if (verificarDatos()){
 
                     monedaTo = Principal.getMonedaTotales(idCuentaTo);
                     monedaFrom = Principal.getMonedaTotales(idCuentaFrom);
                     if(!monedaTo.equals(monedaFrom)){
-                        Toast.makeText(context, "Monedas diferentes", Toast.LENGTH_SHORT).show();
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle("Tipo de cambio");
+                        builder.setTitle(getString(R.string.currency_change));
 
 // Set up the input
                         final EditText input = new EditText(context);
@@ -102,7 +101,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                                 finish();
                             }
                         });
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -115,7 +114,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                         finish();
                     }
                 }
-                else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(context, getString(R.string.err_data), Toast.LENGTH_SHORT).show();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
@@ -160,7 +159,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
         }catch (Exception e){
             return false;
         }
-        if(EditTextError.checkError(etComment)){
+        if(EditTextError.checkError(etComment, getString(R.string.required_field))){
             comment = null;
             etComment.setError(null);
         }

@@ -92,13 +92,18 @@ class SeeTripMainActivity : AppCompatActivity() {
         //TODO hide keyboard
         //SetOnClickListeners
         fab.setOnClickListener {
-            val colors = arrayOf<CharSequence>("Gasto", "Ingreso", "Traspaso", "Retiro")
+            val colors = arrayOf<CharSequence>(
+                    getString(R.string.outcome),
+                    getString(R.string.income),
+                    getString(R.string.transfer),
+                    getString(R.string.withrawal)
+            )
 
             // Initialize a new instance of
             val builder = AlertDialog.Builder(this@SeeTripMainActivity)
 
             // Set the alert dialog title
-            builder.setTitle("Choose an option")
+            builder.setTitle(getString(R.string.choose_option))
 
             builder.setItems(colors) { dialog, which ->
                 val s = which.toString()
@@ -183,7 +188,7 @@ class SeeTripMainActivity : AppCompatActivity() {
                     m = (monthOfYear + 1).toString() + ""
                 fechaInic = "$year-$m-$d"
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", DialogInterface.OnClickListener { alertDialog, which ->
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), DialogInterface.OnClickListener { alertDialog, which ->
                 if (which == DialogInterface.BUTTON_NEGATIVE) {
                     tvFechaInic.text = null
                     fechaInic = null
@@ -212,7 +217,7 @@ class SeeTripMainActivity : AppCompatActivity() {
                     m = (monthOfYear + 1).toString() + ""
                 fechaFin = "$year-$m-$d"
             },calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", DialogInterface.OnClickListener { alertDialog, which ->
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), DialogInterface.OnClickListener { alertDialog, which ->
                 if (which == DialogInterface.BUTTON_NEGATIVE) {
                     tvFechaFin.text = null
                     fechaFin = null

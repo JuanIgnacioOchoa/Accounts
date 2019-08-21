@@ -145,13 +145,12 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
             @Override
             public void onClick(View view) {
                 if(edit){
-                    Toast.makeText(context, "hola", Toast.LENGTH_SHORT).show();
-                    if (EditTextError.checkError(etCantidad)) {
+                    if (EditTextError.checkError(etCantidad, getString(R.string.required_field))) {
                     } else if (verificarDatos()) {
                         Principal.actualizarTraspaso(id,nCantidad,nIdFrom,nIdTo,nComment,nIdMotivo,nCambio, nDate);
                         //Principal.actualizarTipoDeCambio(Principal.getIdMoneda(nIdMoneda),Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta)),nCambio);
                         finish();
-                    } else Toast.makeText(context, "Error en los datos", Toast.LENGTH_SHORT).show();
+                    } else Toast.makeText(context, getString(R.string.err_data), Toast.LENGTH_SHORT).show();
                 }else{
                     edit = true;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -223,7 +222,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         }catch (Exception e){
             return false;
         }
-        if(EditTextError.checkError(etComment)){
+        if(EditTextError.checkError(etComment, getString(R.string.required_field))){
             nComment = null;
             etComment.setError(null);
         }
@@ -240,10 +239,10 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         Spinner sp = (Spinner) parent;
         if(sp.getId() == spFromCuenta.getId()){
             nIdFrom = cursorFromCuenta.getInt(cursorFromCuenta.getColumnIndex("_id"));
-            Toast.makeText(context,"From: "+ nIdFrom,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,getString(R.string.from_)+" "+ nIdFrom,Toast.LENGTH_SHORT).show();
         } else if(sp.getId() == spToCuenta.getId()){
             nIdTo = cursorToCuenta.getInt(cursorToCuenta.getColumnIndex("_id"));
-            Toast.makeText(context,"To: "+ nIdTo,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,getString(R.string.to_) + " "+ nIdTo,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -267,7 +266,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         int idM = item.getItemId();
         if(idM == R.id.action_delete){
             Principal.eliminarTras(id);
-            Toast.makeText(context,"Movimiento ha sido eliminado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,getString(R.string.del_move), Toast.LENGTH_SHORT).show();
             finish();
         }
         return super.onOptionsItemSelected(item);

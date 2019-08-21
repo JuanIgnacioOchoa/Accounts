@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            android:text="Mes"
+            android:text="@string/month"
             android:background="@null"
             
             />
@@ -35,7 +35,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/spMonth"
-            android:text="Año"
+            android:text="@string/year"
             android:background="@null"
             />
 
@@ -47,7 +47,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/spYear"
-            android:text="Moneda"
+            android:text="@string/currency"
             android:background="@null"
             />
     </LinearLayout>
@@ -63,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Ingreso"
+            android:text="@string/income"
             android:textColor="#000000"/>
         <TextView
             android:layout_width="match_parent"
@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Gasto"
+            android:text="@string/outcome"
             android:textColor="#000000"/>
         <TextView
             android:layout_width="match_parent"
@@ -117,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Ganancia"
+            android:text="@string/savings"
             android:textColor="#000000"/>
         <TextView
             android:layout_width="match_parent"

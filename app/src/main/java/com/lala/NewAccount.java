@@ -39,7 +39,7 @@ public class NewAccount extends AppCompatActivity {
         bGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!EditTextError.checkError(etCuenta)&&!EditTextError.checkError(etCantidad)){
+                if(!EditTextError.checkError(etCuenta, getString(R.string.err_data))&&!EditTextError.checkError(etCantidad, getString(R.string.err_data))){
                     try {
                         Double cantidad = Double.parseDouble(etCantidad.getText().toString());
                         String cuenta = etCuenta.getText().toString();
@@ -47,7 +47,7 @@ public class NewAccount extends AppCompatActivity {
                         Principal.insertTotales(cuenta,cantidad,moneda);
                         finish();
                     } catch (Exception e){
-                        Toast.makeText(getApplicationContext(),"Error al guardar los datos",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),getString(R.string.err_data_save),Toast.LENGTH_LONG).show();
                     }
 
                 }

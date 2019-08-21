@@ -7,12 +7,12 @@ import android.widget.EditText;
  */
 public class EditTextError {
 
-    public static boolean checkError(EditText editText){
+    public static boolean checkError(EditText editText, String s){
         editText.setError(null);
         String string = editText.getText().toString();
         string = string.replaceAll("\\s+","");
         if("".equals(string)){
-            editText.setError("Campo obligatorio");
+            editText.setError(s);
             return true;
         }
         return false;

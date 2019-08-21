@@ -21,7 +21,7 @@ class CreateTrip : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_trip)
         setSupportActionBar(toolbar)
-        setTitle("Nuevo Viaje")
+        setTitle(getString(R.string.title_activity_create_trip))
         val calendar = Calendar.getInstance()
         val etNombre = findViewById<EditText>(R.id.ET_TR_Nombre)
         val etDesc = findViewById<EditText>(R.id.ET_TR_Desc)
@@ -61,7 +61,7 @@ class CreateTrip : AppCompatActivity() {
                     m = (monthOfYear + 1).toString() + ""
                 fechaInic = "$year-$m-$d"
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", DialogInterface.OnClickListener { alertDialog, which ->
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), DialogInterface.OnClickListener { alertDialog, which ->
                 if (which == DialogInterface.BUTTON_NEGATIVE) {
                     tvFechaInic.text = null
                     fechaInic = null
@@ -87,7 +87,7 @@ class CreateTrip : AppCompatActivity() {
                     m = (monthOfYear + 1).toString() + ""
                 fechaFin = "$year-$m-$d"
             },calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", DialogInterface.OnClickListener { alertDialog, which ->
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), DialogInterface.OnClickListener { alertDialog, which ->
                 if (which == DialogInterface.BUTTON_NEGATIVE) {
                     tvFechaFin.text = null
                     fechaFin = null

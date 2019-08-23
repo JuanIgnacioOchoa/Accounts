@@ -8,9 +8,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -290,7 +295,7 @@ public class Principal {
                 "union\n" + "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
                 " then Cantidad * Cambio end) FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" +year +"\" and Cambio <> 1 \n" +
                 "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales) == ? THEN" +
-                " Cantidad * Cambio * -1 end) FROM Movimiento WHERE strftime('%Y',Fecha) == \"" +year +"\")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+                " Cantidad * Cambio * -1 end) FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == \"" +year +"\")",new String[]{Moneda+"",Moneda+"",Moneda+""});
         c.moveToFirst();
         Double gasto;
         gasto = c.getDouble(c.getColumnIndex("Gasto"));
@@ -1184,6 +1189,65 @@ public class Principal {
         return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamoDetalle.TABLE_NAME + " WHERE " + DBMan.DBPrestamoDetalle.IdPrestamo + " == " + idPrestamo, null);
     }
 
+    //Config
+    public static String getLastSync(){
+        String [] columns = {DBMan.DBConfig.Value};
+        String where = "_id = ?";
+        String whereArgs[] = {DBMan.DBConfig.LastSync +""};
+        Cursor c = db.query(DBMan.DBConfig.TABLE_NAME, columns, where, whereArgs,null, null, null);
+        if(c.getCount() <= 0){
+            return null;
+        }
+        c.moveToFirst();
+        return c.getString(c.getColumnIndex(DBMan.DBConfig.Value));
+    }
+
+    public static Cursor getAllTables(){
+        String table = "sqlite_master";
+        String columns[] = {"name"};
+        String where = "type = ? and name like ?";
+        String whereArgs[] = {"table", "Accounts%"};
+        return db.query(table, columns, where, whereArgs, null, null, null);
+    }
+
+    public static String getTableAsJsonString(String table) throws JSONException{
+
+        Cursor c = db.query(table, new String[]{"*"}, null, null, null, null, null );
+        return cursorToString(c);
+    }
+
+    public static void deleteTables(){
+        Log.d("Accoun", "DeleteTables");
+        Cursor c = getAllTables();
+        while(c.moveToNext()){
+            String name = c.getString(c.getColumnIndex("name"));
+            db.delete(name, null, null);
+        }
+    }
+
+    public static long insertIntoTable(String table, String[] columns, String[] values){
+        ContentValues contentValues = new ContentValues();
+        for(int i = 0; i < columns.length; i++){
+            contentValues.put(columns[i], values[i]);
+        }
+
+        long a = db.insert(table, null,contentValues);
+        return a;
+    }
+    /*//Android Config
+    public static void updateAuthCode(String s){
+        db.execSQL("UPDATE " + DBMan.DBAndroidConfig.TABLE_NAME + " SET " + DBMan.DBAndroidConfig.Value + " = " + "\"" + s + "\"" +
+                " WHERE _id = " + DBMan.DBAndroidConfig.authKeyValue);
+    }
+
+    public static String getAuthCode(){
+        Cursor c = db.rawQuery("SELECT " + DBMan.DBAndroidConfig.Value + " FROM " + DBMan.DBAndroidConfig.TABLE_NAME +
+                " WHERE _id == " + DBMan.DBAndroidConfig.authKeyValue, null);
+        c.moveToFirst();
+        String s = c.getString(c.getColumnIndex(DBMan.DBAndroidConfig.Value));
+        return s;
+    }
+*/
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -1205,6 +1269,32 @@ public class Principal {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED)
                     return false;
         return true;
+    }
+
+    private static String cursorToString(Cursor crs) throws JSONException{
+        JSONArray arr = new JSONArray();
+        crs.moveToFirst();
+        while (!crs.isAfterLast()) {
+            int nColumns = crs.getColumnCount();
+            JSONObject row = new JSONObject();
+            for (int i = 0 ; i < nColumns ; i++) {
+                String colName = crs.getColumnName(i);
+                if (colName != null) {
+                    switch (crs.getType(i)) {
+                        case Cursor.FIELD_TYPE_BLOB   : row.put(colName, crs.getBlob(i).toString()); break;
+                        case Cursor.FIELD_TYPE_FLOAT  : row.put(colName, crs.getDouble(i))         ; break;
+                        case Cursor.FIELD_TYPE_INTEGER: row.put(colName, crs.getLong(i))           ; break;
+                        case Cursor.FIELD_TYPE_NULL   : row.put(colName, null)               ; break;
+                        case Cursor.FIELD_TYPE_STRING : row.put(colName, crs.getString(i))         ; break;
+                    }
+                }
+            }
+            arr.put(row);
+            if (!crs.moveToNext())
+                break;
+        }
+        crs.close(); // close the cursor
+        return arr.toString();
     }
 }
 /*

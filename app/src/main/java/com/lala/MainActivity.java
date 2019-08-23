@@ -1,6 +1,9 @@
 package com.lala;
 
 import android.Manifest;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,11 +12,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -31,7 +37,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 /*
@@ -43,10 +48,42 @@ import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.MetadataChangeSet;
 */
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.signin.SignIn;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.FileList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,23 +101,39 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private Menu menu;
+    private Boolean signedIn = false;
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    int RC_SIGN_IN = 9;
     public final Context cont = this;
     private File AppDir;
     private final int version = 1;
     private Principal principal;
     private SQLiteDatabase db;
+    private GoogleSignInClient mGoogleSignInClient;
+
+    private static final String APPLICATION_NAME = "Account";
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+
+
+    private static Fragment fragmentTotals;
+    private static Fragment fragmentMoves;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        fragmentTotals = FragmentTotals.getInstance();
+        fragmentMoves = FragmentMoves.getInstance();
+
         verifyStoragePermissions(this);
 
         // Create the adapter that will return a fragment for each of the three primary sections of the activity.
@@ -94,7 +147,17 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-       final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        AccountManager accountManager = AccountManager.get(this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode(getString(R.string.server_client_id))
+                .requestIdToken(getString(R.string.server_client_id))
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,9 +246,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
     @Override
+    protected void onStart(){
+        super.onStart();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if(account != null && GoogleSignIn.hasPermissions(account, new Scope(Scopes.DRIVE_APPFOLDER))){
+            Toast.makeText(cont, "Welcome " + account.getDisplayName(), Toast.LENGTH_LONG).show();
+            signedIn = true;
+            if(account.getServerAuthCode() == null){
+                signIn();
+            } else {
+                DriveFilesTask task = new DriveFilesTask();
+                task.execute(account.getServerAuthCode());
+            }
+        } else {
+            Toast.makeText(cont, "Not signed in already", Toast.LENGTH_LONG).show();
+            signedIn = false;
+        }
+    }
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
+        if(signedIn){
+            menu.findItem(R.id.login).setTitle(R.string.logout);
+        } else {
+            menu.findItem(R.id.login).setTitle(R.string.login);
+        }
         return true;
     }
 
@@ -215,6 +302,14 @@ public class MainActivity extends AppCompatActivity {
         else if(id == R.id.action_prestamo){
             Intent i = new Intent(this, PrestamoActivity.class);
             startActivity(i);
+        }
+        else if(id == R.id.login){
+            if(signedIn){
+                Toast.makeText(cont, "Log out", Toast.LENGTH_LONG).show();
+                signOut();
+            } else {
+                signIn();
+            }
         }
         else if(id == R.id.new_moneda){
             AlertDialog.Builder builder = new AlertDialog.Builder(cont);
@@ -266,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
     public void createAndInitAppDir(){
         try {
             if(doesSDCardAccessible()){
-
+//TODO change
                 AppDir = new File(Environment.getExternalStorageDirectory(),"cuentas"+"/");
                 if(!AppDir.exists()){
                     AppDir.mkdirs();
@@ -294,10 +389,10 @@ public class MainActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             switch (position) {
                 case 0: {
-                    return FragmentTotals.getInstance();
+                    return fragmentTotals;
                 }
                 default: {
-                    return FragmentMoves.getInstance();
+                    return fragmentMoves;
                 }
             }
         }
@@ -321,6 +416,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    public static void updateFragments(){
+        ((FragmentMoves) fragmentMoves).updateAdapter();
+        ((FragmentTotals) fragmentTotals).updateAdapter();
+    }
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -334,62 +433,148 @@ public class MainActivity extends AppCompatActivity {
             );
         }
     }
-    /*
-    com.google.android.gms.common.api.GoogleApiClient GAC;
-    ///...
-    void upload(final String titl, final File file, final String mime) {
-        Log.d(Principal.TAG, "Start Uploading " + (GAC != null) + (titl != null) +(file != null));
-        if (GAC != null && GAC.isConnected() && titl != null && file != null) try {
-            Log.d(Principal.TAG, "IF 1");
-            Drive.DriveApi.newDriveContents(GAC).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
-                @Override
-                public void onResult(@NonNull DriveApi.DriveContentsResult contRslt) {
-                    if (contRslt.getStatus().isSuccess()){
-                        Log.d(Principal.TAG, "IF 2");
-                        DriveContents cont = contRslt.getDriveContents();
-                        if (cont != null && file2Os(cont.getOutputStream(), file)) {
-                            Log.d(Principal.TAG, "IF 3");
-                            MetadataChangeSet meta = new MetadataChangeSet.Builder().setMimeType(mime).build();
-                            Drive.DriveApi.getRootFolder(GAC).createFile(GAC, meta, cont).setResultCallback(
-                                    new ResultCallback<DriveFolder.DriveFileResult>() {
-                                        @Override
-                                        public void onResult(@NonNull DriveFolder.DriveFileResult fileRslt) {
-                                            if (fileRslt.getStatus().isSuccess()) {
-                                                // fileRslt.getDriveFile();   BINGO !!!
-                                            }
-                                        }
-                                    }
-                            );
-                        }
-                    }
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d(Principal.TAG, "Exception, " + e.toString());
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RC_SIGN_IN){
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+            Log.d("Accoun", "1");
         }
+    }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask){
+        try {
+            GoogleSignInAccount account =  completedTask.getResult(ApiException.class);
+            Toast.makeText(cont, "Welcome Back " + account.getDisplayName(), Toast.LENGTH_LONG).show();
+            signedIn = true;
+            menu.findItem(R.id.login).setTitle(R.string.logout);
+            DriveFilesTask task = new DriveFilesTask();
+            task.execute(account.getServerAuthCode());
+        } catch (ApiException e){
+            Toast.makeText(cont, "Error on Log in", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            Log.d("Accoun","Api " + e.getStackTrace());
+            signedIn = false;
+            menu.findItem(R.id.login).setTitle(R.string.login);
+        }
+    }
+    private void signIn(){
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    private void signOut(){
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task){
+                      Toast.makeText(cont, "Signed out", Toast.LENGTH_SHORT).show();
+                        signedIn = false;
+                        menu.findItem(R.id.login).setTitle(R.string.login);
+                    }
+                });
     }
 
-    static boolean file2Os(OutputStream os, File file) {
-        Log.d(Principal.TAG, "file2os");
-        boolean bOK = false;
-        InputStream is = null;
-        if (file != null && os != null) try {
-            byte[] buf = new byte[4096];
-            is = new FileInputStream(file);
-            int c;
-            while ((c = is.read(buf, 0, buf.length)) > 0)
-                os.write(buf, 0, c);
-            bOK = true;
-        } catch (Exception e) {e.printStackTrace();}
-        finally {
-            try {
-                os.flush(); os.close();
-                if (is != null )is.close();
-            } catch (Exception e) {e.printStackTrace();}
+    private class DriveFilesTask extends AsyncTask<String, Void, Integer> {
+        DriveFilesTask(){
+            super();
         }
-        return  bOK;
+        @Override
+        protected Integer doInBackground(String ... pParams) {
+            Log.d("Accoun", "Do in BackGround " + pParams[0] + " " + pParams[0]);
+            String s = DriveMan.getAccessToken(pParams[0], getString(R.string.server_client_id));
+            if(s == "" || s == null){
+                return 1;
+            }
+            final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
+
+            GoogleCredential googleCredential = new GoogleCredential().setAccessToken(s);
+
+            new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, googleCredential);
+            Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, googleCredential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+
+
+            DriveFilesTask task = new DriveFilesTask();
+            try{
+                new DriveMan(service);
+                //DriveMan.deleteAllAndCreate();
+                String configId = DriveMan.getFileByName(DBMan.DBConfig.TABLE_NAME+".json");
+
+                if(configId == null || configId == ""){
+                    //TODO Create all files
+                    Log.d("Account ", "5 Create all files");
+                    DriveMan.deleteAllAndCreate();
+                }else {
+                    Log.d("Accoun", "5 " + configId);
+                    JSONArray jsonArray = DriveMan.getDataFileByID(configId);
+                    if(jsonArray == null){
+                        //TODO data corrupted delete and create again
+                        return 678;
+                    } else {
+                        String driveLastSyn =  jsonArray.getJSONObject(DBMan.DBConfig.LastSync - 1).getString(DBMan.DBConfig.Value);
+                        String localLastSync = Principal.getLastSync();
+                        Log.d("Accoun Sync", "drive " + driveLastSyn + " local: " +localLastSync);
+                        if(localLastSync == null){
+                            Principal.deleteTables();
+                            DriveMan.downloadFiles();
+                        } else {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                            Date parsedDateDrive = dateFormat.parse(driveLastSyn);
+                            Date parsedDateLocal = dateFormat.parse(localLastSync);
+                            Timestamp timestampDrive = new java.sql.Timestamp(parsedDateDrive.getTime());
+                            Timestamp timestampLocal = new java.sql.Timestamp(parsedDateLocal.getTime());
+                            Log.d("Accoun", "5a " + timestampDrive + " - " + timestampLocal);
+                            if (timestampLocal.before(timestampDrive)) {
+                                Principal.deleteTables();
+                                DriveMan.downloadFiles();
+                            } else if (timestampLocal.after(timestampDrive)) {
+                                DriveMan.deleteAllAndCreate();
+                            }
+                        }
+                        //Principal.deleteTables();
+                        return 0;
+                    }
+                }
+                return 0;
+            } catch (JSONException e){
+                //TODO ask permision to delete and create again
+                //TODO data corrupted delete and create again
+                /*
+                try {
+                    DriveMan.deleteAllAndCreate();
+                } catch (IOException e1){
+                    Log.d("Accoun", "6 error1 " + e1);
+                    return 2;
+                } catch (JSONException e1){
+                    Log.d("Accoun", "6 error1 " + e1);
+                    return 2;
+                }*/
+                Log.d("Accoun", "6 " + e);
+                return 2;
+            } catch (IOException e){
+                Log.d("Accoun", "6 error " + e);
+                return 3;
+            } catch (ParseException e){
+                Log.d("Accoun", "6 error " + e);
+                return 4;
+            }
+            //return 1;
+        }
+
+        protected void onProgressUpdate() {
+        }
+
+        protected void onPostExecute(Integer result) {
+            if(result == 0){
+                MainActivity.updateFragments();
+                Toast.makeText(cont, "Google Drive connection was a succeess", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(cont, "Google Drive connection Error " + result, Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
-    */
 }
 

@@ -115,6 +115,10 @@ public class FragmentTotals extends Fragment {
         c = Principal.getTotales();
         adapter.changeCursor(c);
     }
+    public void updateAdapter(){
+        c = Principal.getTotales();
+        adapter.changeCursor(c);
+    }
 /*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

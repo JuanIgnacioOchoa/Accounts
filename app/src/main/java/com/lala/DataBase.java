@@ -26,7 +26,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE \"Moneda\" (" +
+        db.execSQL("CREATE TABLE " + DBMan.DBMoneda.TABLE_NAME + "  (" +
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , " +
                 "\"Moneda\" VARCHAR(5) NOT NULL UNIQUE , " +
                 "\"Active\" INTEGER NOT NULL DEFAULT 1)");
@@ -34,7 +34,7 @@ public class DataBase extends SQLiteOpenHelper {
                 ", Nombre varchar ( 50 ) NOT NULL , Descripcion varchar ( 250 ) , FechaCreacion DATETIME NOT NULL DEFAULT CURRENT_DATE ," +
                 " FechaCierre DATETIME, FechaInicio DATETIME, FechaFin DATETIME, Total DOUBLE NOT NULL DEFAULT 0.0," +
                 " IdMoneda INTEGER NOT NULL, FOREIGN KEY(IdMoneda) REFERENCES Moneda(_id) )");
-        db.execSQL("CREATE TABLE \"Totales\" (" +
+        db.execSQL("CREATE TABLE " + DBMan.DBTotales.TABLE_NAME + " (" +
                 "\"_id\" INTEGER PRIMARY KEY NOT NULL ," +
                 "\"Cuenta\" VARCHAR(20) NOT NULL ," +
                 "\"CantidadInicial\" DOUBLE NOT NULL ," +
@@ -42,11 +42,11 @@ public class DataBase extends SQLiteOpenHelper {
                 "\"IdMoneda\" INTEGER NOT NULL DEFAULT (1) ," +
                 "\"Activa\" BOOL NOT NULL DEFAULT (1) ," +
                 "\"Tipo\" INTEGER DEFAULT (1) )");
-        db.execSQL("CREATE TABLE \"Motivo\" (" +
+        db.execSQL("CREATE TABLE " + DBMan.DBMotivo.TABLE_NAME + " (" +
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , " +
                 "\"Motivo\" VARCHAR(50) NOT NULL UNIQUE , " +
                 "\"Active\" BOOL NOT NULL DEFAULT 1)");
-        db.execSQL("CREATE TABLE \"Movimiento\" ( " +
+        db.execSQL("CREATE TABLE " + DBMan.DBMovimientos.TABLE_NAME + " ( " +
                 "_id INTEGER NOT NULL, " +
                 "Cantidad DOUBLE NOT NULL, " +
                 "Fecha DATETIME NOT NULL DEFAULT CURRENT_DATE, " +
@@ -69,12 +69,12 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE CambioMoneda(_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, " +
                 "IdMoneda1 INTEGER NOT NULL, IdMoneda2 INTEGER  NOT NULL, Tipo_de_cambio DOUBLE NOT NULL, " +
                 "FOREIGN KEY(IdMoneda1) REFERENCES Moneda(_id), FOREIGN KEY(IdMoneda2) REFERENCES Moneda(_id) )");
-        db.execSQL("CREATE TABLE \"Personas\" \n" +
+        db.execSQL("CREATE TABLE " + DBMan.DBPersona.TABLE_NAME + " \n" +
                 "\t(\"_id\" INTEGER NOT NULL, \n" +
                 "\t\"Nombre\" varchar (50), \n" +
                 "\t\"Active\" BOOL not null DEFAULT 1, \n" +
                 "\tPRIMARY KEY(\"_id\"))");
-        db.execSQL("CREATE TABLE \"Prestamos\" \n" +
+        db.execSQL("CREATE TABLE " + DBMan.DBPrestamo.TABLE_NAME + " \n" +
                 "    ( \"_id\" INTEGER NOT NULL, \n" +
                 "    \"Cantidad\" DOUBLE NOT NULL, \n" +
                 "    \"Fecha\" DATETIME NOT NULL DEFAULT CURRENT_DATE, \n" +
@@ -91,7 +91,7 @@ public class DataBase extends SQLiteOpenHelper {
                 "    FOREIGN KEY(\"IdTotales\") REFERENCES \"Totales\"(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdPersona\") REFERENCES \"Personas\"(\"_id\"))");
 
-        db.execSQL("CREATE TABLE \"PrestamosDetalle\" \n" +
+        db.execSQL("CREATE TABLE " + DBMan.DBPrestamoDetalle.TABLE_NAME + " \n" +
                 "    ( \"_id\" INTEGER NOT NULL, \n" +
                 "    \"Cantidad\" DOUBLE NOT NULL, \n" +
                 "    \"Fecha\" DATETIME NOT NULL DEFAULT CURRENT_DATE, \n" +
@@ -104,30 +104,51 @@ public class DataBase extends SQLiteOpenHelper {
                 "    FOREIGN KEY(\"IdTotales\") REFERENCES \"Totales\"(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdPrestamo\") REFERENCES \"Prestamos\"(\"_id\"))");
 
-        db.execSQL("insert into Totales \n" +
-                "(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)\n" +
+
+
+        db.execSQL("insert into " + DBMan.DBTotales.TABLE_NAME + " \n" +
+                "(_id," + DBMan.DBTotales.Cuenta + ", " + DBMan.DBTotales.CantidadInicial + "," +
+                DBMan.DBTotales.CantidadActual + "," + DBMan.DBTotales.Moneda + ", " + DBMan.DBTotales.Activa + ", " +
+                DBMan.DBTotales.Tipo +")\n" +
                 "values\n" +
                 "(1, \"Prestamos\", 0, 0, 1, 0, 1)");
-        db.execSQL("insert into Totales \n" +
-                "(_id, Cuenta, CantidadInicial, CurrentCantidad, IdMoneda, Activa, Tipo)\n" +
+        db.execSQL("insert into " + DBMan.DBTotales.TABLE_NAME + " \n" +
+                "(_id," + DBMan.DBTotales.Cuenta + ", " + DBMan.DBTotales.CantidadInicial + "," +
+                DBMan.DBTotales.CantidadActual + "," + DBMan.DBTotales.Moneda + ", " + DBMan.DBTotales.Activa + ", " +
+                DBMan.DBTotales.Tipo +")\n" +
                 "values\n" +
                 "(20, \"xxxxx\", 0, 0, 1, 0, 1)");
-        db.execSQL("insert into Motivo \n" +
-                "(_id, Motivo, Active) \n" +
+        db.execSQL("insert into " + DBMan.DBMotivo.TABLE_NAME + " \n" +
+                "(_id, " + DBMan.DBMotivo.Motivo + ", " + DBMan.DBMotivo.Activo + ") \n" +
                 "values \n" +
                 "(1, \"Traspaso\", 0)");
-        db.execSQL("insert into Motivo \n" +
-                "(_id, Motivo, Active) \n" +
+        db.execSQL("insert into " + DBMan.DBMotivo.TABLE_NAME +
+                "(_id, " + DBMan.DBMotivo.Motivo + ", " + DBMan.DBMotivo.Activo + ") \n" +
                 "values \n" +
                 "(2, \"Retiro\", 0)");
-        db.execSQL("insert into Motivo \n" +
-                "(_id, Motivo, Active) \n" +
+        db.execSQL("insert into " + DBMan.DBMotivo.TABLE_NAME + " \n" +
+                "(_id, " + DBMan.DBMotivo.Motivo + ", " + DBMan.DBMotivo.Activo + ") \n" +
                 "values \n" +
                 "(3, \"RetiroMonedaDiferente\", 0)");
-        db.execSQL("insert into Motivo \n" +
-                "(_id, Motivo, Active) \n" +
+
+
+        /*
+        db.execSQL("CREATE TABLE " + DBMan.DBAndroidConfig.TABLE_NAME + " (\n" +
+                "\t\"_id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, \n" +
+                DBMan.DBAndroidConfig.KEY + " varchar NOT NULL, \n" +
+                DBMan.DBAndroidConfig.Value + " varchar NOT NULL\n" +
+                ")");
+
+        db.execSQL("insert into "+ DBMan.DBMotivo.TABLE_NAME + " \n" +
+                "(_id, " + DBMan.DBMotivo.Motivo + ", " + DBMan.DBMotivo.Activo + ") \n" +
                 "values \n" +
                 "(15, \"xxxxx\", 0)");
+
+        db.execSQL("insert into "+ DBMan.DBAndroidConfig.TABLE_NAME + " \n" +
+                "(_id, " + DBMan.DBAndroidConfig.KEY + ", " + DBMan.DBAndroidConfig.Value + ") \n" +
+                "VALUES(1, \"authCode\", \"\")");
+
+        */
         //db.execSQL(ManagerSettings.CREATE_TABLE);
         //db.delete(ManagerMotivo.TABLE_NAME,null,null);
     }

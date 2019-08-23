@@ -75,6 +75,9 @@
     <string name="title_activity_reportes">Reportes</string>
     <string name="motives">Motivos</string>
 
+    <string name="login">Ingresar</string>
+    <string name="logout">Salir</string>
+
     <string name="jan">ENE</string>
     <string name="feb">FEB</string>
     <string name="mar">MAR</string>

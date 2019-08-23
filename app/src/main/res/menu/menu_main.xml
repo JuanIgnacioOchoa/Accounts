@@ -26,4 +26,8 @@
         android:title="@string/reports"
         android:orderInCategory="100"
         />
+    <item android:id="@+id/login"
+        android:title="@string/login"
+        android:orderInCategory="10"
+        />
 </menu>

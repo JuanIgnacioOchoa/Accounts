@@ -75,6 +75,12 @@ public class FragmentMoves extends Fragment{
         adapter.changeCursor(c);
         //listView.setAdapter(adapter);
     }
+    public void updateAdapter(){
+        c = Principal.getMovimientos();
+        adapter.changeCursor(c);
+        cursorMoneda = Principal.getMoneda();
+        simpleCursorAdapter.changeCursor(cursorMoneda);
+    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

@@ -13,6 +13,8 @@ public class DBMan {
         public static final String CantidadActual = "CurrentCantidad";
         public static final String CantidadInicial = "CantidadInicial";
         public static final String Moneda = "IdMoneda";
+        public static final String Activa = "Activa";
+        public static final String Tipo = "Tipo";
     }
     public static class DBMovimientos{
         public static final String TABLE_NAME = "AccountsMovimiento";
@@ -79,4 +81,24 @@ public class DBMan {
         public static final String Nombre = "Nombre";
         public static final String Activo = "Active";
     }
+
+    public static class DBConfig{
+        public static final String TABLE_NAME = "AccountsConfig";
+        public static final String Key = "KeyCode";
+        public static final String Value = "ValueCode";
+
+
+        public static final int LastUpdated = 1;
+        public static final int LastSync = 2;
+    }
+    /*
+    public static class DBAndroidConfig{
+        public static final String TABLE_NAME = "AndroidAccountConfig";
+        public static final String KEY = "KeyCode";
+        public static final String Value = "ValueCode";
+
+
+        public static final int authKeyValue = 1;
+    }
+    */
 }

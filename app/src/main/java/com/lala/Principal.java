@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -19,7 +21,12 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.ConnectException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /** Accounts
  * Created by Juan on 07/02/2016.
@@ -62,12 +69,16 @@ public class Principal {
     public static Cursor getTotal(int id){
         return db.rawQuery("SELECT * FROM AccountsTotales WHERE _id = ?",new String[]{""+id});
     }
-    public static Cursor getTotales(){
+    public static Cursor getTotales(boolean inactivos){
+        String activa = "";
+        if(!inactivos){
+            activa = "Activa == 1 and ";
+        }
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
-                "AccountsTotales.CurrentCantidad FROM AccountsTotales, AccountsMoneda LEFT JOIN " +
+                "AccountsTotales.CurrentCantidad, AccountsTotales.Activa FROM AccountsTotales, AccountsMoneda LEFT JOIN " +
                 "AccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and date('now','-1 month') <= date('now') " +
-                "WHERE Activa == 1 and AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id " +
-                "ORDER by Count DESC" ,null);
+                "WHERE " + activa + " AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id " +
+                "ORDER by activa desc, Count DESC" ,null);
     }
     public static Cursor getTotalesWithPrestamo(){
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
@@ -88,8 +99,13 @@ public class Principal {
                 "GROUP BY AccountsTotales._id ORDER by Fecha DESC, Count DESC" ,new String[]{id+""});
     }
     public static void insertTotales(String cuenta, Double cantidad, int moneda){
-        db.execSQL("INSERT INTO AccountsTotales(Cuenta,CantidadInicial,CurrentCantidad" +
-                ",IdMoneda) VALUES ('"+cuenta+"','"+cantidad+"','"+cantidad+"','" +moneda+"')");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.Cuenta, cuenta);
+        contentValues.put(DBMan.DBTotales.CantidadInicial, cantidad);
+        contentValues.put(DBMan.DBTotales.CantidadActual, cantidad);
+        contentValues.put(DBMan.DBTotales.Moneda, moneda);
+        db.insert(DBMan.DBTotales.TABLE_NAME, null, contentValues);
+        updateLast();
     }
     public static int getMonedaId(int id){
         Cursor c = db.rawQuery("SELECT IdMoneda FROM AccountsTotales " +
@@ -123,15 +139,43 @@ public class Principal {
         Cursor c = db.rawQuery("SELECT CurrentCantidad FROM AccountsTotales WHERE _id = ?", new String[]{""+id});
         c.moveToFirst();
         Double priorCant = c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
-        db.execSQL("UPDATE AccountsTotales SET CurrentCantidad = " +(priorCant + cantidad)+ " WHERE _id = " + id);
+        //db.execSQL("UPDATE AccountsTotales SET CurrentCantidad = " +(priorCant + cantidad)+ " WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.CantidadActual, (priorCant+cantidad) + "");
+        db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{id+""});
+        updateLast();
     }
     public static void updateTotalesFromPrestamo(double cant, int idCuenta){
         Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME +
                 " WHERE _id == " + idCuenta, null);
         c.moveToFirst();
         double can = c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
-        db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME + " SET " + DBMan.DBTotales.CantidadActual + " = " + (can + cant) +
-                " WHERE _id = " +idCuenta);
+        //db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME + " SET " + DBMan.DBTotales.CantidadActual + " = " + (can + cant) +
+        //        " WHERE _id = " +idCuenta);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.CantidadActual, (can + cant));
+        db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{idCuenta+""});
+        updateLast();
+    }
+
+    public static void updateTotalesInfo(double cant, String cuenta, int id, boolean activa){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.CantidadActual, cant);
+        contentValues.put(DBMan.DBTotales.Cuenta, cuenta);
+        if(activa){
+            contentValues.put(DBMan.DBTotales.Activa, 1);
+        } else {
+            contentValues.put(DBMan.DBTotales.Activa, 0);
+        }
+        db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{id+""});
+        updateLast();
+    }
+    public static Cursor getTotalesTotales(int moneda){
+        return db.rawQuery(" SELECT * FROM (" +
+                "          select Sum(CurrentCantidad) as Positivo from AccountsTotales where Activa = 1 and CurrentCantidad > 0 and IdMoneda = ? " +
+                "        ) as t1, (" +
+                "          select Sum(CurrentCantidad) as Negativo from AccountsTotales where Activa = 1 and CurrentCantidad < 0 and IdMoneda = ? " +
+                "        ) as t2", new String[]{""+moneda, ""+moneda});
     }
     //Movimientos
     public static Cursor getMovimientos() {
@@ -143,8 +187,10 @@ public class Principal {
     }
     public static long newMove(Double cantidad, int cuenta, String comment,String motivo, String moneda, double cambio){
 
+        ContentValues contentValues;
+        updateLast();
 
-        ContentValues contentValues = new ContentValues();
+        contentValues = new ContentValues();
         contentValues.put(DBMan.DBMovimientos.Cantidad,cantidad);
 
         contentValues.put(DBMan.DBMovimientos.Comment, comment);
@@ -152,6 +198,7 @@ public class Principal {
         contentValues.put("IdMoneda", getIdMoneda(moneda));
         contentValues.put("IdTotales", cuenta);
         if(cambio != -1) contentValues.put("Cambio", cambio);
+
         return db.insert(DBMan.DBMovimientos.TABLE_NAME,null,contentValues);
     }
     public static Cursor getData(int id){
@@ -165,26 +212,37 @@ public class Principal {
     }
     public static void eliminarMov(int id) {
         deshacerMov(id);
-        db.execSQL("DELETE FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE _id = " + id);
+        db.delete(DBMan.DBMovimientos.TABLE_NAME, "_id = ?", new String[]{id+""});
+        updateLast();
     }
     public static void eliminarTras(int id) {
         deshacerTras(id);
-        db.execSQL("DELETE FROM " + DBMan.DBMovimientos.TABLE_NAME + " WHERE _id = " + id);
+        db.delete(DBMan.DBMovimientos.TABLE_NAME, "_id = ?", new String[]{id+""});
+        updateLast();
     }
+
+
     public static void actualizarMovimiento(int id, Double cantidad, int cuenta, String comment,int motivo, int moneda, double cambio, String date){
         deshacerMov(id);
         String sCambio = null;
         if(cambio != -1.0) sCambio = cambio + "";
-        db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " +
-                DBMan.DBMovimientos.Cantidad + " = " + cantidad +", " + DBMan.DBMovimientos.IdTotales + "="+cuenta+
-                ", " + DBMan.DBMovimientos.IdMotivo + " = " + motivo + ", " + DBMan.DBMovimientos.IdMoneda + " = " + moneda+ ", " +
-                DBMan.DBMovimientos.Cambio + " = " + sCambio+ ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "'), " +
-                DBMan.DBMovimientos.Comment+ " = '"+ comment+"' WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBMovimientos.Cantidad, cantidad);
+        contentValues.put(DBMan.DBMovimientos.IdTotales, cuenta);
+        contentValues.put(DBMan.DBMovimientos.IdMotivo, motivo);
+        contentValues.put(DBMan.DBMovimientos.IdMoneda, moneda);
+        contentValues.put(DBMan.DBMovimientos.Cambio, sCambio);
+        contentValues.put(DBMan.DBMovimientos.Fecha, date);
+        contentValues.put(DBMan.DBMovimientos.Comment, comment);
+        db.update(DBMan.DBMovimientos.TABLE_NAME,contentValues, "_id = ?", new String[]{id+""});
         Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{cuenta+""});
         c.moveToFirst();
         if(cambio == -1.0) cantidad = cantidad + c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
         else cantidad = (cantidad*cambio) + c.getDouble(c.getColumnIndex(DBMan.DBTotales.CantidadActual));
-        db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME + " SET " + DBMan.DBTotales.CantidadActual +" = " + cantidad + " WHERE _id = " + cuenta);
+        contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.CantidadActual, cantidad);
+        db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{cuenta+""});
+        updateLast();
     }
 
     public static Double getIngresoTotal(int Moneda){
@@ -506,9 +564,15 @@ public class Principal {
         return c.getInt(c.getColumnIndex("_id"));
     }
     public static void updateMoveFromPrestamo(int idMove, double cantidad, double cambio, int idMoneda){
-        db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " +
-                DBMan.DBMovimientos.Cantidad + " = " + cantidad + ", " + DBMan.DBMovimientos.Cambio + " = " + cambio +
-                ", " + DBMan.DBMovimientos.IdMoneda + " = " + idMoneda + " WHERE _id = " + idMove);
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DBMan.DBMovimientos.Cantidad, cantidad);
+        contentValues.put(DBMan.DBMovimientos.Cambio, cambio);
+        contentValues.put(DBMan.DBMovimientos.IdMoneda, idMoneda);
+        db.update(DBMan.DBMovimientos.TABLE_NAME, contentValues, "_id = ?", new String[]{idMove+""});
+
+        updateLast();
     }
     public static Cursor getSumByMotive(int id, String month, String year){
         if(month == null){
@@ -627,6 +691,8 @@ public class Principal {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBMotivo.Motivo,mot);
         db.insert(DBMan.DBMotivo.TABLE_NAME,null, contentValues);
+
+        updateLast();
     }
     public static Cursor getMotive(){
         return db.rawQuery("SELECT AccountsMotivo._id, AccountsMotivo.Motivo, COUNT(AccountsMotivo.Motivo) as Cuenta FROM AccountsMotivo LEFT JOIN " +
@@ -655,12 +721,21 @@ public class Principal {
 
     }
     public static void updateActiveMotive(int act, int id){
-        db.execSQL("UPDATE " + DBMan.DBMotivo.TABLE_NAME + " SET " +
-                "Active = " + act + " WHERE _id = " + id);
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DBMan.DBMotivo.Activo, act);
+        db.update(DBMan.DBMotivo.TABLE_NAME, contentValues, "_id = ?", new String[]{id+""});
+
+        updateLast();
     }
     public static void updateNameMotive(String motivo, int id){
-        db.execSQL("UPDATE " + DBMan.DBMotivo.TABLE_NAME + " SET " +
-                DBMan.DBMotivo.Motivo + " = '" + motivo + "' WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBMotivo.Motivo, motivo);
+        db.update(DBMan.DBMotivo.TABLE_NAME, contentValues, "_id = ?", new String[]{id+""});
+
+        updateLast();
+
     }
     //Moneda
     public static Cursor getMoneda(){
@@ -715,14 +790,23 @@ public class Principal {
                 "JOIN AccountsMoneda Moneda2 ON Moneda2._id = AccountsCambioMoneda.IdMoneda2 " +
                 "WHERE AccountsCambioMoneda.IdMoneda1 = ? and AccountsCambioMoneda.IdMoneda2 = ?", new String[]{moneda1,moneda2});
         c.moveToFirst();
-        db.execSQL("UPDATE CambioMoneda SET Tipo_de_cambio = " + cambio +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBCambioMoneda.Cambio, cambio);
+        db.update(DBMan.DBCambioMoneda.TABLE_NAME, contentValues, "_id = ?", new String[]{""+c.getInt(c.getColumnIndex("_id"))});
+
         c = db.rawQuery("SELECT AccountsCambioMoneda._id " +
                 "FROM AccountsCambioMoneda " +
                 "JOIN AccountsMoneda Moneda1 ON Moneda1._id = AccountsCambioMoneda.IdMoneda1 " +
                 "JOIN AccountsMoneda Moneda2 ON Moneda2._id = AccountsCambioMoneda.IdMoneda2 " +
                 "WHERE AccountsCambioMoneda.IdMoneda1 = ? and AccountsCambioMoneda.IdMoneda2 = ?", new String[]{moneda2,moneda1});
+
         c.moveToFirst();
-        db.execSQL("UPDATE AccountsCambioMoneda SET Tipo_de_cambio = " + (1/cambio) +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
+        contentValues = new ContentValues();
+        contentValues.put(DBMan.DBCambioMoneda.Cambio, (1/cambio));
+        db.update(DBMan.DBCambioMoneda.TABLE_NAME, contentValues, "_id = ?", new String[]{""+c.getInt(c.getColumnIndex("_id"))});
+
+        updateLast();
     }
 
     public static void actualizarTipoDeCambio(int moneda1,int moneda2, double cambio){
@@ -732,9 +816,13 @@ public class Principal {
                 "JOIN AccountsMoneda Moneda2 ON Moneda2._id = AccountsCambioMoneda.IdMoneda2 " +
                 "WHERE AccountsCambioMoneda.IdMoneda1 = ? and AccountsCambioMoneda.IdMoneda2 = ?", new String[]{moneda1+"",moneda2+""});
         c.moveToFirst();
-        db.execSQL("UPDATE AccountsCambioMoneda SET Tipo_de_cambio = " + cambio +" WHERE _id = " + c.getInt(c.getColumnIndex("_id")));
-    }
 
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBCambioMoneda.TABLE_NAME, DBMan.DBCambioMoneda.Cambio);
+        db.update(DBMan.DBCambioMoneda.TABLE_NAME, contentValues, "_id = ?", new String[]{""+c.getInt(c.getColumnIndex("_id"))});
+        updateLast();
+    }
+///Aqui voy
     //Traspaso
     public static void newTraspaso(int cuentaFrom, int cuentaTo, double cantidad, double cambio, String comment){
         ContentValues contentValues = new ContentValues();
@@ -746,6 +834,7 @@ public class Principal {
         contentValues.put(DBMan.DBMovimientos.Traspaso,cuentaTo);
         if(cambio != -1) contentValues.put("Cambio", cambio);
         db.insert(DBMan.DBMovimientos.TABLE_NAME,null,contentValues);
+        updateLast();
     }
     //Retiro
     public static void newRetiro(int cuentaFrom, int cuentaTo, double cantidad, double cambio, String comment){
@@ -758,6 +847,7 @@ public class Principal {
         contentValues.put(DBMan.DBMovimientos.Traspaso,cuentaTo);
         if(cambio != -1) contentValues.put("Cambio", cambio);
         db.insert(DBMan.DBMovimientos.TABLE_NAME,null,contentValues);
+        updateLast();
     }
     public static void newTipoCambio(int Moneda1, int Moneda2){
         ContentValues c1 = new ContentValues();
@@ -768,6 +858,7 @@ public class Principal {
         c2.put(DBMan.DBCambioMoneda.Moneda2,Moneda1);
         db.insert(DBMan.DBCambioMoneda.TABLE_NAME,null,c1);
         db.insert(DBMan.DBCambioMoneda.TABLE_NAME,null,c2);
+        updateLast();
     }
 
     public static void guardarMoneda(String moneda){
@@ -783,6 +874,7 @@ public class Principal {
             newTipoCambio(idMonedaNueva,c.getInt(c.getColumnIndex("_id")));
             c.moveToPrevious();
         }
+        updateLast();
     }
     public static void actualizarTraspaso(int id,Double cantidad,int idFrom,int idTo,
                                           String comment,int motivo,Double cambio, String date){
@@ -790,12 +882,15 @@ public class Principal {
         String sCambio = null;
 
         if(Principal.getMonedaId(idFrom) != Principal.getMonedaId(idTo)) sCambio = cambio + "";
-        Toast.makeText(context,idFrom + " = " + idTo,Toast.LENGTH_SHORT).show();
-        db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " +
-                DBMan.DBMovimientos.Cantidad + " = " + cantidad +", " + DBMan.DBMovimientos.IdTotales + "="+idFrom +
-                ", " + DBMan.DBMovimientos.IdMotivo + " = " + motivo + ", " + DBMan.DBMovimientos.Traspaso + "=" + idTo + ", " +
-                DBMan.DBMovimientos.Cambio + " = " + sCambio + ", " + DBMan.DBMovimientos.Fecha + " = date('" + date + "'), " +
-                DBMan.DBMovimientos.Comment + " = " + comment +"  WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBMovimientos.Cantidad, cantidad);
+        contentValues.put(DBMan.DBMovimientos.IdTotales, idFrom);
+        contentValues.put(DBMan.DBMovimientos.IdMotivo, motivo);
+        contentValues.put(DBMan.DBMovimientos.Traspaso, idTo);
+        contentValues.put(DBMan.DBMovimientos.Cambio, sCambio);
+        contentValues.put(DBMan.DBMovimientos.Fecha, date);
+        contentValues.put(DBMan.DBMovimientos.Comment, comment);
+        db.update(DBMan.DBMovimientos.TABLE_NAME, contentValues, "_id = ?", new String[]{""+id});
         if(motivo == 1){
             Principal.newMoveCuenta(cantidad * -1, idFrom);
             if(Principal.getMonedaId(idFrom) != Principal.getMonedaId(idTo)){
@@ -811,6 +906,7 @@ public class Principal {
             }
             else Principal.newMoveCuenta(cantidad * -1, idFrom);
         }
+        updateLast();
 
     }
     public static void deshacerTras(int id){
@@ -824,7 +920,7 @@ public class Principal {
         idCuentaFrom = c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdTotales));
         String cambio = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
         cantidad = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cantidad));
-        Toast.makeText(context,"Cantidad 1:  " + cantidad,Toast.LENGTH_SHORT).show();
+        ContentValues contentValues;
         //if(cambio != null) cantidad = cantidad * Double.parseDouble(cambio);
         if(motivo == 1){
             Toast.makeText(context,"Motivo 1:  ",Toast.LENGTH_SHORT).show();
@@ -833,16 +929,18 @@ public class Principal {
             cCuenta.moveToFirst();
             Double cantCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
             cantCuenta = cantCuenta + cantidad;
-            db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
-                    " = " + cantCuenta +" WHERE _id = " + idCuentaFrom);
+            contentValues = new ContentValues();
+            contentValues.put(DBMan.DBTotales.CantidadActual, cantCuenta);
+            db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{""+idCuentaFrom});
             cCuenta = db.rawQuery("SELECT "+ DBMan.DBTotales.CantidadActual + " " +
                     "FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{""+idCuentaTo});
             cCuenta.moveToFirst();
             cantCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
             if(cambio != null) cantidad = cantidad * Double.parseDouble(cambio);
             cantCuenta = cantCuenta - cantidad;
-            db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
-                    " = " + cantCuenta +" WHERE _id = " + idCuentaTo);
+            contentValues = new ContentValues();
+            contentValues.put(DBMan.DBTotales.CantidadActual, cantCuenta);
+            db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{idCuentaTo+""});
 
         } else {
             Toast.makeText(context,"Motivo 2:  ",Toast.LENGTH_SHORT).show();
@@ -853,8 +951,9 @@ public class Principal {
             Toast.makeText(context,"Cantidad cuenta: " +cantCuenta,Toast.LENGTH_LONG).show();
             Toast.makeText(context,"Cantidad 2:  " + cantCuenta + " - " + cantidad +" = " + (cantCuenta -cantidad),Toast.LENGTH_LONG).show();
             cantCuenta = cantCuenta - cantidad;
-            db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
-                    " = " + cantCuenta +" WHERE _id = " + idCuentaTo);
+            contentValues = new ContentValues();
+            contentValues.put(DBMan.DBTotales.CantidadActual, cantCuenta);
+            db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{""+idCuentaTo});
             cCuenta = db.rawQuery("SELECT "+ DBMan.DBTotales.CantidadActual + " " +
                     "FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{""+idCuentaFrom});
             cCuenta.moveToFirst();
@@ -862,9 +961,11 @@ public class Principal {
             if (cambio!=null) cantidad = cantidad * Double.parseDouble(cambio);
             Toast.makeText(context,"Cantidad 3:  " + cantCuenta + " + " + cantidad +" = " + (cantCuenta + cantidad),Toast.LENGTH_LONG).show();
             cantCuenta = cantCuenta + cantidad;
-            db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
-                    " = " + cantCuenta +" WHERE _id = " + idCuentaFrom);
+            contentValues = new ContentValues();
+            contentValues.put(DBMan.DBTotales.CantidadActual, cantCuenta);
+            db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{idCuentaFrom+""});
         }
+        updateLast();
     }
     public static void deshacerMov(int id){
         Double cantidad;
@@ -881,8 +982,9 @@ public class Principal {
         cCuenta.moveToFirst();
         Double cantidadCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
         cantidad = cantidadCuenta - cantidad;
-        db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
-                " = " + cantidad +" WHERE _id = " + idCuenta);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.CantidadActual, cantidad);
+        db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{idCuenta+""});
     }
 
     //GetFirst use date
@@ -911,8 +1013,11 @@ public class Principal {
 
     //Trips
     public static Cursor getTrips(){
-        return db.rawQuery("SELECT * FROM " + DBMan.DBViaje.TABLE_NAME + " order by " + DBMan.DBViaje.FechaCreacion +
-                " desc", null);
+        return db.rawQuery("SELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, sum(m.Cantidad) as Total, t.IdMoneda \n" +
+                "FROM " + DBMan.DBViaje.TABLE_NAME + " as t, " + DBMan.DBMovimientos.TABLE_NAME +" as m \n" +
+                "Where t._id = m.IdViaje \n" +
+                "GROUP by t._id \n" +
+                "order by FechaCreacion desc", null);
     }
     public static Cursor getTrip(int _id){
         Cursor c = db.rawQuery("SELECT * FROM " + DBMan.DBViaje.TABLE_NAME + " WHERE _id == " + _id
@@ -939,6 +1044,7 @@ public class Principal {
         contentValues.put(DBMan.DBViaje.Descripcion, descripcion);
         long a = db.insert(DBMan.DBViaje.TABLE_NAME,null,contentValues);
         if(a >= 0){
+            updateLast();
             return true;
         } else{
             return false;
@@ -954,8 +1060,9 @@ public class Principal {
     public static boolean updateMoveTrip(int idMove, int idTrip, Double cantidad){
         //TODO make it boolean
         //try {
-            db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " + DBMan.DBMovimientos.IdTrip +
-                    " = ? " + " WHERE _id == ?", new String[]{idTrip+"", idMove+""});
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DBMan.DBMovimientos.IdTrip, idTrip);
+            db.update(DBMan.DBMovimientos.TABLE_NAME, contentValues, "_id = ?", new String[]{idMove+""});
             Cursor c = db.rawQuery("SELECT " + DBMan.DBMovimientos.IdMoneda + " FROM " + DBMan.DBMovimientos.TABLE_NAME +
                     " WHERE _id = " + idMove, null);
             c.moveToFirst();
@@ -969,9 +1076,11 @@ public class Principal {
                         " WHERE _id == ?",new String[]{idTrip+""});
                 c.moveToFirst();
                 Double cantActual = c.getDouble(c.getColumnIndex(DBMan.DBViaje.CantTotal));
-                db.execSQL("UPDATE " + DBMan.DBViaje.TABLE_NAME + " SET " + DBMan.DBViaje.CantTotal +
-                        " = " + (cantActual + cantidad) + " WHERE _id == " + idTrip);
+                contentValues = new ContentValues();
+                contentValues.put(DBMan.DBViaje.CantTotal, cantActual + cantidad);
+                db.update(DBMan.DBViaje.TABLE_NAME, contentValues, "_id = ?", new String[]{""+idTrip});
             }
+            updateLast();
             return true;
         //} catch (Exception e){
         //    return false;
@@ -979,15 +1088,22 @@ public class Principal {
     }
 
     public static boolean updateTrip(int _id, String name, String descripcion, String fechaInic, String fechaFin, int moneda){
-        db.execSQL("UPDATE " + DBMan.DBViaje.TABLE_NAME + " SET " + DBMan.DBViaje.Nombre + " = \"" + name +
-                "\", " + DBMan.DBViaje.Descripcion + " = \"" + descripcion + "\", " + DBMan.DBViaje.FechaInicio + " = \"" + fechaInic +
-                "\", " + DBMan.DBViaje.FechaFin + " = \"" + fechaFin + "\", " + DBMan.DBViaje.IdMoneda + " = \"" + moneda +
-                "\" WHERE _id = " + _id);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBViaje.Nombre, name);
+        contentValues.put(DBMan.DBViaje.Descripcion, descripcion);
+        contentValues.put(DBMan.DBViaje.FechaInicio, fechaInic);
+        contentValues.put(DBMan.DBViaje.FechaFin, fechaFin);
+        contentValues.put(DBMan.DBViaje.IdMoneda, moneda);
+        db.update(DBMan.DBViaje.TABLE_NAME, contentValues, "_id = ?", new String[]{""+_id});
+        updateLast();
         return true;
     }
     public static void addMoveToTrip(int idMove, int idTrip){
-        db.execSQL("UPDATE " + DBMan.DBMovimientos.TABLE_NAME + " SET " + DBMan.DBMovimientos.IdTrip +
-                " = " +idTrip + " WHERE _id == " + idMove);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBMovimientos.IdTrip, idTrip);
+        db.update(DBMan.DBMovimientos.TABLE_NAME, contentValues, "_id = ?", new String[]{""+idMove});
+        updateLast();
     }
 
 
@@ -1005,17 +1121,22 @@ public class Principal {
             c.moveToFirst();
             return c.getInt(c.getColumnIndex("_id"));
         }
+        updateLast();
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBPersona.Nombre,persona);
         return (db.insert(DBMan.DBPersona.TABLE_NAME,null, contentValues));
     }
     public static void updateActivePeople(int act, int id){
-        db.execSQL("UPDATE " + DBMan.DBPersona.TABLE_NAME + " SET " +
-                "Active = " + act + " WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPersona.Activo, act);
+        db.update(DBMan.DBPersona.TABLE_NAME, contentValues, "_id = ?", new String[]{""+id});
+        updateLast();
     }
     public static void updateNamePeople(String nombre, int id){
-        db.execSQL("UPDATE " + DBMan.DBPersona.TABLE_NAME + " SET " +
-                DBMan.DBPersona.Nombre + " = '" + nombre + "' WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPersona.Nombre, nombre);
+        db.update(DBMan.DBPersona.TABLE_NAME, contentValues, "_id = ?", new String[]{""+id});
+        updateLast();
     }
     public static Cursor getPersonas(){
         return db.rawQuery("SELECT AccountsPersonas._id as _id, AccountsPersonas.Nombre as Nombre, COUNT(AccountsPersonas.Nombre) as Count " +
@@ -1040,15 +1161,22 @@ public class Principal {
         cCuenta.moveToFirst();
         Double cantidadCuenta = cCuenta.getDouble(cCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
         cantidad = cantidadCuenta - cantidad;
-        db.execSQL("UPDATE " + DBMan.DBTotales.TABLE_NAME +" SET "+ DBMan.DBTotales.CantidadActual +
-                " = " + cantidad +" WHERE _id = " + idCuenta);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBTotales.CantidadActual, cantidad);
+        db.update(DBMan.DBTotales.TABLE_NAME, contentValues, "_id = ?", new String[]{""+idCuenta});
+        updateLast();
     }
     public static void updatePrestamo(int id, double cant, double cambio, int idCuenta, int idMoneda, int idPersona, String comment, String fecha){
-        db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET " + DBMan.DBPrestamo.Cantidad +
-                " = " + cant + ", " + DBMan.DBPrestamo.Cambio + " = " + cambio + ", " +
-                DBMan.DBPrestamo.IdTotales + " = " + idCuenta + ", " + DBMan.DBPrestamo.IdMoneda + " = " + idMoneda +
-                ", " + DBMan.DBPrestamo.IdPersona + " = " + idPersona + ", " + DBMan.DBPrestamo.Comment + " = \"" + comment + "\"" +
-                ", " + DBMan.DBPrestamo.Fecha + " = \"" + fecha + "\"" + " WHERE _id == " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPrestamo.Cantidad, cant);
+        contentValues.put(DBMan.DBPrestamo.Cambio, cambio);
+        contentValues.put(DBMan.DBPrestamo.IdTotales, idCuenta);
+        contentValues.put(DBMan.DBPrestamo.IdMoneda, idMoneda);
+        contentValues.put(DBMan.DBPrestamo.IdPersona, idPersona);
+        contentValues.put(DBMan.DBPrestamo.Comment, comment);
+        contentValues.put(DBMan.DBPrestamo.Fecha, fecha);
+        db.update(DBMan.DBPrestamo.TABLE_NAME, contentValues, "_id = ?", new String[]{"" + id});
+        updateLast();
     }
     public static String getPersonaNombreById(int id){
         Cursor c = db.rawQuery("SELECT " + DBMan.DBPersona.Nombre + " FROM " + DBMan.DBPersona.TABLE_NAME +
@@ -1069,6 +1197,7 @@ public class Principal {
         contentValues.put(DBMan.DBPrestamo.IdMovimiento, idMove);
         long a = db.insert(DBMan.DBPrestamo.TABLE_NAME,null,contentValues);
         if(a >= 0){
+            updateLast();
             return true;
         } else{
             return false;
@@ -1076,9 +1205,12 @@ public class Principal {
     }
 
     public static void updatePrestamoFromMove(int id, double cantidad, double cambio, int idMoneda){
-        db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET "
-                + DBMan.DBPrestamo.Cantidad + " = " + cantidad + ", " + DBMan.DBPrestamo.Cambio +
-                " = " + cambio + ", " + DBMan.DBPrestamo.IdMoneda + " = " + idMoneda + " WHERE _id == " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPrestamo.Cantidad, cantidad);
+        contentValues.put(DBMan.DBPrestamo.Cambio, cambio);
+        contentValues.put(DBMan.DBPrestamo.IdMoneda, idMoneda);
+        db.update(DBMan.DBPrestamo.TABLE_NAME, contentValues, "_id = ?", new String[]{"" + id});
+        updateLast();
     }
     public static Cursor getPrestamosPlus(boolean isCeros){
         String s = " ";
@@ -1089,7 +1221,7 @@ public class Principal {
                 "\tselect p._id, p.Fecha, AccountsTotales.Cuenta, AccountsMoneda.Moneda, Comment, AccountsPersonas.Nombre, p.Cambio, p.IdMovimiento, p.Cerrada,\n" +
                 "\t\t(p.Cantidad - coalesce(pd.Cantidad, 0)) as Cantidad from AccountsPrestamos as p\n" +
                 "\tleft join(\n" +
-                "\tselect _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from PrestamosDetalle group by IdPrestamo\n" +
+                "\tselect _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from " + DBMan.DBPrestamoDetalle.TABLE_NAME +" group by IdPrestamo\n" +
                 "\t) as pd on p._id = pd.IdPrestamo, AccountsPersonas, AccountsMoneda, AccountsTotales\n" +
                 "\tWhere AccountsPersonas._id = p.IdPersona and AccountsMoneda._id = p.IdMoneda and AccountsTotales._id = p.IdTotales \n" +
                 ") WHERE IdMovimiento = 0" + s + "order by Fecha desc", null);
@@ -1167,18 +1299,27 @@ public class Principal {
         contentValues.put(DBMan.DBPrestamoDetalle.IdPrestamo, idPrestamo);
         long a = db.insert(DBMan.DBPrestamoDetalle.TABLE_NAME,null,contentValues);
         if(a >= 0){
+            updateLast();
             return true;
         } else{
             return false;
         }
     }
     public static void updatePrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio, int _id){
-        db.execSQL("UPDATE " + DBMan.DBPrestamoDetalle.TABLE_NAME + " SET " + DBMan.DBPrestamoDetalle.Cantidad + " = ?, " +
-                DBMan.DBPrestamoDetalle.IdTotales + " = ?, " + DBMan.DBPrestamoDetalle.IdMoneda + " = ?, " + DBMan.DBPrestamoDetalle.IdPrestamo + " = ?, " +
-                DBMan.DBPrestamoDetalle.Cambio + " = ? WHERE _id = ?", new String[]{cantidad+"", idTotales+"", idMoneda+"", idPrestamo+"", cambio+"", _id+""});
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPrestamoDetalle.Cantidad, cantidad);
+        contentValues.put(DBMan.DBPrestamoDetalle.IdTotales, idTotales);
+        contentValues.put(DBMan.DBPrestamoDetalle.IdMoneda, idMoneda);
+        contentValues.put(DBMan.DBPrestamoDetalle.IdPrestamo, idPrestamo);
+        contentValues.put(DBMan.DBPrestamoDetalle.Cambio, cambio);
+        db.update(DBMan.DBPrestamoDetalle.TABLE_NAME, contentValues, "_id = ?", new String[]{_id+""});
+        updateLast();
     }
     public static void CerrarPrestamo(int id){
-        db.execSQL("UPDATE " + DBMan.DBPrestamo.TABLE_NAME + " SET " + DBMan.DBPrestamo.Cerrada + " = 1 WHERE _id = " + id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBPrestamo.Cerrada, 1);
+        db.update(DBMan.DBPrestamo.TABLE_NAME, contentValues, "_id = ?", new String[]{id+""});
+        updateLast();
     }
     public static double getSumPrestamoDetalle(int idPrestamo){
         Cursor c = db.rawQuery("select sum(Cantidad * Cambio) as Cantidad from AccountsPrestamosDetalle Where IdPrestamo = ? group by IdPrestamo", new String[]{idPrestamo+""});
@@ -1221,6 +1362,7 @@ public class Principal {
         Cursor c = getAllTables();
         while(c.moveToNext()){
             String name = c.getString(c.getColumnIndex("name"));
+            Log.d("Accoun ", "delete: " + name);
             db.delete(name, null, null);
         }
     }
@@ -1229,25 +1371,77 @@ public class Principal {
         ContentValues contentValues = new ContentValues();
         for(int i = 0; i < columns.length; i++){
             contentValues.put(columns[i], values[i]);
-        }
-
-        long a = db.insert(table, null,contentValues);
+        }long a = db.insert(table, null,contentValues);
         return a;
     }
-    /*//Android Config
-    public static void updateAuthCode(String s){
-        db.execSQL("UPDATE " + DBMan.DBAndroidConfig.TABLE_NAME + " SET " + DBMan.DBAndroidConfig.Value + " = " + "\"" + s + "\"" +
-                " WHERE _id = " + DBMan.DBAndroidConfig.authKeyValue);
+
+    public static void updateLast(){
+        Timestamp ts = new Timestamp((new Date()).getTime());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String s = simpleDateFormat.format(ts);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBConfig.Value, s);
+        Log.d("Accoun ", ts + " ---- " + s);
+        db.update(DBMan.DBConfig.TABLE_NAME, contentValues, "_id = ? or _id = ?", new String[]{DBMan.DBConfig.LastSync+"", DBMan.DBConfig.LastUpdated+""});
     }
 
-    public static String getAuthCode(){
-        Cursor c = db.rawQuery("SELECT " + DBMan.DBAndroidConfig.Value + " FROM " + DBMan.DBAndroidConfig.TABLE_NAME +
-                " WHERE _id == " + DBMan.DBAndroidConfig.authKeyValue, null);
-        c.moveToFirst();
-        String s = c.getString(c.getColumnIndex(DBMan.DBAndroidConfig.Value));
-        return s;
+    public static void setOnlyWifi(boolean x){
+        int b = 0;
+        if(x){
+            b = 1;
+        }
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBMan.DBConfig.Value, b);
+        db.update(DBMan.DBConfig.TABLE_NAME,contentValues, "_id = ?", new String[]{""+ DBMan.DBConfig.Wifi});
+        updateLast();
     }
-*/
+
+    public static boolean getOnlyWifi(){
+        Cursor c = db.query(DBMan.DBConfig.TABLE_NAME, new String[]{DBMan.DBConfig.Value}, "_id = ?", new String[]{DBMan.DBConfig.Wifi+""}, null, null, null);
+        c.moveToFirst();
+        if(c.getCount() == 0){
+            return false;
+        }
+        int x = c.getInt(c.getColumnIndex(DBMan.DBConfig.Value));
+        Log.d("Accoun", "Wifi " + x);
+        if(x == 1)
+            return true;
+        return false;
+    }
+    public static boolean isWifiAvailable(Context context) {
+        boolean haveConnectedWifi = false;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+        }
+        return haveConnectedWifi;
+    }
+
+    public static boolean haveNetworkConnection(Context context) {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    private static String encrypt(){
+        //Cipher cipher = Cipher.getInstance("AES");
+        return "";
+    }
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.

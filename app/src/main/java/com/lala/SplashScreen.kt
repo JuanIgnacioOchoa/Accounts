@@ -71,6 +71,7 @@ class SplashScreen : AppCompatActivity() {
 
         //Navigate with delay
         mDelayHandler!!.postDelayed(mRunnable, SPLASH_DELAY)
+        /*
 
         val PERMISSIONS = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
@@ -78,6 +79,7 @@ class SplashScreen : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, PERMISSIONS, 1)
         } else
             mDelayHandler!!.postDelayed(mRunnable, 1500)
+            */
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

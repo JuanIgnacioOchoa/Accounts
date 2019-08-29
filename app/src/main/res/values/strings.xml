@@ -77,7 +77,7 @@
 
     <string name="login">Log In</string>
     <string name="logout">Log Out</string>
-    
+
     <string name="jan">JAN</string>
     <string name="feb">FEB</string>
     <string name="mar">MAR</string>
@@ -92,6 +92,23 @@
     <string name="dec">DEC</string>
 
 
-
     <string name="server_client_id">852881704240-sac3gm0eka2cts8o9ipjrkmcon0qm5vd.apps.googleusercontent.com</string>
+
+    <string name="account_edit">Edit Account</string>
+
+    <string name="conexion_err">Network Error</string>
+    <string name="no_wifi">No wifi, use Mobile Data instead</string>
+    <string name="sync_err">Cant sync data, check network</string>
+    <string name="sync_success">Sync Success</string>
+    <string name="wel_back">Welcome Back </string>
+    <string name="not_logged">Not logged in</string>
+    <string name="signed_out">Signe out</string>
+    <string name="wifi_only">Only use WIFI</string>
+    <string name="big_change">Big change</string>
+    <string name="big_change_msg">The change in quantity represents a considerable modification, it is recommended to add as a move</string>
+    <string name="yes">Yes</string>
+    <string name="account_name">Account Title</string>
+    <string name="account_active">Active Account</string>
+    <string name="account_amount">Current Amount</string>
+    <string name="small_amount">Difference in amount is really small</string>
 </resources>

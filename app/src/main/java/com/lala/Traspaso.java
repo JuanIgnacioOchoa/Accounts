@@ -54,8 +54,8 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             cursorFromCuenta = Principal.getTotalCredit();
             cursorToCuenta = Principal.getTotalWallet();
         }else {
-            cursorFromCuenta = Principal.getTotales();
-            cursorToCuenta = Principal.getTotales();
+            cursorFromCuenta = Principal.getTotales(false);
+            cursorToCuenta = Principal.getTotales(false);
         }
 
         from = new String[]{DBMan.DBTotales.Cuenta};

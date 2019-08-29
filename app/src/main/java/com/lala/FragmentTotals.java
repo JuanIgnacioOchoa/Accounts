@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
@@ -12,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.Timer;
@@ -32,6 +35,8 @@ public class FragmentTotals extends Fragment {
     //private ArrayList<Event> events;
     private CursorAdapter cursorAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvPos, tvNeg, tvSum;
+    private CheckBox cbActivas;
     private static Fragment fragmentEventsUniqueInstance;
     private NumberFormat instance;
     private Cursor c;
@@ -58,7 +63,10 @@ public class FragmentTotals extends Fragment {
         //floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fragment_activity_event_floatingActionButton);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_activity_event_swipeRefreshLayout);
         listView = (ListView) view.findViewById(R.id.listView_Totals);
-
+        tvNeg = view.findViewById(R.id.tvNeg);
+        tvPos = view.findViewById(R.id.tvPos);
+        tvSum = view.findViewById(R.id.tvSum);
+        cbActivas = view.findViewById(R.id.cbActiva);
         return view;
     }
 
@@ -77,7 +85,7 @@ public class FragmentTotals extends Fragment {
         instance = NumberFormat.getInstance();
         instance.setMinimumFractionDigits(2);
         // adapter
-        c = Principal.getTotales();
+        c = Principal.getTotales(false);
         adapter = new myAdapter(this.getContext(),c);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -88,35 +96,37 @@ public class FragmentTotals extends Fragment {
                 startActivity(i);
             }
         });
-        /*
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        Cursor totalestotales = Principal.getTotalesTotales(1);
+        totalestotales.moveToFirst();
+        double neg = totalestotales.getDouble(totalestotales.getColumnIndex("Negativo"));
+        double pos = totalestotales.getDouble(totalestotales.getColumnIndex("Positivo"));
+        double sum = pos + neg;
+        tvNeg.setText(instance.format(neg));
+        tvPos.setText(instance.format(pos));
+        tvSum.setText(instance.format(sum));
+        tvNeg.setTextColor(Color.RED);
+        tvPos.setTextColor(Color.rgb(11, 79, 34));
+        if(sum > 0){
+            tvSum.setTextColor(Color.rgb(11, 79, 34));
+        } else {
+            tvSum.setTextColor(Color.RED);
+        }
+        cbActivas.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-                    }
-                }, 1000);
-
+            public void onClick(View v) {
+                updateAdapter();
             }
-        });*/
+        });
         swipeRefreshLayout.setEnabled(false);
         swipeRefreshLayout.setRefreshing(false);
     }
     public void onResume(){
         super.onResume();
-        c = Principal.getTotales();
+        c = Principal.getTotales(cbActivas.isChecked());
         adapter.changeCursor(c);
     }
     public void updateAdapter(){
-        c = Principal.getTotales();
+        c = Principal.getTotales(cbActivas.isChecked());
         adapter.changeCursor(c);
     }
 /*

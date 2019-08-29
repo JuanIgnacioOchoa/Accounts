@@ -42,11 +42,14 @@ class FragmentPrestamoPeople : Fragment() {
         listView.adapter = adapter
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val idPersona = cursorPrestamos.getInt(cursorPrestamos.getColumnIndex("_id"))
-            //val i = Intent(context, seePrestamoActivity::class.java)
-            //i.putExtra("_id", idPres)
-            //i.putExtra("_id", cursorPrestamos.getInt(cursorPrestamos.getColumnIndex("_id")))
-            //i.putExtra("title", cursorPrestamos.getString(cursorPrestamos.getColumnIndex(DBMan.DBPersona.Nombre)))
-            //startActivity(i)
+            //TODO Create activity personasPresatmos
+            /*
+            val i = Intent(context, seePrestamoActivity::class.java)
+            i.putExtra("_id", idPersona)
+            i.putExtra("_id", cursorPrestamos.getInt(cursorPrestamos.getColumnIndex("_id")))
+            i.putExtra("title", cursorPrestamos.getString(cursorPrestamos.getColumnIndex(DBMan.DBPersona.Nombre)))
+            startActivity(i)
+            */
         }
     }
     fun actualizar(boolean: Boolean){

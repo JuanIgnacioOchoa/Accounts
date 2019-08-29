@@ -40,7 +40,7 @@ class CreateTrip : AppCompatActivity() {
             val nombre = etNombre.text.toString()
             val descr = etDesc.text.toString()
             if(Principal.createTrip(nombre, fechaInic, fechaFin, moneda, descr)){
-                Activity().finish()
+                finish()
             }
         }
         tvFechaInic.setOnClickListener{

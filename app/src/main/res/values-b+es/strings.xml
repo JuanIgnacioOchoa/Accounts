@@ -90,4 +90,24 @@
     <string name="oct">OCT</string>
     <string name="nov">NOV</string>
     <string name="dec">DIC</string>
+
+    <string name="account_edit">Editar Cuenta</string>
+
+    <string name="server_client_id">852881704240-sac3gm0eka2cts8o9ipjrkmcon0qm5vd.apps.googleusercontent.com</string>
+
+    <string name="conexion_err">Error de conexion</string>
+    <string name="no_wifi">No existe conexion a wifi usar datos moviles</string>
+    <string name="sync_err">No se pudo syncronizar, revisar conexion a internet</string>
+    <string name="sync_success">Actualizacion exitosa</string>
+    <string name="wel_back">Bienvenido de Regreso </string>
+    <string name="not_logged">Sesion no iniciada</string>
+    <string name="signed_out">Sesion cerrada</string>
+    <string name="wifi_only">Actualizar con WIFI</string>
+    <string name="big_change">Cambio Significativo</string>
+    <string name="big_change_msg">El cambio en la cantidad representa una modificación considerable, se recomienda agregar como movimiento</string>
+    <string name="yes">Si</string>
+    <string name="account_name">Nombre Cuenta</string>
+    <string name="account_active">Cuenta Activa</string>
+    <string name="account_amount">Cantidad Actual</string>
+    <string name="small_amount">Diferencia en cantidad nueva muy pequeña</string>
 </resources>

@@ -67,6 +67,10 @@ public class DBMan {
         public static final String IdMovimiento = "IdMovimiento";
         public static final String Cerrada = "Cerrada";
     }
+    public static final class DBTiposCuentas{
+        public static final String TABLE_NAME = "AccountsTiposCuentas";
+        public static final String Tipo = "Tipo";
+    }
     public static class DBPrestamoDetalle{
         public static final String TABLE_NAME = "AccountsPrestamosDetalle";
         public static final String Cantidad = "Cantidad";
@@ -90,6 +94,7 @@ public class DBMan {
 
         public static final int LastUpdated = 1;
         public static final int LastSync = 2;
+        public static final int Wifi = 3;
     }
     /*
     public static class DBAndroidConfig{

@@ -46,7 +46,7 @@ class NewPrestamoActivity : AppCompatActivity() {
         spPersonas = findViewById(R.id.SPPersona)
         etPersona = findViewById(R.id.etPersona)
         val cursorMoneda = Principal.getMoneda()
-        val cursorTotales = Principal.getTotales()
+        val cursorTotales = Principal.getTotales(false)
         val cursorPersonas = Principal.getPersonas()
         var from = arrayOf("Moneda")
         val to = intArrayOf(android.R.id.text1)

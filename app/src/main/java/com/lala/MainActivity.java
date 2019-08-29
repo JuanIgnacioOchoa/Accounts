@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -38,6 +39,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 /*
 import com.google.android.gms.common.api.Batch;
@@ -124,16 +128,21 @@ public class MainActivity extends AppCompatActivity {
     private static Fragment fragmentTotals;
     private static Fragment fragmentMoves;
 
+    private ImageButton ibSync;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("Accoun Lifecycle", "onCreate");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         fragmentTotals = FragmentTotals.getInstance();
         fragmentMoves = FragmentMoves.getInstance();
 
+        ibSync = findViewById(R.id.ibSync);
         verifyStoragePermissions(this);
 
         // Create the adapter that will return a fragment for each of the three primary sections of the activity.
@@ -147,6 +156,46 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        ibSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int res = updateDrive(false);
+                switch (res){
+                    case 1:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle(getString(R.string.conexion_err));
+
+                        builder.setMessage(getString(R.string.no_wifi));
+                        // Set up the buttons
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int res2 = updateDrive(true);
+                                if(res2 == 2){
+                                    Toast.makeText(getApplicationContext(), getString(R.string.sync_err), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        builder.show();
+                        break;
+                    case 2:
+                        Toast.makeText(getApplicationContext(), getString(R.string.sync_err), Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
         AccountManager accountManager = AccountManager.get(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -182,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String s = String.valueOf(which);
-                                Toast.makeText(cont,s,Toast.LENGTH_LONG).show();
                                 switch (which){
                                     case 0:{
                                         Intent i = new Intent(cont,Gasto.class);
@@ -223,45 +271,60 @@ public class MainActivity extends AppCompatActivity {
 
         this.createAndInitAppDir();
         DataBase helper = new DataBase(this.getApplicationContext(), AppDir, version);
+        Log.d("Accoun", getCacheDir()+"");
+        //DataBase helper = new DataBase(this.getApplicationContext(), getCacheDir(), version);
+        helper.getWritableDatabase();
         db = helper.getWritableDatabase();
+
         helper.saveDB(db);
         principal = new Principal(db, this);
-
-        //ManagerMov managerMov = new ManagerMov(this);
-        //ManagerTotal managerTotal = new ManagerTotal(this);
-        //MyDate prueba = new MyDate("22-2-2015");
-
-        //upload("temp.db", AppDir, "application/x-sqlite3");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if(account != null && GoogleSignIn.hasPermissions(account, new Scope(Scopes.DRIVE_APPFOLDER))){
+            Toast.makeText(cont, getString(R.string.wel_back) + " " + account.getDisplayName(), Toast.LENGTH_LONG).show();
+            signedIn = true;
+        } else {
+            Toast.makeText(cont, getString(R.string.not_logged), Toast.LENGTH_LONG).show();
+            signedIn = false;
+        }
+        if(signedIn){
+            ibSync.setVisibility(View.VISIBLE);
+        } else {
+            ibSync.setVisibility(View.GONE);
+        }
+        updateDrive(false);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //upload("temp.db", AppDir, "application/x-sqlite3");
+        Log.d("Accoun Lifecycle", "onDestroy");
     }
 
     @Override
     protected void onStop(){
         super.onStop();
-
+        Log.d("Accoun Lifecycle", "onStop");
+        updateDrive(false);
     }
     @Override
     protected void onStart(){
         super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null && GoogleSignIn.hasPermissions(account, new Scope(Scopes.DRIVE_APPFOLDER))){
-            Toast.makeText(cont, "Welcome " + account.getDisplayName(), Toast.LENGTH_LONG).show();
-            signedIn = true;
-            if(account.getServerAuthCode() == null){
-                signIn();
-            } else {
-                DriveFilesTask task = new DriveFilesTask();
-                task.execute(account.getServerAuthCode());
-            }
-        } else {
-            Toast.makeText(cont, "Not signed in already", Toast.LENGTH_LONG).show();
-            signedIn = false;
-        }
+        Log.d("Accoun Lifecycle", "onStart");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d("Accoun Lifecycle", "onResume");
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.d("Accoun Lifecycle", "onPause");
+    }
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+        Log.d("Accoun Lifecycle", "onRestart");
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -285,6 +348,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent(this, Settings.class);
+            startActivity(i);
             return true;
         }
         else if(id == R.id.action_motivo){
@@ -305,7 +370,6 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(id == R.id.login){
             if(signedIn){
-                Toast.makeText(cont, "Log out", Toast.LENGTH_LONG).show();
                 signOut();
             } else {
                 signIn();
@@ -340,8 +404,6 @@ public class MainActivity extends AppCompatActivity {
 
             builder.show();
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -434,6 +496,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private int updateDrive(boolean usrApprove){
+        if((!usrApprove) && Principal.getOnlyWifi() && !Principal.isWifiAvailable(getApplicationContext())){
+            Log.d("Accoun", "Only Wifi and no wifi available");
+            return 1;
+        }
+        if(!Principal.haveNetworkConnection(getApplicationContext())){
+            Log.d("Accoun", "Can use Mobile data but there is no internet access");
+            return 2;
+        }
+        Log.d("Accoun", "Update drive true");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if(account != null && GoogleSignIn.hasPermissions(account, new Scope(Scopes.DRIVE_APPFOLDER))){
+            signedIn = true;
+            if(account.getServerAuthCode() == null){
+                signIn();
+            } else {
+                DriveFilesTask task = new DriveFilesTask();
+                task.execute(account.getServerAuthCode());
+            }
+        } else {
+            signedIn = false;
+        }
+        if(signedIn){
+            ibSync.setVisibility(View.VISIBLE);
+        } else {
+            ibSync.setVisibility(View.GONE);
+        }
+        return 0;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -446,17 +537,20 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask){
         try {
             GoogleSignInAccount account =  completedTask.getResult(ApiException.class);
-            Toast.makeText(cont, "Welcome Back " + account.getDisplayName(), Toast.LENGTH_LONG).show();
             signedIn = true;
             menu.findItem(R.id.login).setTitle(R.string.logout);
             DriveFilesTask task = new DriveFilesTask();
             task.execute(account.getServerAuthCode());
         } catch (ApiException e){
-            Toast.makeText(cont, "Error on Log in", Toast.LENGTH_LONG).show();
             e.printStackTrace();
             Log.d("Accoun","Api " + e.getStackTrace());
             signedIn = false;
             menu.findItem(R.id.login).setTitle(R.string.login);
+        }
+        if(signedIn){
+            ibSync.setVisibility(View.VISIBLE);
+        } else {
+            ibSync.setVisibility(View.GONE);
         }
     }
     private void signIn(){
@@ -468,11 +562,16 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task){
-                      Toast.makeText(cont, "Signed out", Toast.LENGTH_SHORT).show();
+                      Toast.makeText(cont, getString(R.string.signed_out), Toast.LENGTH_SHORT).show();
                         signedIn = false;
                         menu.findItem(R.id.login).setTitle(R.string.login);
                     }
                 });
+        if(signedIn){
+            ibSync.setVisibility(View.VISIBLE);
+        } else {
+            ibSync.setVisibility(View.GONE);
+        }
     }
 
     private class DriveFilesTask extends AsyncTask<String, Void, Integer> {
@@ -500,8 +599,8 @@ public class MainActivity extends AppCompatActivity {
             try{
                 new DriveMan(service);
                 //DriveMan.deleteAllAndCreate();
-                String configId = DriveMan.getFileByName(DBMan.DBConfig.TABLE_NAME+".json");
-
+                String configId = DriveMan.getFileByName(DBMan.DBConfig.TABLE_NAME);
+                Log.d("Account ", " Config Id " + configId);
                 if(configId == null || configId == ""){
                     //TODO Create all files
                     Log.d("Account ", "5 Create all files");
@@ -531,6 +630,8 @@ public class MainActivity extends AppCompatActivity {
                                 DriveMan.downloadFiles();
                             } else if (timestampLocal.after(timestampDrive)) {
                                 DriveMan.deleteAllAndCreate();
+                            } else {
+                                return 1;
                             }
                         }
                         //Principal.deleteTables();
@@ -564,14 +665,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onProgressUpdate() {
+
         }
 
         protected void onPostExecute(Integer result) {
             if(result == 0){
                 MainActivity.updateFragments();
-                Toast.makeText(cont, "Google Drive connection was a succeess", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(cont, "Google Drive connection Error " + result, Toast.LENGTH_SHORT).show();
+                Toast.makeText(cont, getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
+            } else if(result == 1) {
+                Log.d("Accoun", "No changes to commit");
+            }else {
+                //Toast.makeText(cont, "Google Drive connection Error " + result, Toast.LENGTH_SHORT).show();
+                signIn();
             }
         }
 

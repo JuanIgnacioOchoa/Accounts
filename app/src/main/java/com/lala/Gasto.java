@@ -141,7 +141,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         if(gasto){
             cursorCuenta = Principal.getTotalesWithPrestamo();
         } else {
-            cursorCuenta = Principal.getTotales();
+            cursorCuenta = Principal.getTotales(false);
         }
         from = new String[]{DBMan.DBTotales.Cuenta};
         simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorCuenta,from,to,0);
@@ -156,6 +156,20 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         spMotivo.setOnItemSelectedListener(this);
         spMoneda.setOnItemSelectedListener(this);
         etOtro.setVisibility(View.GONE);
+
+        idCuenta = i.getIntExtra("Totales", -1);
+        if(idCuenta > 0){
+            cant = i.getDoubleExtra("Cantidad", 0.0);
+            etCantidad.setText(cant+"");
+            for(int j = 0; j < cursorCuenta.getCount(); j++){
+                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idCuenta){
+                    spCuenta.setSelection(j);
+                    j = cursorCuenta.getCount()+1;
+                }
+            }
+        }
 
     }
 

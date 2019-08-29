@@ -213,7 +213,7 @@ public class DriveMan {
             fileWriter.write(s);
             fileWriter.flush();
             File fileMetadata = new File();
-            fileMetadata.setName(name+".json");
+            fileMetadata.setName(name);
             fileMetadata.setParents(Collections.singletonList("appDataFolder"));
             FileContent mediaContent = new FileContent("application/json", tmpFile);
             File file = drive.files().create(fileMetadata, mediaContent)
@@ -236,7 +236,7 @@ public class DriveMan {
         FileList files = retrieveAllFiles();
         for(File file : files.getFiles()){
             JSONArray data = getDataFileByID(file.getId());
-
+            Log.d("Accoun", "Download files: " + file.getName());
             for (int i=0; i < data.length(); i++) {
                 JSONObject d = data.getJSONObject(i);
                 String keys[] = new String[d.length()];
@@ -245,10 +245,15 @@ public class DriveMan {
                 for (Iterator<String> it = d.keys(); it.hasNext(); ) {
                     String k = it.next();
                     keys[x] = k;
-                    values[x] = d.getString(k);
+                    String v = d.getString(k);
+                    if(v == null || v == "null"){
+                        values[x] = null;
+                    } else {
+                        values[x] = v;
+                    }
                     x++;
                 }
-                Principal.insertIntoTable(file.getName().substring(0, file.getName().length() -5), keys, values);
+                Principal.insertIntoTable(file.getName(), keys, values);
             }
         }
     }

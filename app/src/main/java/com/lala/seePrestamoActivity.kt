@@ -94,7 +94,7 @@ class seePrestamoActivity : AppCompatActivity() {
         listView.adapter = adapterList
 
         cursorMoneda = Principal.getMoneda()
-        cursorCuenta = Principal.getTotales()
+        cursorCuenta = Principal.getTotales(false)
         cursorPersona = Principal.getPersonas()
         adapterMoneda = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
         adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
@@ -131,7 +131,7 @@ class seePrestamoActivity : AppCompatActivity() {
             builder.setTitle("Agregar Pago")
             val tvMoneda = TextView(applicationContext)
             val spCuenta = Spinner(applicationContext)
-            val cursorCuenta = Principal.getTotales()
+            val cursorCuenta = Principal.getTotales(false)
             val adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
             spCuenta.adapter = adapterCuenta
             val etCantidad = EditText(applicationContext)
@@ -414,7 +414,7 @@ class seePrestamoActivity : AppCompatActivity() {
             builder.setTitle(getString(R.string.add_payment))
             val tvMoneda = TextView(applicationContext)
             val spCuenta = Spinner(applicationContext)
-            val cursorCuenta = Principal.getTotales()
+            val cursorCuenta = Principal.getTotales(false)
             val adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
             spCuenta.adapter = adapterCuenta
             val etCantidad = EditText(applicationContext)

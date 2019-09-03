@@ -5,7 +5,6 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.api.client.http.FileContent;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
@@ -228,7 +227,6 @@ public class DriveMan {
     public static void deleteAllAndCreate() throws IOException, JSONException{
         deleteAll();
         createAll();
-        retrieveAllFiles();
     }
 
     public static void downloadFiles() throws IOException, JSONException{

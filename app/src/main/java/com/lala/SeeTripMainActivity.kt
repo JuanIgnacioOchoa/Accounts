@@ -8,14 +8,11 @@ import android.content.Intent
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.CursorAdapter
-import android.support.v7.app.AppCompatActivity;
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 
 import kotlinx.android.synthetic.main.activity_see_trip_main.*
@@ -46,6 +43,13 @@ class SeeTripMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_see_trip_main)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+            //handleOnBackPress();
+        }
+
         _id = intent.getIntExtra("_id", 0)
         cursorTrip = Principal.getTrip(_id)
         val nombre = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre))
@@ -141,7 +145,8 @@ class SeeTripMainActivity : AppCompatActivity() {
             val dialog: AlertDialog = builder.create()
 
             // Display the alert dialog on app interface
-            dialog.show()
+            val alertDialog = builder.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
         editFab.setOnClickListener{
             if(!editable) {
@@ -195,6 +200,7 @@ class SeeTripMainActivity : AppCompatActivity() {
                 }
             })
             alertDialog.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
         tvFechaFin.setOnClickListener(View.OnClickListener {
             if(!editable){
@@ -224,6 +230,7 @@ class SeeTripMainActivity : AppCompatActivity() {
                 }
             })
             alertDialog.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         })
 
     }

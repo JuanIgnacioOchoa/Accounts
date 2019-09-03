@@ -2,34 +2,39 @@ package com.lala;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -40,18 +45,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
-/*
-import com.google.android.gms.common.api.Batch;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.MetadataChangeSet;
-*/
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -59,45 +54,33 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.signin.SignIn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.drive.model.FileList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -128,13 +111,36 @@ public class MainActivity extends AppCompatActivity {
     private static Fragment fragmentTotals;
     private static Fragment fragmentMoves;
 
+    private AdView mAdView;
+    private InterstitialAd mInterstitialAd;
     private ImageButton ibSync;
+    private boolean driveRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Accoun Lifecycle", "onCreate");
         setContentView(R.layout.activity_main);
+
+
+        MobileAds.initialize(this);
+        mAdView = findViewById(R.id.adView);
+
+
+        mInterstitialAd = new InterstitialAd(this);
+        //PROD ca-app-pub-5443791090032110/3043271632
+        //TEST ca-app-pub-3940256099942544/1033173712
+        mInterstitialAd.setAdUnitId("ca-app-pub-5443791090032110/3043271632");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                //Load the next interstitial.
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -174,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                                 if(res2 == 2){
                                     Toast.makeText(getApplicationContext(), getString(R.string.sync_err), Toast.LENGTH_SHORT).show();
                                 } else {
+                                    //mInterstitialAd.show();
                                     Toast.makeText(getApplicationContext(), getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -184,13 +191,14 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.cancel();
                             }
                         });
-
-                        builder.show();
+                        AlertDialog alertDialog = builder.show();
+                        alertDialog.setCanceledOnTouchOutside(false);
                         break;
                     case 2:
                         Toast.makeText(getApplicationContext(), getString(R.string.sync_err), Toast.LENGTH_SHORT).show();
                         break;
                     default:
+                        mInterstitialAd.show();
                         Toast.makeText(getApplicationContext(), getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -261,7 +269,8 @@ public class MainActivity extends AppCompatActivity {
                                 // the user clicked on colors[which]
                             }
                         });
-                        builder.show();
+                        AlertDialog alertDialog = builder.show();
+                        alertDialog.setCanceledOnTouchOutside(false);
                     }
                 }
 
@@ -269,10 +278,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        this.createAndInitAppDir();
-        DataBase helper = new DataBase(this.getApplicationContext(), AppDir, version);
-        Log.d("Accoun", getCacheDir()+"");
-        //DataBase helper = new DataBase(this.getApplicationContext(), getCacheDir(), version);
+        //this.createAndInitAppDir();
+        //DataBase helper = new DataBase(this.getApplicationContext(), AppDir, version);
+        //Log.d("Accoun", getCacheDir()+"");
+        DataBase helper = new DataBase(this.getApplicationContext(), getCacheDir(), version);
         helper.getWritableDatabase();
         db = helper.getWritableDatabase();
 
@@ -314,6 +323,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         Log.d("Accoun Lifecycle", "onResume");
     }
     @Override
@@ -401,8 +412,8 @@ public class MainActivity extends AppCompatActivity {
                     dialog.cancel();
                 }
             });
-
-            builder.show();
+            AlertDialog alertDialog = builder.show();
+            alertDialog.setCanceledOnTouchOutside(false);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -513,7 +524,10 @@ public class MainActivity extends AppCompatActivity {
                 signIn();
             } else {
                 DriveFilesTask task = new DriveFilesTask();
-                task.execute(account.getServerAuthCode());
+                ((FragmentMoves) fragmentMoves).loading();
+                ((FragmentTotals) fragmentTotals).loading();
+                if(!driveRunning)
+                    task.execute(account.getServerAuthCode());
             }
         } else {
             signedIn = false;
@@ -529,6 +543,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_SIGN_IN){
+            ((FragmentMoves) fragmentMoves).loading();
+            ((FragmentTotals) fragmentTotals).loading();
+            Log.d("Accoun", "-1");
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
             Log.d("Accoun", "1");
@@ -540,10 +557,13 @@ public class MainActivity extends AppCompatActivity {
             signedIn = true;
             menu.findItem(R.id.login).setTitle(R.string.logout);
             DriveFilesTask task = new DriveFilesTask();
-            task.execute(account.getServerAuthCode());
+            ((FragmentMoves) fragmentMoves).loading();
+            ((FragmentTotals) fragmentTotals).loading();
+            if(!driveRunning)
+                task.execute(account.getServerAuthCode());
         } catch (ApiException e){
             e.printStackTrace();
-            Log.d("Accoun","Api " + e.getStackTrace());
+            Log.d("Accoun","Api error" + e.getStackTrace());
             signedIn = false;
             menu.findItem(R.id.login).setTitle(R.string.login);
         }
@@ -577,9 +597,11 @@ public class MainActivity extends AppCompatActivity {
     private class DriveFilesTask extends AsyncTask<String, Void, Integer> {
         DriveFilesTask(){
             super();
+
         }
         @Override
         protected Integer doInBackground(String ... pParams) {
+            driveRunning = true;
             Log.d("Accoun", "Do in BackGround " + pParams[0] + " " + pParams[0]);
             String s = DriveMan.getAccessToken(pParams[0], getString(R.string.server_client_id));
             if(s == "" || s == null){
@@ -593,9 +615,6 @@ public class MainActivity extends AppCompatActivity {
             Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, googleCredential)
                     .setApplicationName(APPLICATION_NAME)
                     .build();
-
-
-            DriveFilesTask task = new DriveFilesTask();
             try{
                 new DriveMan(service);
                 //DriveMan.deleteAllAndCreate();
@@ -669,8 +688,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(Integer result) {
+            driveRunning = false;
+            MainActivity.updateFragments();
             if(result == 0){
-                MainActivity.updateFragments();
                 Toast.makeText(cont, getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
             } else if(result == 1) {
                 Log.d("Accoun", "No changes to commit");

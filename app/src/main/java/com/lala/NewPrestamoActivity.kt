@@ -1,18 +1,13 @@
 package com.lala
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputType
 import android.view.View
 import android.widget.*
 
 import kotlinx.android.synthetic.main.activity_new_prestamo.*
-import java.lang.Exception
 import android.view.View.OnFocusChangeListener
 import java.text.NumberFormat
 
@@ -33,6 +28,12 @@ class NewPrestamoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_prestamo)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+            //handleOnBackPress();
+        }
         prestado = intent.getBooleanExtra("Prestado", false)
         when (prestado){
             true -> title = getString(R.string.loans_by)
@@ -104,7 +105,8 @@ class NewPrestamoActivity : AppCompatActivity() {
                     // Finally, make the alert dialog using builder
                     val dialog: AlertDialog = builder.create()
                     // Display the alert dialog on app interface
-                    dialog.show()
+                    val alertDialog = builder.show()
+                    alertDialog.setCanceledOnTouchOutside(false)
                 } else {
                     Principal.createPrestamo(cant, cuenta, moneda, persona, descr, 1.0, 0)
                     Principal.newMoveCuenta(cant * -1, cuenta)
@@ -145,6 +147,16 @@ class NewPrestamoActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+        if(cursorAdapterCuenta.count == 0 || cursorAdapterMoneda.count == 0 || cursorAdapterPersona.count == 0){
+            val builder = AlertDialog.Builder(this@NewPrestamoActivity)
+            builder.setTitle(getString(R.string.alert_info_data))
+            builder.setMessage(getString(R.string.alert_info_data_msg_pre))
+
+// Set up the buttons
+            builder.setPositiveButton("OK") { dialog, which -> finish() }
+            val alertDialog = builder.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
     }
 

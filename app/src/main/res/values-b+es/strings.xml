@@ -13,6 +13,8 @@
     <string name="trip_desc">Descripcion del Viaje</string>
     <string name="account_">Cuenta:</string>
     <string name="account">Cuenta</string>
+    <string name="accounts_">Cuentas:</string>
+    <string name="moves_">Movimientos:</string>
     <string name="motive_">Motivo:</string>
     <string name="motive_hint">Motivo</string>
     <string name="comment_or_desc_hint">Comentario o descripcion</string>
@@ -93,7 +95,7 @@
 
     <string name="account_edit">Editar Cuenta</string>
 
-    <string name="server_client_id">852881704240-sac3gm0eka2cts8o9ipjrkmcon0qm5vd.apps.googleusercontent.com</string>
+    <string name="server_client_id">852881704240-s2bfpjonbu6s7p4iitdlj9ajese4uj26.apps.googleusercontent.com</string>
 
     <string name="conexion_err">Error de conexion</string>
     <string name="no_wifi">No existe conexion a wifi usar datos moviles</string>
@@ -110,4 +112,13 @@
     <string name="account_active">Cuenta Activa</string>
     <string name="account_amount">Cantidad Actual</string>
     <string name="small_amount">Diferencia en cantidad nueva muy pequeña</string>
+
+    <string name="hint_no_moves">No existen movimientos dar click al boton +, para agregar uno</string>
+    <string name="hint_no_accounts">No existen cuentas activas, dar click al boton + para agregar una</string>
+    <string name="alert_info_data">Faltan datos.</string>
+    <string name="alert_info_data_msg">Se necesita agregar una cuenta, motivo y moneda antes de registrar un movimiento.</string>
+    <string name="alert_info_data_msg_acc">Se necesita agregar una moneda antes de registrar una cuenta.</string>
+    <string name="alert_info_data_msg_tri">Se necesita agregar una moneda antes de registrar un viaje.</string>
+    <string name="alert_info_data_msg_pre">Se necesita agregar una cuenta, deudores/prestadores(personas) y moneda antes de registrar un movimiento.</string>
+    <string name="alert_info_data_msg_tras">Se necesita agregar una cuentas antes de registrar un movimiento.</string>
 </resources>

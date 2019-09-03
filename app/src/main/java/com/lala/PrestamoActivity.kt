@@ -3,13 +3,13 @@ package com.lala
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ImageSpan
@@ -17,7 +17,6 @@ import android.view.*
 import android.widget.CheckBox
 import android.widget.SimpleCursorAdapter
 import android.widget.Spinner
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_prestamo.*
 
 class PrestamoActivity : AppCompatActivity() {
@@ -33,6 +32,12 @@ class PrestamoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prestamo)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+            //handleOnBackPress();
+        }
         title = (getString(R.string.title_activity_prestamo))
         fragmentPrestamosPlus = FragmentPrestamosPlus.newInstance()
         fragmentPrestamosPeople = FragmentPrestamoPeople.newInstance()
@@ -74,7 +79,8 @@ class PrestamoActivity : AppCompatActivity() {
             // Finally, make the alert dialog using builder
             val dialog: AlertDialog = builder.create()
             // Display the alert dialog on app interface
-            dialog.show()
+            val alertDialog = builder.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
         cbCeros.setOnCheckedChangeListener { buttonView, isChecked ->
             fragmentPrestamosPlus.actualizar(!cbCeros.isChecked)

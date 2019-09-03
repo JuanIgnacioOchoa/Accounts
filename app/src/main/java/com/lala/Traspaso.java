@@ -9,10 +9,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -107,8 +107,8 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                                 dialog.cancel();
                             }
                         });
-
-                        builder.show();
+                        AlertDialog alertDialog = builder.show();
+                        alertDialog.setCanceledOnTouchOutside(false);
                     }else {
                         guardar();
                         finish();
@@ -131,6 +131,21 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             }
         });
 
+        if(cursorFromCuenta.getCount() == 0){
+            AlertDialog.Builder builder = new AlertDialog.Builder(Traspaso.this);
+            builder.setTitle(getString(R.string.alert_info_data));
+            builder.setMessage(getString(R.string.alert_info_data_msg_tras));
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            AlertDialog alertDialog = builder.show();
+            alertDialog.setCanceledOnTouchOutside(false);
+        }
     }
 
     @Override

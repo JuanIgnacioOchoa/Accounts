@@ -133,7 +133,7 @@
         android:layout_alignStart="@+id/textView2"
         android:layout_marginTop="199dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/see_trasp_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

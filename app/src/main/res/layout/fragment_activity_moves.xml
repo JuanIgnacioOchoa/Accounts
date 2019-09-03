@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/fragment_activity_moves_swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -13,6 +13,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="top|left">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/moves_"
+                android:layout_alignParentTop="true"
+                android:id="@+id/tvTitleM"
+                android:textColor="#000000"
+                android:textSize="20dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:text="Ingreso"
                 android:id="@+id/frag_moves_tvIngreso"
-                android:layout_marginTop="25dp"
-                android:layout_alignParentTop="true"
+                android:layout_marginTop="15dp"
+                android:layout_below="@id/tvTitleM"
                 android:layout_centerHorizontal="true" />
 
             <Spinner
@@ -38,6 +47,18 @@
                 android:layout_alignBottom="@+id/frag_moves_tvIngreso"
                 android:layout_alignParentEnd="true" />
 
+            <TextView
+                android:id="@+id/tvHintMove"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/hint_no_moves"
+                android:maxLines="5"
+                android:lines="2"
+                android:paddingTop="30dp"
+                android:visibility="gone"
+                android:layout_below="@id/frag_moves_spMoneda"
+                android:layout_gravity="center" />
+
             <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -46,7 +67,7 @@
                 android:layout_below="@id/frag_moves_spMoneda"
                 android:layout_marginTop="20dp"/>
         </RelativeLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 

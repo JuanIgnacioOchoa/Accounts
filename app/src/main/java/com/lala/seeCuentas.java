@@ -6,12 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +43,15 @@ public class seeCuentas extends AppCompatActivity {
         setContentView(R.layout.activity_see_cuentas);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                //handleOnBackPress();
+            }
+        });
         Intent i = getIntent();
         id = i.getIntExtra("_id", 1);
         year = i.getStringExtra("year");
@@ -194,7 +202,8 @@ public class seeCuentas extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             });
-                            builder2.show();
+                            AlertDialog alertDialog = builder2.show();
+                            alertDialog.setCanceledOnTouchOutside(false);
                         }
                         //finish();
                     }
@@ -220,7 +229,8 @@ public class seeCuentas extends AppCompatActivity {
                 relativeLayout.addView(layout);
                 //relativeLayout.addView(cbActivar);
                 builder.setView(relativeLayout);
-                builder.show();
+                AlertDialog alertDialog = builder.show();
+                alertDialog.setCanceledOnTouchOutside(false);
             }
         });
 

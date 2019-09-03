@@ -4,14 +4,12 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
 import android.database.Cursor
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.widget.CursorAdapter
-import android.support.v7.app.AppCompatActivity
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.appcompat.app.AppCompatActivity
 import android.text.InputType
 import android.view.*
 import android.widget.*
@@ -61,6 +59,13 @@ class seePrestamoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_see_prestamo)
         setSupportActionBar(toolbar)
 
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener(View.OnClickListener {
+            finish()
+            //handleOnBackPress();
+        })
+        
         id = intent.getIntExtra("_id", 0)
         cursorPrestamo = Principal.getCursorPrestamo(id)
         cursorDetalle = Principal.getPrestamoDetalle(id)
@@ -224,7 +229,8 @@ class seePrestamoActivity : AppCompatActivity() {
             // Finally, make the alert dialog using builder
             val dialog: AlertDialog = builder.create()
             // Display the alert dialog on app interface
-            dialog.show()
+            val alertDialog = builder.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
 
         fab.setOnClickListener {
@@ -396,6 +402,7 @@ class seePrestamoActivity : AppCompatActivity() {
                 fecha = "$year-$m-$d"
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
             alertDialog.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -502,7 +509,8 @@ class seePrestamoActivity : AppCompatActivity() {
             // Finally, make the alert dialog using builder
             val dialog: AlertDialog = builder.create()
             // Display the alert dialog on app interface
-            dialog.show()
+            val alertDialog = builder.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
         return super.onOptionsItemSelected(item)
     }

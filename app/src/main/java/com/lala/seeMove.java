@@ -9,9 +9,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,6 +50,15 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         setContentView(R.layout.activity_see_move);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                //handleOnBackPress();
+            }
+        });
         Intent i = getIntent();
         id = i.getIntExtra("id",0);
         c = Principal.getData(id);
@@ -133,7 +142,9 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                         nDate = year + "-" + m + "-" + d;
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                //AlertDialog alertDialog2 = alertDialog.show();
                 alertDialog.show();
+                alertDialog.setCanceledOnTouchOutside(false);
             }
         });
 
@@ -401,8 +412,8 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
                     dialog.cancel();
                 }
             });
-
-            builder.show();
+            AlertDialog alertDialog = builder.show();
+            alertDialog.setCanceledOnTouchOutside(false);
         }
         return super.onOptionsItemSelected(item);
     }

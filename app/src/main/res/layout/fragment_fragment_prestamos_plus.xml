@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".FragmentPrestamosPlus">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/fragment_activity_moves_swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,6 +15,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/LV_Prestamo"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

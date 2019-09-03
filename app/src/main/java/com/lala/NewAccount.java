@@ -1,9 +1,15 @@
 package com.lala;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -23,6 +29,16 @@ public class NewAccount extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                //handleOnBackPress();
+            }
+        });
 
         etCuenta = (EditText) findViewById(R.id.new_account_cuenta);
         etCantidad = (EditText) findViewById(R.id.new_account_cantidad);
@@ -45,6 +61,7 @@ public class NewAccount extends AppCompatActivity {
                         String cuenta = etCuenta.getText().toString();
                         int moneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"));
                         Principal.insertTotales(cuenta,cantidad,moneda);
+                        Principal.hideKeyboard(NewAccount.this);
                         finish();
                     } catch (Exception e){
                         Toast.makeText(getApplicationContext(),getString(R.string.err_data_save),Toast.LENGTH_LONG).show();
@@ -59,5 +76,20 @@ public class NewAccount extends AppCompatActivity {
                 finish();
             }
         });
+        if(cursorAdapterMoneda.getCount() == 0){
+            AlertDialog.Builder builder = new AlertDialog.Builder(NewAccount.this);
+            builder.setTitle(getString(R.string.alert_info_data));
+            builder.setMessage(getString(R.string.alert_info_data_msg_acc));
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            AlertDialog alertDialog = builder.show();
+            alertDialog.setCanceledOnTouchOutside(false);
+        }
     }
 }

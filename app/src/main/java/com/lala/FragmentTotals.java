@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.fragment.app.Fragment;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +16,8 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.NumberFormat;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Carlos Alexis on 21/11/2015.
@@ -40,7 +37,7 @@ public class FragmentTotals extends Fragment {
     private static Fragment fragmentEventsUniqueInstance;
     private NumberFormat instance;
     private Cursor c;
-
+    private TextView tvHint;
 
     @SuppressLint("ValidFragment")
     private FragmentTotals(){
@@ -67,6 +64,7 @@ public class FragmentTotals extends Fragment {
         tvPos = view.findViewById(R.id.tvPos);
         tvSum = view.findViewById(R.id.tvSum);
         cbActivas = view.findViewById(R.id.cbActiva);
+        tvHint = (TextView) view.findViewById(R.id.tvHintAcc);
         return view;
     }
 
@@ -119,15 +117,27 @@ public class FragmentTotals extends Fragment {
         });
         swipeRefreshLayout.setEnabled(false);
         swipeRefreshLayout.setRefreshing(false);
+
     }
     public void onResume(){
         super.onResume();
-        c = Principal.getTotales(cbActivas.isChecked());
-        adapter.changeCursor(c);
+        updateAdapter();
+
     }
     public void updateAdapter(){
+        if(!isAdded()) return;
         c = Principal.getTotales(cbActivas.isChecked());
         adapter.changeCursor(c);
+        if(c.getCount()<=0){
+            tvHint.setVisibility(View.VISIBLE);
+            tvHint.setText(getString(R.string.hint_no_accounts));
+        } else {
+            tvHint.setVisibility(View.GONE);
+        }
+    }
+    public void loading(){
+        tvHint.setVisibility(View.VISIBLE);
+        tvHint.setText("Loading...");
     }
 /*
     @Override

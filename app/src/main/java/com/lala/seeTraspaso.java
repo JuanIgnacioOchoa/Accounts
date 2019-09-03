@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +48,16 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         setContentView(R.layout.activity_see_traspaso);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                //handleOnBackPress();
+            }
+        });
+
         Intent i = getIntent();
         id = i.getIntExtra("_id",0);
         c = Principal.getData(id);
@@ -99,6 +109,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 alertDialog.show();
+                alertDialog.setCanceledOnTouchOutside(false);
             }
         });
         instance = NumberFormat.getInstance();

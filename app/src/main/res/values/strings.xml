@@ -13,6 +13,8 @@
     <string name="end_date">Fecha Fin</string>
     <string name="trip_desc">Trip Description</string>
     <string name="account_">Account:</string>
+    <string name="accounts_">Accounts:</string>
+    <string name="moves_">Moves:</string>
     <string name="account">Account</string>
     <string name="motive_">Motive:</string>
     <string name="motive_hint">Motive</string>
@@ -111,4 +113,13 @@
     <string name="account_active">Active Account</string>
     <string name="account_amount">Current Amount</string>
     <string name="small_amount">Difference in amount is really small</string>
+
+    <string name="hint_no_moves">There are no records registered to add one Click on the + button</string>
+    <string name="hint_no_accounts">There are no ctive accounts to add one click on the + button</string>
+    <string name="alert_info_data">Information is missing.</string>
+    <string name="alert_info_data_msg">You need to add account currency and motives before starting to add records.</string>
+    <string name="alert_info_data_msg_acc">You need to add a currency before adding an account</string>
+    <string name="alert_info_data_msg_tri">You need to add a currency before adding a trip</string>
+    <string name="alert_info_data_msg_pre">You need to add account currency and loaners/debtors before starting to add records.</string>
+    <string name="alert_info_data_msg_tras">You need to add accounts before starting to add records.</string>
 </resources>

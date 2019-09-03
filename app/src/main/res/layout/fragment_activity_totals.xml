@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/fragment_activity_event_swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -13,10 +13,20 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/accounts_"
+                android:layout_alignParentTop="true"
+                android:id="@+id/tvTitleA"
+                android:textColor="#000000"
+                android:textSize="20dp"/>
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/relative1">
+                android:id="@+id/relative1"
+                android:layout_below="@id/tvTitleA">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -62,10 +72,22 @@
                 android:layout_below="@id/relative1"
                 android:layout_gravity="center" />
 
+            <TextView
+                android:id="@+id/tvHintAcc"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/hint_no_accounts"
+                android:maxLines="5"
+                android:lines="2"
+                android:paddingTop="30dp"
+                android:visibility="gone"
+                android:layout_below="@id/relative1"
+                android:layout_gravity="center" />
+
 
         </RelativeLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 

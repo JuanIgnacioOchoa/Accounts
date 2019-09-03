@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.cursoradapter.widget.CursorAdapter;
 
 import java.text.NumberFormat;
 
@@ -27,6 +29,16 @@ public class SeeByMotive extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_by_motive);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                //handleOnBackPress();
+            }
+        });
         Intent i = this.getIntent();
         int id = i.getIntExtra("_id", 0);
         String month = i.getStringExtra("month");
@@ -52,7 +64,7 @@ public class SeeByMotive extends AppCompatActivity {
         });
     }
 
-    public class myAdapter extends android.support.v4.widget.CursorAdapter {
+    public class myAdapter extends CursorAdapter {
 
         public myAdapter(Context context, Cursor cursor) {
             super(context, cursor, 0);

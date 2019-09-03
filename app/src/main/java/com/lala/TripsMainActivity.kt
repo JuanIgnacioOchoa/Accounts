@@ -3,18 +3,15 @@ package com.lala
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
-import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.CursorAdapter
-import android.support.v7.app.AppCompatActivity;
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_trips_main.*
 import java.text.NumberFormat
@@ -30,6 +27,12 @@ class TripsMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trips_main)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+            //handleOnBackPress();
+        }
         setTitle(getString(R.string.title_activity_trips_main))
         fab.setOnClickListener { view ->
             val intent = Intent(this, CreateTrip::class.java)

@@ -4,24 +4,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class FragmentReportesMotives extends Fragment implements AdapterView.OnItemClickListener {
     private NumberFormat instance;
@@ -102,7 +96,7 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
         }
         adapter.changeCursor(c);
     }
-    public class myAdapter extends android.support.v4.widget.CursorAdapter {
+    public class myAdapter extends CursorAdapter {
 
         public myAdapter(Context context, Cursor cursor) {
             super(context, cursor, 0);

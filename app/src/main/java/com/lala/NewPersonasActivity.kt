@@ -2,13 +2,14 @@ package com.lala
 
 import android.content.Context
 import android.database.Cursor
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.widget.CursorAdapter
+import androidx.cursoradapter.widget.CursorAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.android.synthetic.main.activity_trips_main.*
 
 class NewPersonasActivity : AppCompatActivity() {
     private lateinit var bAgregar: Button
@@ -20,6 +21,13 @@ class NewPersonasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_personas)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener(View.OnClickListener {
+            finish()
+            //handleOnBackPress();
+        })
         context = applicationContext
         c = Principal.getPeopleAll()
         bAgregar = findViewById(R.id.new_motivo_bAgregar)

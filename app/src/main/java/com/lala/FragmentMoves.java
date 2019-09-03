@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.fragment.app.Fragment;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +17,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.NumberFormat;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Carlos Alexis on 21/11/2015.
@@ -40,6 +37,7 @@ public class FragmentMoves extends Fragment{
     private SimpleCursorAdapter simpleCursorAdapter;
     private TextView tvGasto, tvIngreso;
     private Spinner spMoneda;
+    private TextView tvHint;
 
     @SuppressLint("ValidFragment")
     private FragmentMoves(){
@@ -64,22 +62,33 @@ public class FragmentMoves extends Fragment{
         tvGasto = (TextView) view.findViewById(R.id.frag_moves_tvGasto);
         tvIngreso = (TextView) view.findViewById(R.id.frag_moves_tvIngreso);
         spMoneda = (Spinner) view.findViewById(R.id.frag_moves_spMoneda);
-
+        tvHint = (TextView) view.findViewById(R.id.tvHintMove);
 
         return view;
     }
     @Override
     public void onResume(){
         super.onResume();
-        c = Principal.getMovimientos();
-        adapter.changeCursor(c);
+        updateAdapter();
         //listView.setAdapter(adapter);
     }
     public void updateAdapter(){
+        if(!isAdded()) return;
         c = Principal.getMovimientos();
         adapter.changeCursor(c);
         cursorMoneda = Principal.getMoneda();
         simpleCursorAdapter.changeCursor(cursorMoneda);
+
+        if(c.getCount()<=0){
+            tvHint.setVisibility(View.VISIBLE);
+            tvHint.setText(getString(R.string.hint_no_moves));
+        } else {
+            tvHint.setVisibility(View.GONE);
+        }
+    }
+    public void loading(){
+        tvHint.setVisibility(View.VISIBLE);
+        tvHint.setText("Loading...");
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

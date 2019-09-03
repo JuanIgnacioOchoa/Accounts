@@ -1,12 +1,10 @@
 package com.lala
 
-import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View
 import android.widget.*
 
@@ -22,6 +20,12 @@ class CreateTrip : AppCompatActivity() {
         setContentView(R.layout.activity_create_trip)
         setSupportActionBar(toolbar)
         setTitle(getString(R.string.title_activity_create_trip))
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+            //handleOnBackPress();
+        }
         val calendar = Calendar.getInstance()
         val etNombre = findViewById<EditText>(R.id.ET_TR_Nombre)
         val etDesc = findViewById<EditText>(R.id.ET_TR_Desc)
@@ -68,6 +72,7 @@ class CreateTrip : AppCompatActivity() {
                 }
             })
             alertDialog.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         }
         tvFechaFin.setOnClickListener(View.OnClickListener {
             val alertDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -94,7 +99,18 @@ class CreateTrip : AppCompatActivity() {
                 }
             })
             alertDialog.show()
+            alertDialog.setCanceledOnTouchOutside(false)
         })
+        if(cursorMoneda.count == 0){
+            val builder = AlertDialog.Builder(this@CreateTrip)
+            builder.setTitle(getString(R.string.alert_info_data))
+            builder.setMessage(getString(R.string.alert_info_data_msg_tri))
+
+// Set up the buttons
+            builder.setPositiveButton("OK") { dialog, which -> finish() }
+            val alertDialog = builder.show()
+            alertDialog.setCanceledOnTouchOutside(false)
+        }
     }
 
 }

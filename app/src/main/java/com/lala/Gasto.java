@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,6 +57,8 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         if(idViaje >= 0){
             title = Principal.getTripNameById(idViaje) + " ";
         }
+        idCuenta = i.getIntExtra("Totales", -1);
+
         etCantidad = (EditText) findViewById(R.id.gasto_etCantidad);
         etComment = (EditText) findViewById(R.id.gasto_etComment);
         etOtro = (EditText) findViewById(R.id.new_move_otro);
@@ -103,8 +105,8 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                                 dialog.cancel();
                             }
                         });
-
-                        builder.show();
+                        AlertDialog alertDialog = builder.show();
+                        alertDialog.setCanceledOnTouchOutside(false);
                     }else {
                         guardar();
                         finish();
@@ -138,16 +140,24 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         to = new int[] {android.R.id.text1};
         simpleCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMotivo, from, to,0);
         spMotivo.setAdapter(simpleCursorAdapter);
-        if(gasto){
-            cursorCuenta = Principal.getTotalesWithPrestamo();
+        if(idCuenta > 0){
+            cursorCuenta = Principal.getSingleTotales(idCuenta);
+            cursorMoneda = Principal.getSingleMoneda(Principal.getMonedaId(idCuenta));
+            cant = i.getDoubleExtra("Cantidad", 0.0);
+            etCantidad.setText(cant+"");
         } else {
-            cursorCuenta = Principal.getTotales(false);
+            if (gasto) {
+                cursorCuenta = Principal.getTotalesWithPrestamo();
+            } else {
+                cursorCuenta = Principal.getTotales(false);
+            }
+            cursorMoneda = Principal.getMoneda();
         }
         from = new String[]{DBMan.DBTotales.Cuenta};
         simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorCuenta,from,to,0);
         spCuenta.setAdapter(simpleCursorAdapter);
 
-        cursorMoneda = Principal.getMoneda();
+
         from = new String[]{"Moneda"};
         simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorMoneda,from,to,0);
         spMoneda.setAdapter(simpleCursorAdapter);
@@ -157,20 +167,22 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         spMoneda.setOnItemSelectedListener(this);
         etOtro.setVisibility(View.GONE);
 
-        idCuenta = i.getIntExtra("Totales", -1);
-        if(idCuenta > 0){
-            cant = i.getDoubleExtra("Cantidad", 0.0);
-            etCantidad.setText(cant+"");
-            for(int j = 0; j < cursorCuenta.getCount(); j++){
-                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
-                int id = value.getInt(value.getColumnIndex("_id"));
-                if(id == idCuenta){
-                    spCuenta.setSelection(j);
-                    j = cursorCuenta.getCount()+1;
-                }
-            }
-        }
+        if(cursorCuenta.getCount() == 0 || cursorMoneda.getCount() == 0 || cursorMotivo.getCount() == 0){
+            AlertDialog.Builder builder = new AlertDialog.Builder(Gasto.this);
+            builder.setTitle(getString(R.string.alert_info_data));
+            builder.setMessage(getString(R.string.alert_info_data_msg));
 
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            AlertDialog alertDialog = builder.show();
+            alertDialog.setCanceledOnTouchOutside(false);
+
+        }
     }
 
     @Override
@@ -238,7 +250,8 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                         dialog.cancel();
                     }
                 });
-                builder.show();
+                AlertDialog alertDialog = builder.show();
+                alertDialog.setCanceledOnTouchOutside(false);
             }
             //this.position = position;
         } else if(sp.getId()==R.id.gasto_spMoneda) {

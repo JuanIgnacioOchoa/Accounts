@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,7 +21,6 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.ConnectException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -90,6 +89,11 @@ public class Principal {
                 "FROM AccountsTotales, AccountsMoneda\n" +
                 "where AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id == 1\n" +
                 "ORDER by Count DESC",null);
+    }
+    public static Cursor getSingleTotales(int id){
+        return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
+                " AccountsTotales.CurrentCantidad FROM AccountsTotales, AccountsMoneda WHERE AccountsTotales.IdMoneda = AccountsMoneda._id and " +
+                "AccountsTotales._id = ?", new String[]{""+id});
     }
     public static Cursor getTotales(int id){
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
@@ -743,6 +747,10 @@ public class Principal {
                 " AccountsMovimiento on AccountsMovimiento.IdMoneda = AccountsMoneda._id and date('now','-1 month') <= date('now') WHERE Active == 1" +
                 " GROUP BY AccountsMoneda._id ORDER by Fecha DESC, Cuenta DESC ",null);
     }
+    public static Cursor getSingleMoneda(int id){
+        return db.rawQuery("SELECT AccountsMoneda._id, AccountsMoneda.Moneda FROM AccountsMoneda WHERE _id = ?" +
+                " ",new String[]{""+id});
+    }
     public static String getTipodeCambio(String MonedaFrom, String MonedaTo){
         int id1 = getIdMoneda(MonedaFrom);
         int id2 = getIdMoneda(MonedaTo);
@@ -989,8 +997,11 @@ public class Principal {
 
     //GetFirst use date
     public static Calendar getFirstDate(){
-        Cursor c = db.rawQuery("SELECT Fecha FROM AccountsMovimiento WHERE _id = 1", new String[]{});
+        Cursor c = db.rawQuery("SELECT Fecha FROM AccountsMovimiento order by Fecha asc limit 1", new String[]{});
         c.moveToFirst();
+        if(c.getCount() == 0){
+            return Calendar.getInstance();
+        }
         String fecha = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Fecha));
         String year = fecha.substring(0,4);
         int yy = Integer.parseInt(year);
@@ -1248,11 +1259,11 @@ public class Principal {
         }
         return db.rawQuery("\n" +
                 "SELECT AccountsPersonas._id, AccountsPersonas.Nombre, AccountsMoneda.Moneda, SUM(Cantidad * b) as Cantidad, Fecha FROM(\n" +
-                "\tSELECT *, (1) as b FROM(\n" +
-                "\t\t(\n" +
-                "\t\tselect (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(\n" +
-                "\t\t\t(select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from AccountsPrestamos where IdMovimiento = 0 group by IdPersona, IdMoneda) as table1\n" +
-                "\t\t\tleft join (\n" +
+                "   SELECT *, (1) as b FROM(\n" +
+                "   ( " +
+                "       select (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(\n" +
+                "           (select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from AccountsPrestamos where IdMovimiento = 0 group by IdPersona, IdMoneda) as table1 " +
+                "           left join (\n" +
                 "\t\t\tselect sum(pd.Cantidad * pd.Cambio) as CantidadMenos, p.IdPersona, p.IdMoneda\n" +
                 "\t\t\tfrom AccountsPrestamos as p, AccountsPrestamosDetalle as pd \n" +
                 "\t\t\twhere p._id = pd.IdPrestamo and p.IdMovimiento = 0\n" +
@@ -1260,7 +1271,7 @@ public class Principal {
                 "\t\t) as table1\n" +
                 "\t)\n" +
                 "\tunion all\n" +
-                "\tSELECT *, (-1) as b FROM(\n" +
+                "\tSELECT *, (1)/*(-1)*/ as b FROM(\n" +
                 "\t\t(\n" +
                 "\t\tselect (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(\n" +
                 "\t\t\t(select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from AccountsPrestamos where IdMovimiento <> 0 group by IdPersona, IdMoneda) as table1\n" +
@@ -1394,7 +1405,7 @@ public class Principal {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBConfig.Value, b);
         db.update(DBMan.DBConfig.TABLE_NAME,contentValues, "_id = ?", new String[]{""+ DBMan.DBConfig.Wifi});
-        updateLast();
+        //updateLast();
     }
 
     public static boolean getOnlyWifi(){
@@ -1443,14 +1454,11 @@ public class Principal {
         return "";
     }
     public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
         View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 

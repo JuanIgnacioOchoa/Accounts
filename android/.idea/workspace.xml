@@ -10,154 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="17370134-f053-4c47-9834-575d42d6c4b4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SQL/incluir_viajes.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SQL/prestamos.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SQL/recorrerCuentas.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SQL/reportes_motivos.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SQL/reportes_motivosformat.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/debug/app.aab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/proguard-rules.pro" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/release/app-release.apk.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/release/app.aab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/release/output.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/CreateTrip.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/DBMan.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/DataBase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/DriveMan.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/EditTextError.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentMoves.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentPrestamoPeople.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentPrestamosMinus.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentPrestamosPlus.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentReportesCuentas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentReportesMotives.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/FragmentTotals.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/Gasto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/MainActivity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/NewAccount.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/NewMotive.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/NewPersonasActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/NewPrestamoActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/PrestamoActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/Principal.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/Reportes.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/SeeByMotive.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/SeeTripMainActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/Settings.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/SplashScreen.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/Traspaso.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/TripsMainActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/seeCuentas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/seeMove.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/seePrestamoActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/lala/seeTraspaso.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/add.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/check.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/cuentas.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/minus.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/minus2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/people.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/people2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/plus.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/plus2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/plus_minus.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/plus_minus2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/profile_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/drawable/splash.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_create_trip.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_gasto.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_new_account.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_new_motive.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_new_personas.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_new_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_reportes.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_account.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_by_motive.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_cuentas.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_move.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_traspaso.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_see_trip_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_splash_screen.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_traspaso.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_trips_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_create_trip.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_gasto.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_new_account.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_new_motive.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_new_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_reportes.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_see_cuentas.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_see_move.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_see_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_see_traspaso.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_see_trip_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_traspaso.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/content_trips_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_activity_moves.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_activity_reportes_cuentas.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_activity_reportes_motives.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_activity_totals.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_fragment_prestamos_plus.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_prestamo_people.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/inflate_reportes_motive.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/inflate_see_by_motive.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_movimientos.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_new_motive.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_prestamo_detalle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_prestamo_people.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_see_cuentas.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_totals.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/list_trips.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/menu/menu_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/menu/menu_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/menu/menu_see.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/menu/menu_see_prestamo.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-hdpi/icon1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-hdpi/logo3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-hdpi/logo4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-mdpi/icon1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-mdpi/logo3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-mdpi/logo4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xhdpi/icon1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xhdpi/logo3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xhdpi/logo4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxhdpi/icon1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxhdpi/logo3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxhdpi/logo4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxxhdpi/icon1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/mipmap-xxxhdpi/logo3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values-b+es/strings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values-v21/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values-w820dp/dimens.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values/attrs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values/colors.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values/dimens.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values/strings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../totalessql.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Accounts/es.xcloc/Localized Contents/es.xliff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Accounts/es.xcloc/Source Contents/Accounts/Base.lproj/LaunchScreen.storyboard" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Accounts/es.xcloc/Source Contents/Accounts/Base.lproj/Main.storyboard" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Accounts/es.xcloc/Source Contents/Accounts/en.lproj/InfoPlist.strings" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Accounts/es.xcloc/contents.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Base.lproj/Main.storyboard" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Base.lproj/Main.storyboard" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/DataViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/DataViewController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/SeeCuentaViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/SeeCuentaViewController.swift" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -168,7 +31,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_3_API_Q" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="5.4_FWVGA_API_25" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -195,8 +58,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="1361" column="37" selection-start-line="1361" selection-start-column="24" selection-end-line="1361" selection-end-column="37" />
+            <state relative-caret-position="293">
+              <caret line="52" column="29" selection-start-line="52" selection-start-column="29" selection-end-line="53" selection-end-column="82" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeCuentas.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="194">
+              <caret line="250" column="43" lean-forward="true" selection-start-line="250" selection-start-column="43" selection-end-line="250" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -232,6 +104,8 @@
       <find>spMoneda</find>
       <find>scope</find>
       <find>config</find>
+      <find>id</find>
+      <find>cursorMoves</find>
     </findStrings>
   </component>
   <component name="GenerateSignedApkSettings">
@@ -429,6 +303,7 @@
   <component name="PropertiesComponent">
     <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/app" />
     <property name="ExportApk.BuildVariants" value="release" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
@@ -576,11 +451,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.25026625" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.2869353" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -589,7 +464,7 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Run" order="0" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.4969475" visible="true" weight="0.319802" />
+      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.4969475" visible="true" weight="0.32959184" />
       <window_info anchor="bottom" id="TODO" order="2" sideWeight="0.49946752" weight="0.32970297" />
       <window_info anchor="bottom" id="Debug" order="3" />
       <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49946752" weight="0.32970297" />
@@ -688,10 +563,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeCuentas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="250" column="43" lean-forward="true" selection-start-line="250" selection-start-column="43" selection-end-line="250" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="1361" column="37" selection-start-line="1361" selection-start-column="24" selection-end-line="1361" selection-end-column="37" />
+        <state relative-caret-position="293">
+          <caret line="52" column="29" selection-start-line="52" selection-start-column="29" selection-end-line="53" selection-end-column="82" />
         </state>
       </provider>
     </entry>

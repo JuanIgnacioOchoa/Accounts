@@ -31,8 +31,8 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     var picker = UIPickerView()
     var displayString: String?
     var index: Int?
-    var dataArrayTotales:[[String:Any?]]?
-    var dataArrayMovimientos:[[String:Any?]]?
+    var dataArrayTotales:[[String:Any?]] = []
+    var dataArrayMovimientos:[[String:Any?]] = []
     var totalesVisible = true
     var movimientosVisible = true
     var monedas:[[String:Any?]]?
@@ -82,6 +82,11 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         let positivo = getIngresoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
         positivoLbl.text = numberFormatter.string(from: positivo)
         let total = ((positivo as! Double) - (negativo as! Double)) as NSNumber
+        if Int(truncating: total) < 0 {
+            totalLbl.textColor = UIColor.red
+        } else if Int(truncating: total) > 0{
+            totalLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+        }
         totalLbl.text = numberFormatter.string(from: total)
     }
     
@@ -126,19 +131,20 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if "seeCuentasSegue" == segue.identifier {
             if let indexPath = tableView.indexPathForSelectedRow{
                 let viewController = segue.destination as! SeeCuentaViewController
-                let cuenta = dataArrayTotales![indexPath.row][Totales.Cuenta] as! String
-                viewController.test = "Holiii----\(cuenta)"
-                navigationItem.title = "Pruebaaa"
+                let cuenta = dataArrayTotales[indexPath.row][Totales.Cuenta] as! String
+                let moneda = dataArrayTotales[indexPath.row][Moneda.Moneda] as! String
+                viewController.title = "\(cuenta) \(moneda)"
+                viewController._id = dataArrayTotales[indexPath.row]["_id"] as! Int64
             }
         } else if "seeMovimientosSegue" == segue.identifier {
             if let indexPath = tableView.indexPathForSelectedRow{
                 let viewController = segue.destination as! SeeMovimientoViewController
-                let cuenta = dataArrayMovimientos![indexPath.row][Movimiento.Cantidad] as! Double
-                viewController.test = "Holiii----\(cuenta)"
-                navigationItem.title = "Pruebaaa"
+                viewController._id = dataArrayMovimientos[indexPath.row]["_id"] as! Int64
+                viewController.title = "Movimiento"
             }
         }
     }
@@ -151,10 +157,10 @@ extension DataViewController: UITableViewDelegate, UITableViewDataSource{
         if(index == 0){
             tableView.rowHeight = 50
             
-            return dataArrayTotales?.count ?? 0
+            return dataArrayTotales.count
         } else {
             tableView.rowHeight = 100
-            return dataArrayMovimientos?.count ?? 0
+            return dataArrayMovimientos.count
         }
     }
     
@@ -164,11 +170,11 @@ extension DataViewController: UITableViewDelegate, UITableViewDataSource{
         //let cell: UITableViewCell
         if(index == 0){
             let cell = tableView.dequeueReusableCell(withIdentifier: "MainCuentasCell") as! MainCuentasTableViewCell
-            cell.setCell(data: dataArrayTotales![row])
+            cell.setCell(data: dataArrayTotales[row])
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MainMovCell") as! MainMovTableViewCell
-            cell.setCell(data: dataArrayMovimientos![row])
+            cell.setCell(data: dataArrayMovimientos[row])
             return cell
         }
         //cell.setCell(data: data)

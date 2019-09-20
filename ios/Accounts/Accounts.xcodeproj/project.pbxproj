@@ -12,6 +12,8 @@
 		58286C9923352DEB00E03899 /* SeeCuentaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */; };
 		58286C9B2335328800E03899 /* CreteMovimientoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9A2335328800E03899 /* CreteMovimientoViewController.swift */; };
 		58286C9D2335329800E03899 /* SeeMovimientoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */; };
+		58286CA22335421600E03899 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 58286CA42335421600E03899 /* Localizable.strings */; };
+		58286CA72335442B00E03899 /* SeeMovByCuentasTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286CA62335442B00E03899 /* SeeMovByCuentasTableViewCell.swift */; };
 		58572DE8232B195800D403EA /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58572DE7232B195800D403EA /* SignIn.swift */; };
 		589FD15A2329548500BF3531 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589FD1592329548500BF3531 /* AppDelegate.swift */; };
 		589FD15C2329548500BF3531 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589FD15B2329548500BF3531 /* ViewController.swift */; };
@@ -60,6 +62,9 @@
 		58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMovimientoViewController.swift; sourceTree = "<group>"; };
 		58286C9E2335364600E03899 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
 		58286C9F2335364700E03899 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		58286CA32335421600E03899 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		58286CA52335421900E03899 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		58286CA62335442B00E03899 /* SeeMovByCuentasTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMovByCuentasTableViewCell.swift; sourceTree = "<group>"; };
 		58572DE7232B195800D403EA /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
 		589FD1562329548500BF3531 /* Accounts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Accounts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		589FD1592329548500BF3531 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -160,6 +165,7 @@
 				589FD1602329548600BF3531 /* Assets.xcassets */,
 				589FD1622329548600BF3531 /* LaunchScreen.storyboard */,
 				589FD1652329548600BF3531 /* Info.plist */,
+				58286CA42335421600E03899 /* Localizable.strings */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -198,8 +204,9 @@
 		589FD18C2329AAC000BF3531 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				589FD18D2329AAF700BF3531 /* MainCuentasTableViewCell.swift */,
 				589FD18F232AAD6400BF3531 /* MainMovTableViewCell.swift */,
+				589FD18D2329AAF700BF3531 /* MainCuentasTableViewCell.swift */,
+				58286CA62335442B00E03899 /* SeeMovByCuentasTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -349,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				589FD1642329548600BF3531 /* LaunchScreen.storyboard in Resources */,
+				58286CA22335421600E03899 /* Localizable.strings in Resources */,
 				589FD1612329548600BF3531 /* Assets.xcassets in Resources */,
 				589FD15F2329548500BF3531 /* Main.storyboard in Resources */,
 			);
@@ -479,6 +487,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				589FD193232AB13800BF3531 /* Database.swift in Sources */,
+				58286CA72335442B00E03899 /* SeeMovByCuentasTableViewCell.swift in Sources */,
 				58286C9B2335328800E03899 /* CreteMovimientoViewController.swift in Sources */,
 				589FD15C2329548500BF3531 /* ViewController.swift in Sources */,
 				58286C9923352DEB00E03899 /* SeeCuentaViewController.swift in Sources */,
@@ -528,6 +537,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		58286CA42335421600E03899 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				58286CA32335421600E03899 /* en */,
+				58286CA52335421900E03899 /* es */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		589FD15D2329548500BF3531 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

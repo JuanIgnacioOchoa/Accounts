@@ -30,6 +30,11 @@ class MainMovTableViewCell: UITableViewCell {
         monedaLbl.text = moneda
         fechaLbl.text = fecha
         motivoLbl.text = motivo
+        if Int(truncating: cantidad) < 0{
+            cantidadLbl.textColor = UIColor.red
+        } else if Int(truncating: cantidad) > 0 {
+            cantidadLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+        }
     }
     
 }

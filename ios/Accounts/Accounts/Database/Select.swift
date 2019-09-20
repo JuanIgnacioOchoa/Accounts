@@ -9,7 +9,7 @@
 import Foundation
 
 //Totales
-func getTotales(inactivos: Bool) -> [[String:Any?]]?{
+func getTotales(inactivos: Bool) -> [[String:Any?]]{
     var activa = "";
     if(!inactivos){
         activa = "Activa == 1 and ";
@@ -26,12 +26,12 @@ func getTotales(inactivos: Bool) -> [[String:Any?]]?{
     } catch {
         print("Error select: ", error)
     }
-    return nil
+    return []
 }
 
 //Movimiento
 
-func getMovimientos() -> [[String:Any?]]?{
+func getMovimientos() -> [[String:Any?]]{
     let query = """
 SELECT mov._id, mov.Cantidad, mov.Fecha, t.Cuenta, mot.Motivo, mon.Moneda, mov.Cambio, mov.Traspaso, mov.comment, mov.IdViaje
     FROM AccountsMovimiento as mov, AccountsMoneda as mon, AccountsMotivo as mot, AccountsTotales as t
@@ -45,12 +45,46 @@ SELECT mov._id, mov.Cantidad, mov.Fecha, t.Cuenta, mot.Motivo, mon.Moneda, mov.C
     } catch {
         print("Error select: ", error)
     }
-    return nil
+    return []
 }
+
+
+func getTotalMoves(id: Int64) -> [[String:Any?]]{
+    let query = "SELECT m.*, mot.Motivo FROM AccountsMovimiento as m, AccountsMotivo as mot where m.IdMotivo = mot._id and Fecha BETWEEN date('now', '-1 month') and date('now') and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC"
+    do{
+        let stmt = try Database.db.prepare(query, [id, id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error Select getTotalMoves: ", error)
+    }
+    return []
+}
+func getTotalMoves(id: Int64, year: Int) -> [[String:Any?]]{
+    let query = "SELECT m.*, mot.Motivo FROM AccountsMovimiento as m, AccountsMotivo as mot where m.IdMotivo = mot._id and strftime('%Y',Fecha) == ? and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC"
+    do{
+        let stmt = try Database.db.prepare(query, [year, id, id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error Select getTotalMoves: ", error)
+    }
+    return []
+}
+
+func getTotalMoves(id: Int64, month: Int, year: Int) -> [[String:Any?]]{
+    let query = "SELECT m.*, mot.Motivo FROM AccountsMovimiento as m, AccountsMotivo as mot where m.IdMotivo = mot._id and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC"
+    do{
+        let stmt = try Database.db.prepare(query, [year, month, id, id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error Select getTotalMoves: ", error)
+    }
+    return []
+}
+
 
 //Monedas
 
-func getMonedas() -> [[String:Any?]]?{
+func getMonedas() -> [[String:Any?]]{
     let query = """
             SELECT AccountsMoneda._id, AccountsMoneda.Moneda, COUNT(AccountsMoneda.Moneda) as Cuenta FROM AccountsMoneda LEFT JOIN
                 AccountsMovimiento on AccountsMovimiento.IdMoneda = AccountsMoneda._id and date('now','-1 month') <= date('now') WHERE Active == 1
@@ -62,7 +96,7 @@ func getMonedas() -> [[String:Any?]]?{
     } catch {
         print("Error select: ", error)
     }
-    return nil
+    return []
 }
 
 //Reportes
@@ -117,7 +151,7 @@ func getIngresoTotalByMonedaFromCurrentMonth(moneda:Int) -> Double{
     return 0
 }
 
-func getTotalesByMonth(month: String, year: String) -> [[String:Any?]]?{
+func getTotalesByMonth(month: String, year: String) -> [[String:Any?]]{
     let query = "select AccountsTotales._id, AccountsTotales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso\n" +
         "from(\n" +
         "\tSELECT t._id as idTotales, sum(Gasto) as Gasto \n" +
@@ -174,7 +208,7 @@ func getTotalesByMonth(month: String, year: String) -> [[String:Any?]]?{
     } catch {
         print("Error select: ", error)
     }
-    return nil
+    return []
 }
 
 // Config

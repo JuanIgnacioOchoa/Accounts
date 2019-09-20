@@ -9,12 +9,11 @@
 import UIKit
 
 class SeeMovimientoViewController: UIViewController {
+    var _id:Int64 = 0
     
-    var test = "test1"
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(test)
-        // Do any additional setup after loading the view.
+        print("_id: ", _id)
     }
     
 

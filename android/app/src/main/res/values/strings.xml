@@ -1,0 +1,125 @@
+<resources>
+
+    <string name="app_name">Account</string>
+    <string name="hello_world">Hello World!!</string>
+
+    <string name="account_hint">Account Name</string>
+    <string name="current_amount_hint">Current Amount</string>
+    <string name="currency">Currency</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="_new">New</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">Fecha Fin</string>
+    <string name="trip_desc">Trip Description</string>
+    <string name="account_">Account:</string>
+    <string name="accounts_">Accounts:</string>
+    <string name="moves_">Moves:</string>
+    <string name="account">Account</string>
+    <string name="motive_">Motive:</string>
+    <string name="motive_hint">Motive</string>
+    <string name="comment_or_desc_hint">Comment or description</string>
+    <string name="ammount_m">Amount $$</string>
+    <string name="see">See</string>
+    <string name="move">Move</string>
+    <string name="income">Income</string>
+    <string name="outcome">Expense</string>
+    <string name="person_">Person: </string>
+    <string name="zeros_m">0.00$</string>
+    <string name="show_zeros">Show on 0</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="savings">Savings</string>
+    <string name="currency_change">Currency Change</string>
+    <string name="date_">Date:</string>
+    <string name="date_hint">Date</string>
+    <string name="from_">From:</string>
+    <string name="to_">To:</string>
+    <string name="transfer">Transfer</string>
+    <string name="withrawal">Withdrawal</string>
+    <string name="choose_option">Choose an Option</string>
+    <string name="chars_currency">The currency has to have 3 characters</string>
+    <string name="required_field">Field is required</string>
+    <string name="dif_curr">Different currencies</string>
+    <string name="err_data">Data Error</string>
+    <string name="err_data_save">Error Saving Data</string>
+    <string name="who_lend">Who Lends You?</string>
+    <string name="loans_for">Loans because</string>
+    <string name="loans_by">Loans From</string>
+    <string name="lend_to">Lend To</string>
+    <string name="succes_saved">Saved successfully</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
+    <string name="del_move">Move has been deleted</string>
+    <string name="add_payment">Add Payment</string>
+    <string name="err_add_dif_curr">Couldn\'t add different currencies</string>
+    <string name="not_defined">Not Defined</string>
+
+    <string name="trips">Trips</string>
+    <string name="loans">Loans</string>
+    <string name="new_currency">New Currency</string>
+    <string name="reports">Reports</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="title_activity_see_prestamo">See Loan</string>
+    <string name="title_activity_new_prestamo">New Loan</string>
+    <string name="title_activity_prestamo">Loan</string>
+    <string name="title_activity_see_trip_main">Trip</string>
+    <string name="title_activity_create_trip">Create Trip</string>
+    <string name="title_activity_trips_main">Trip</string>
+    <string name="title_activity_new_motive">New Motive</string>
+    <string name="title_activity_gasto">Outcome</string>
+    <string name="title_activity_see_move">See Move</string>
+    <string name="title_activity_traspaso">Transfer</string>
+    <string name="title_activity_see_traspaso">Transfer</string>
+    <string name="title_activity_reportes">Reports</string>
+    <string name="motives">Motives</string>
+
+    <string name="login">Log In</string>
+    <string name="logout">Log Out</string>
+
+    <string name="jan">JAN</string>
+    <string name="feb">FEB</string>
+    <string name="mar">MAR</string>
+    <string name="apr">APR</string>
+    <string name="may">MAY</string>
+    <string name="jun">JUN</string>
+    <string name="jul">JUL</string>
+    <string name="aug">AUG</string>
+    <string name="sep">SEP</string>
+    <string name="oct">OCT</string>
+    <string name="nov">NOV</string>
+    <string name="dec">DEC</string>
+
+
+    <string name="server_client_id">852881704240-sac3gm0eka2cts8o9ipjrkmcon0qm5vd.apps.googleusercontent.com</string>
+
+    <string name="account_edit">Edit Account</string>
+
+    <string name="conexion_err">Network Error</string>
+    <string name="no_wifi">No wifi, use Mobile Data instead</string>
+    <string name="sync_err">Cant sync data, check network</string>
+    <string name="sync_success">Sync Success</string>
+    <string name="wel_back">Welcome Back </string>
+    <string name="not_logged">Not logged in</string>
+    <string name="signed_out">Sign out</string>
+    <string name="wifi_only">Only use WIFI</string>
+    <string name="big_change">Big change</string>
+    <string name="big_change_msg">The change in quantity represents a considerable modification, it is recommended to add as a move</string>
+    <string name="yes">Yes</string>
+    <string name="account_name">Account Title</string>
+    <string name="account_active">Active Account</string>
+    <string name="account_amount">Current Amount</string>
+    <string name="small_amount">Difference in amount is really small</string>
+
+    <string name="hint_no_moves">There are no records registered to add one Click on the + button</string>
+    <string name="hint_no_accounts">There are no active accounts to add one click on the + button</string>
+    <string name="alert_info_data">Information is missing.</string>
+    <string name="alert_info_data_msg">You need to add account currency and motives before starting to add records.</string>
+    <string name="alert_info_data_msg_acc">You need to add a currency before adding an account</string>
+    <string name="alert_info_data_msg_tri">You need to add a currency before adding a trip</string>
+    <string name="alert_info_data_msg_pre">You need to add account currency and loaners/debtors before starting to add records.</string>
+    <string name="alert_info_data_msg_tras">You need to add accounts before starting to add records.</string>
+</resources>

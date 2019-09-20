@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="New Text"
+        android:id="@+id/LM_Fecha"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/LM_Cantidad" />
+    <TextView
+        android:layout_width="177dp"
+        android:layout_height="40dp"
+        android:text="New Text"
+        android:id="@+id/LM_Cuenta"
+        android:gravity="center_vertical"
+        android:layout_weight="0.07"
+        android:layout_below="@+id/LM_Fecha"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="110dp"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/LM_Cantidad"
+        android:layout_alignBottom="@+id/LM_Cuenta"
+        android:layout_toEndOf="@+id/LM_Cuenta"
+        android:layout_below="@+id/LM_Fecha" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="New Text"
+        android:id="@+id/LM_Moneda"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/LM_Cantidad"
+        android:layout_toEndOf="@+id/LM_Cantidad"
+        android:layout_alignTop="@+id/LM_Cantidad" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/LM_Motivo"
+        android:layout_below="@+id/LM_Cuenta"
+        android:layout_alignEnd="@+id/LM_Cantidad"
+        android:layout_toEndOf="@+id/LM_Cuenta" />
+
+
+</RelativeLayout>

@@ -1,0 +1,57 @@
+
+/* Class = "UISwitch"; accessibilityLabel = "Activadas"; ObjectID = "23W-Wv-IgU"; */
+"23W-Wv-IgU.accessibilityLabel" = "Activadas";
+
+/* Class = "UILabel"; text = "Gasolina"; ObjectID = "7vJ-Ay-7iD"; */
+"7vJ-Ay-7iD.text" = "Gasolina";
+
+/* Class = "UILabel"; text = "MXN"; ObjectID = "BAw-11-qG8"; */
+"BAw-11-qG8.text" = "MXN";
+
+/* Class = "UILabel"; accessibilityLabel = "M"; ObjectID = "ElY-7E-tTd"; */
+"ElY-7E-tTd.accessibilityLabel" = "M";
+
+/* Class = "UILabel"; text = "Mostrar Inactivas"; ObjectID = "ElY-7E-tTd"; */
+"ElY-7E-tTd.text" = "Mostrar Inactivas";
+
+/* Class = "UILabel"; text = "$-2863"; ObjectID = "G1R-kp-ssx"; */
+"G1R-kp-ssx.text" = "$-2863";
+
+/* Class = "UIButton"; normalTitle = "+"; ObjectID = "Ic1-Tg-Mea"; */
+"Ic1-Tg-Mea.normalTitle" = "+";
+
+/* Class = "UILabel"; text = "-"; ObjectID = "Owq-tF-HCM"; */
+"Owq-tF-HCM.text" = "-";
+
+/* Class = "UILabel"; text = "Cuentas:"; ObjectID = "ZOM-ex-BCD"; */
+"ZOM-ex-BCD.text" = "Cuentas:";
+
+/* Class = "UILabel"; text = "$-300.00"; ObjectID = "bCb-tO-PSh"; */
+"bCb-tO-PSh.text" = "$-300.00";
+
+/* Class = "UILabel"; text = "MXN"; ObjectID = "h6s-pd-reS"; */
+"h6s-pd-reS.text" = "MXN";
+
+/* Class = "UILabel"; text = "300,000.00"; ObjectID = "mLU-dM-ZLK"; */
+"mLU-dM-ZLK.text" = "300,000.00";
+
+/* Class = "UILabel"; text = "="; ObjectID = "mdF-f9-iCW"; */
+"mdF-f9-iCW.text" = "=";
+
+/* Class = "UILabel"; text = "2019-09-08"; ObjectID = "n2r-ba-Qxn"; */
+"n2r-ba-Qxn.text" = "2019-09-08";
+
+/* Class = "UILabel"; text = "100,000.00"; ObjectID = "o6m-he-Rds"; */
+"o6m-he-Rds.text" = "100,000.00";
+
+/* Class = "UILabel"; text = "Banorte"; ObjectID = "oIg-Yj-v6l"; */
+"oIg-Yj-v6l.text" = "Banorte";
+
+/* Class = "UILabel"; text = "400,000.00"; ObjectID = "tYf-Nk-hDr"; */
+"tYf-Nk-hDr.text" = "400,000.00";
+
+/* Class = "UILabel"; text = "AMEX"; ObjectID = "wii-QM-H0X"; */
+"wii-QM-H0X.text" = "AMEX";
+
+/* Class = "UILabel"; text = "MXN"; ObjectID = "xuk-ap-c7Y"; */
+"xuk-ap-c7Y.text" = "MXN";

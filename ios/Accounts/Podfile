@@ -1,0 +1,23 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'Accounts' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+	pod 'SQLite.swift'
+	pod 'GoogleSignIn'
+	pod 'GoogleAPIClientForREST/Drive'
+	pod 'SwiftyJSON'
+  # Pods for Accounts
+
+  target 'AccountsTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'AccountsUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

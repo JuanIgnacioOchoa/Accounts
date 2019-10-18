@@ -43,8 +43,8 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         display.text = displayString
-        dataArrayTotales = getTotales(inactivos: false)
-        dataArrayMovimientos = getMovimientos()
+        //dataArrayTotales = getTotales(inactivos: false)
+        //dataArrayMovimientos = getMovimientos()
         monedas = getMonedas()
         inactivasSwitch.isHidden = totalesVisible
         inactivasLbl.isHidden = totalesVisible
@@ -77,9 +77,35 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         
         numberFormatter.numberStyle = .decimal
         numberFormatter.minimumFractionDigits = 2
-        let negativo = getGastoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+        
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dataArrayTotales = getTotales(inactivos: false)
+        dataArrayMovimientos = getMovimientos()
+        tableView.reloadData()
+        
+        if monedas!.count == 0 {
+            totalLbl.text = numberFormatter.string(from: 0)
+            negativoLbl.text = numberFormatter.string(from: 0)
+            positivoLbl.text = numberFormatter.string(from: 0)
+            return
+        }
+        var negativo:NSNumber = 0
+        var positivo:NSNumber = 0
+        if index == 0{
+            let totales = getTotalesTotales(idMoneda: monedas![selectedMoneda]["_id"] as! Int64)
+            negativo = totales[0]["Negativo"] as! NSNumber
+            positivo = totales[0]["Positivo"] as! NSNumber
+        } else {
+            negativo = getGastoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+            positivo = getIngresoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+        }
+        
         negativoLbl.text = numberFormatter.string(from: negativo)
-        let positivo = getIngresoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+        
         positivoLbl.text = numberFormatter.string(from: positivo)
         let total = ((positivo as! Double) - (negativo as! Double)) as NSNumber
         if Int(truncating: total) < 0 {
@@ -91,6 +117,7 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        
         return 1
     }
     
@@ -105,11 +132,30 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         selectedMoneda = row
         monedaLbl.text = monedas![row][Moneda.Moneda] as? String
         self.view.endEditing(true)
-        let negativo = getGastoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+        var negativo:NSNumber = 0
+        var positivo:NSNumber = 0
+        if index == 0{
+            let totales = getTotalesTotales(idMoneda: monedas![selectedMoneda]["_id"] as! Int64)
+            if totales[0]["Negativo"] != nil {
+                negativo = totales[0]["Negativo"] as! NSNumber
+            }
+            if totales[0]["Positivo"] != nil {
+                positivo = totales[0]["Positivo"] as! NSNumber
+            }
+        } else {
+            negativo = getGastoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+            positivo = getIngresoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+        }
+        
         negativoLbl.text = numberFormatter.string(from: negativo)
-        let positivo = getIngresoTotalByMonedaFromCurrentMonth(moneda: Int(monedas![selectedMoneda]["_id"] as! Int64)) as NSNumber
+        
         positivoLbl.text = numberFormatter.string(from: positivo)
         let total = ((positivo as! Double) - (negativo as! Double)) as NSNumber
+        if Int(truncating: total) < 0 {
+            totalLbl.textColor = UIColor.red
+        } else if Int(truncating: total) > 0{
+            totalLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+        }
         totalLbl.text = numberFormatter.string(from: total)
         sleep(UInt32(0.5))
         blurEffectView!.removeFromSuperview()

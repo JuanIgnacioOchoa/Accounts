@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -72,6 +73,7 @@ public class Reportes extends AppCompatActivity{
 
         MobileAds.initialize(this);
         mAdView = findViewById(R.id.adView);
+
 
         fragmentReportesCuentas = FragmentReportesCuentas.getInstance();
         getFragmentReportesMotives = FragmentReportesMotives.getInstance();
@@ -207,12 +209,12 @@ public class Reportes extends AppCompatActivity{
                         month = s.substring(0,3);
                         String x = months[0];
                         int monthCount = 0;
-                        Toast.makeText(getApplicationContext(), month, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), month, Toast.LENGTH_LONG).show();
                         while(!(month.equals(x)) || monthCount >= 12){
                             monthCount++;
                             x = months[monthCount];
                         }
-                        Toast.makeText(getApplicationContext(), " " + monthCount, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), " " + monthCount, Toast.LENGTH_LONG).show();
                         switch (monthCount){
                             case 0:
                                 month = "01";
@@ -268,7 +270,8 @@ public class Reportes extends AppCompatActivity{
                         TVGasto.setText(instance.format(gasto));
                         TVGanancia.setText(instance.format(ganancia));
                         ((FragmentReportesCuentas)fragmentReportesCuentas).updateAdapter(month,year);
-                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, month,year);
+                        ((FragmentReportesMotives)getFragmentReportesMotives).updateData(idMoneda, month,year); // TODO colocar moneda
+                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(); // TODO colocar moneda
                         break;
                     case 2:
                         year = spAdapterYear.getItem(position);
@@ -290,7 +293,8 @@ public class Reportes extends AppCompatActivity{
                         TVGasto.setText(instance.format(gasto));
                         TVGanancia.setText(instance.format(ganancia));
                         ((FragmentReportesCuentas)fragmentReportesCuentas).updateAdapter(null,year);
-                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, null,year);
+                        ((FragmentReportesMotives)getFragmentReportesMotives).updateData(idMoneda, month,year); // TODO colocar moneda
+                        ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(); // TODO colocar moneda
                         break;
                     default:
                 }
@@ -350,7 +354,8 @@ public class Reportes extends AppCompatActivity{
                 TVGasto.setText(instance.format(gasto));
                 TVGanancia.setText(instance.format(ganancia));
 
-                ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(idMoneda, month,year); // TODO colocar moneda
+                ((FragmentReportesMotives)getFragmentReportesMotives).updateData(idMoneda, month,year); // TODO colocar moneda
+                ((FragmentReportesMotives)getFragmentReportesMotives).updateAdapter(); // TODO colocar moneda
             }
 
             @Override

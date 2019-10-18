@@ -10,7 +10,6 @@
 		30DB126396BDC6B2CA2C2180 /* Pods_AccountsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF72E1FF5698AE940DC2218D /* Pods_AccountsUITests.framework */; };
 		58286C9723344CC800E03899 /* CreateCuentasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9623344CC800E03899 /* CreateCuentasViewController.swift */; };
 		58286C9923352DEB00E03899 /* SeeCuentaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */; };
-		58286C9B2335328800E03899 /* CreteMovimientoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9A2335328800E03899 /* CreteMovimientoViewController.swift */; };
 		58286C9D2335329800E03899 /* SeeMovimientoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */; };
 		58286CA22335421600E03899 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 58286CA42335421600E03899 /* Localizable.strings */; };
 		58286CA72335442B00E03899 /* SeeMovByCuentasTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286CA62335442B00E03899 /* SeeMovByCuentasTableViewCell.swift */; };
@@ -26,6 +25,10 @@
 		589FD18E2329AAF700BF3531 /* MainCuentasTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589FD18D2329AAF700BF3531 /* MainCuentasTableViewCell.swift */; };
 		589FD190232AAD6400BF3531 /* MainMovTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589FD18F232AAD6400BF3531 /* MainMovTableViewCell.swift */; };
 		589FD193232AB13800BF3531 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589FD192232AB13800BF3531 /* Database.swift */; };
+		58B8A53B233AA94100C03A6B /* Update.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B8A53A233AA94100C03A6B /* Update.swift */; };
+		58B8A53D233D340300C03A6B /* ReportesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B8A53C233D340300C03A6B /* ReportesViewController.swift */; };
+		58B8A53F233D35DE00C03A6B /* ReportesDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B8A53E233D35DE00C03A6B /* ReportesDataViewController.swift */; };
+		58B8A541233E6A5500C03A6B /* ReportesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B8A540233E6A5500C03A6B /* ReportesTableViewCell.swift */; };
 		58E025F323312B04003A5767 /* DriveMan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E025F223312B04003A5767 /* DriveMan.swift */; };
 		58E025F523317F6D003A5767 /* Insert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E025F423317F6D003A5767 /* Insert.swift */; };
 		58E025F723319F69003A5767 /* Select.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E025F623319F69003A5767 /* Select.swift */; };
@@ -58,7 +61,6 @@
 		52BF528997A52CD480D4C088 /* Pods-AccountsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AccountsUITests.release.xcconfig"; path = "Target Support Files/Pods-AccountsUITests/Pods-AccountsUITests.release.xcconfig"; sourceTree = "<group>"; };
 		58286C9623344CC800E03899 /* CreateCuentasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCuentasViewController.swift; sourceTree = "<group>"; };
 		58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeCuentaViewController.swift; sourceTree = "<group>"; };
-		58286C9A2335328800E03899 /* CreteMovimientoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreteMovimientoViewController.swift; sourceTree = "<group>"; };
 		58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMovimientoViewController.swift; sourceTree = "<group>"; };
 		58286C9E2335364600E03899 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
 		58286C9F2335364700E03899 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -83,6 +85,10 @@
 		589FD18D2329AAF700BF3531 /* MainCuentasTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCuentasTableViewCell.swift; sourceTree = "<group>"; };
 		589FD18F232AAD6400BF3531 /* MainMovTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMovTableViewCell.swift; sourceTree = "<group>"; };
 		589FD192232AB13800BF3531 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		58B8A53A233AA94100C03A6B /* Update.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Update.swift; sourceTree = "<group>"; };
+		58B8A53C233D340300C03A6B /* ReportesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportesViewController.swift; sourceTree = "<group>"; };
+		58B8A53E233D35DE00C03A6B /* ReportesDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportesDataViewController.swift; sourceTree = "<group>"; };
+		58B8A540233E6A5500C03A6B /* ReportesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportesTableViewCell.swift; sourceTree = "<group>"; };
 		58E025F223312B04003A5767 /* DriveMan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveMan.swift; sourceTree = "<group>"; };
 		58E025F423317F6D003A5767 /* Insert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insert.swift; sourceTree = "<group>"; };
 		58E025F623319F69003A5767 /* Select.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Select.swift; sourceTree = "<group>"; };
@@ -195,8 +201,9 @@
 				589FD15B2329548500BF3531 /* ViewController.swift */,
 				58286C9623344CC800E03899 /* CreateCuentasViewController.swift */,
 				58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */,
-				58286C9A2335328800E03899 /* CreteMovimientoViewController.swift */,
 				58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */,
+				58B8A53C233D340300C03A6B /* ReportesViewController.swift */,
+				58B8A53E233D35DE00C03A6B /* ReportesDataViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -207,6 +214,7 @@
 				589FD18F232AAD6400BF3531 /* MainMovTableViewCell.swift */,
 				589FD18D2329AAF700BF3531 /* MainCuentasTableViewCell.swift */,
 				58286CA62335442B00E03899 /* SeeMovByCuentasTableViewCell.swift */,
+				58B8A540233E6A5500C03A6B /* ReportesTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -218,6 +226,7 @@
 				58E025F423317F6D003A5767 /* Insert.swift */,
 				58E025F623319F69003A5767 /* Select.swift */,
 				58E025F82332A557003A5767 /* Names.swift */,
+				58B8A53A233AA94100C03A6B /* Update.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -488,15 +497,18 @@
 			files = (
 				589FD193232AB13800BF3531 /* Database.swift in Sources */,
 				58286CA72335442B00E03899 /* SeeMovByCuentasTableViewCell.swift in Sources */,
-				58286C9B2335328800E03899 /* CreteMovimientoViewController.swift in Sources */,
 				589FD15C2329548500BF3531 /* ViewController.swift in Sources */,
 				58286C9923352DEB00E03899 /* SeeCuentaViewController.swift in Sources */,
 				589FD1882329550400BF3531 /* DataViewController.swift in Sources */,
 				58E025F523317F6D003A5767 /* Insert.swift in Sources */,
+				58B8A53F233D35DE00C03A6B /* ReportesDataViewController.swift in Sources */,
 				589FD18E2329AAF700BF3531 /* MainCuentasTableViewCell.swift in Sources */,
+				58B8A53D233D340300C03A6B /* ReportesViewController.swift in Sources */,
 				58E025F92332A557003A5767 /* Names.swift in Sources */,
 				58572DE8232B195800D403EA /* SignIn.swift in Sources */,
+				58B8A541233E6A5500C03A6B /* ReportesTableViewCell.swift in Sources */,
 				589FD190232AAD6400BF3531 /* MainMovTableViewCell.swift in Sources */,
+				58B8A53B233AA94100C03A6B /* Update.swift in Sources */,
 				589FD15A2329548500BF3531 /* AppDelegate.swift in Sources */,
 				58E025F323312B04003A5767 /* DriveMan.swift in Sources */,
 				58286C9723344CC800E03899 /* CreateCuentasViewController.swift in Sources */,

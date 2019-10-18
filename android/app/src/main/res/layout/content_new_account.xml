@@ -37,8 +37,8 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/new_account_Smoneda"
-        android:layout_marginTop="69dp"
-        android:layout_below="@+id/new_account_cantidad"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/spTipoCuenta"
         android:layout_alignParentEnd="true" />
 
     <TextView
@@ -49,10 +49,27 @@
         android:layout_alignParentStart="true"
         android:layout_alignBottom="@+id/new_account_Smoneda"
         android:layout_toStartOf="@+id/new_account_Smoneda"
-        android:gravity="center"
         android:layout_alignTop="@+id/new_account_Smoneda"
         android:textSize="20dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipo Cuenta"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/spTipoCuenta"
+        android:layout_toStartOf="@+id/spTipoCuenta"
+        android:layout_alignTop="@+id/spTipoCuenta"
+        android:textSize="20dp" />
+
+
+    <Spinner
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:id="@+id/spTipoCuenta"
+        android:layout_below="@+id/new_account_cantidad"
+        android:layout_alignParentEnd="true"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

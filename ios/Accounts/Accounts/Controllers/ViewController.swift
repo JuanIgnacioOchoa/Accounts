@@ -13,9 +13,7 @@ import GTMSessionFetcher
 
 class ViewController: UIViewController {
 
-    @IBAction func btnClick(_ sender: UIButton) {
-        print("Sign In")
-        
+    @IBAction func btnSignIn(_ sender: Any) {
         GIDSignIn.sharedInstance()?.signIn()
     }
     @IBOutlet weak var contentView: UIView!
@@ -31,7 +29,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSLog("Hola0")
         // Do any additional setup after loading the view.
         dataSource[0] = NSLocalizedString("Accounts: ", comment: "")
         dataSource[1] = NSLocalizedString("Moves: ", comment: "")
@@ -116,10 +113,9 @@ class ViewController: UIViewController {
             // shouldPerformSegueWithIdentifier() says it's ok. In a real app,
             // this is where you'd pass data to the success view controller.
             let destination = segue.destination as! CreateCuentasViewController
-            destination.test = "Adios"
-        } else if "createMovimientoSegue" == segue.identifier {
-            let destination = segue.destination as! CreteMovimientoViewController
-            destination.test = "Adios"
+        } else if "createMoveMain" == segue.identifier {
+            let destination = segue.destination as! SeeMovimientoViewController
+            destination._id = nil
         }
     }
     
@@ -127,7 +123,7 @@ class ViewController: UIViewController {
         if(self.currentIndex == 0){
             self.performSegue(withIdentifier: "createCuentasSegue", sender: nil)
         } else if(self.currentIndex == 1){
-            self.performSegue(withIdentifier: "createMovimientoSegue", sender: nil)
+            self.performSegue(withIdentifier: "createMoveMain", sender: nil)
         }
     }
     

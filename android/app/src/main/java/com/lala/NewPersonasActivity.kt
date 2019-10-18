@@ -25,6 +25,7 @@ class NewPersonasActivity : AppCompatActivity() {
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
 
         toolbar.setNavigationOnClickListener(View.OnClickListener {
+            Principal.hideKeyboard(this);
             finish()
             //handleOnBackPress();
         })
@@ -41,6 +42,7 @@ class NewPersonasActivity : AppCompatActivity() {
                 adapter = MyAdapter(context, c)
                 listView.adapter = adapter
                 etPersona.setText("")
+                Principal.hideKeyboard(this);
                 finish()
             }
         }

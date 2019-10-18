@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
 
-
+<!--
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:id="@+id/ibSync"
                 />
         </androidx.appcompat.widget.Toolbar>
-
+-->
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
@@ -49,13 +49,14 @@
 
     <!---<include layout="@layout/content_main"/>-->
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="30dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="60dp"
         android:src="@drawable/add" />
 
     <androidx.viewpager.widget.ViewPager
@@ -70,6 +71,7 @@
 
     <!-- TEST ca-app-pub-3940256099942544/6300978111 -->
     <!-- PROD ca-app-pub-5443791090032110/4683656361 -->
+
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_width="match_parent"
@@ -79,6 +81,18 @@
         android:layout_gravity="bottom|start"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-5443791090032110/4683656361"></com.google.android.gms.ads.AdView>
+
+
+    <!-- https://code.tutsplus.com/tutorials/targetText=It%20is%20an%20implementation%20of,to%20five%20top-level%20destinations. -->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_navigation"
+        android:layout_gravity="bottom|start"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#ffffff"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

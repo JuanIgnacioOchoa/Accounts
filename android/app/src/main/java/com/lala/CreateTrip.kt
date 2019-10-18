@@ -23,6 +23,7 @@ class CreateTrip : AppCompatActivity() {
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
 
         toolbar.setNavigationOnClickListener {
+            Principal.hideKeyboard(this)
             finish()
             //handleOnBackPress();
         }

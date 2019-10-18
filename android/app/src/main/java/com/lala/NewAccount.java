@@ -19,12 +19,12 @@ import android.widget.Toast;
 public class NewAccount extends AppCompatActivity {
 
     private EditText etCuenta, etCantidad;
-    private Spinner spMoneda;
+    private Spinner spMoneda, spTipoCuenta;
     private Button bGuardar, bCancelar;
-    private Cursor cursorMoneda;
+    private Cursor cursorMoneda, cursorTipo;
     private String[] from;
     private int[] to;
-    private SimpleCursorAdapter cursorAdapterMoneda;
+    private SimpleCursorAdapter cursorAdapterMoneda, cursorAdapterTipoCuenta;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +35,7 @@ public class NewAccount extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Principal.hideKeyboard(NewAccount.this);
                 finish();
                 //handleOnBackPress();
             }
@@ -43,6 +44,7 @@ public class NewAccount extends AppCompatActivity {
         etCuenta = (EditText) findViewById(R.id.new_account_cuenta);
         etCantidad = (EditText) findViewById(R.id.new_account_cantidad);
         spMoneda = (Spinner) findViewById(R.id.new_account_Smoneda);
+        spTipoCuenta = findViewById(R.id.spTipoCuenta);
         bGuardar = (Button) findViewById(R.id.new_account_bGuardar);
         bCancelar = (Button) findViewById(R.id.new_account_bCancelar);
 
@@ -52,6 +54,10 @@ public class NewAccount extends AppCompatActivity {
         cursorAdapterMoneda = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorMoneda,from,to,0);
         spMoneda.setAdapter(cursorAdapterMoneda);
 
+        from = new String[]{"Tipo"};
+        cursorTipo = Principal.getTiposCuentas();
+        cursorAdapterTipoCuenta = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorTipo, from, to, 0);
+        spTipoCuenta.setAdapter(cursorAdapterTipoCuenta);
         bGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +66,8 @@ public class NewAccount extends AppCompatActivity {
                         Double cantidad = Double.parseDouble(etCantidad.getText().toString());
                         String cuenta = etCuenta.getText().toString();
                         int moneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"));
-                        Principal.insertTotales(cuenta,cantidad,moneda);
+                        int tipo = cursorTipo.getInt(cursorTipo.getColumnIndex("_id"));
+                        Principal.insertTotales(cuenta,cantidad,moneda, tipo);
                         Principal.hideKeyboard(NewAccount.this);
                         finish();
                     } catch (Exception e){
@@ -73,6 +80,7 @@ public class NewAccount extends AppCompatActivity {
         bCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Principal.hideKeyboard(NewAccount.this);
                 finish();
             }
         });
@@ -85,6 +93,7 @@ public class NewAccount extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    Principal.hideKeyboard(NewAccount.this);
                     finish();
                 }
             });

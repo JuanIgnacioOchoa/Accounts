@@ -2,20 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lala">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/logo4"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.lala.Settings"
+        <activity android:name=".MenuMoreActivity"></activity>
+        <activity android:name=".MainTotals" />
+        <activity android:name=".LineChartCuentasActivity" />
+        <activity android:name=".BalanceGraphActivity" />
+        <activity android:name=".IngresoGraph" />
+        <activity android:name=".Graphs" />
+        <activity android:name=".MovesMainActivity" />
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".Settings"
             android:label="@string/action_settings"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <!--
         <activity
             android:name=".SplashScreen"
@@ -41,47 +47,48 @@
         </activity>
         -->
         <activity
-            android:name="com.lala.seePrestamoActivity"
+            android:name=".seePrestamoActivity"
             android:label="@string/title_activity_see_prestamo"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.NewPrestamoActivity"
+            android:name=".NewPrestamoActivity"
             android:label="@string/title_activity_new_prestamo"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name="com.lala.NewPersonasActivity"
+        <activity
+            android:name=".NewPersonasActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.PrestamoActivity"
+            android:name=".PrestamoActivity"
             android:label="@string/title_activity_prestamo"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.SeeTripMainActivity"
+            android:name=".SeeTripMainActivity"
             android:label="@string/title_activity_see_trip_main"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.CreateTrip"
+            android:name=".CreateTrip"
             android:label="@string/title_activity_create_trip"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.TripsMainActivity"
+            android:name=".TripsMainActivity"
             android:label="@string/title_activity_trips_main"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.MainActivity"
+            android:name=".prueba"
             android:label="Cuentas"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -91,76 +98,75 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="com.google.android.apps.drive.APP_ID"
-                android:value="id=576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
-
             <intent-filter>
                 <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
 
                 <data android:mimeType="application/vnd.google-apps.drive-sdk.576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
                 <data android:mimeType="application/x-sqlite3" />
             </intent-filter>
+
+            <meta-data
+                android:name="com.google.android.apps.drive.APP_ID"
+                android:value="id=576970357250-phkqrqimc3eavaahpt325s3rlk5hbuvv.apps.googleusercontent.com" />
         </activity>
         <activity
-            android:name="com.lala.NewAccount"
+            android:name=".NewAccount"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.NewMotive"
+            android:name=".NewMotive"
             android:label="@string/title_activity_new_motive"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.Gasto"
+            android:name=".Gasto"
             android:label="@string/title_activity_gasto"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
-            android:name="com.lala.seeMove"
+            android:name=".seeMove"
             android:label="@string/title_activity_see_move"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.seeCuentas"
+            android:name=".seeCuentas"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.Traspaso"
+            android:name=".Traspaso"
             android:label="@string/title_activity_traspaso"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name="com.lala.seeTraspaso"
+            android:name=".seeTraspaso"
             android:label="@string/title_activity_see_traspaso"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.lala.Reportes"
+            android:name=".Reportes"
             android:label="@string/title_activity_reportes"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <activity android:name="com.lala.SeeByMotive"
+        <activity
+            android:name=".SeeByMotive"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+            android:windowSoftInputMode="stateHidden|adjustResize" /> <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
         <!-- PROD ca-app-pub-5443791090032110~4435958949 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5443791090032110~4435958949"/>
+            android:value="ca-app-pub-5443791090032110~4435958949" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

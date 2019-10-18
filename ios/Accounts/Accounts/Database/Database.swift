@@ -214,7 +214,6 @@ class Database{
     }
     
     static func insertIntoTable(table: String, columns: Array<String>, values:Array<String?>){
-        print(columns.count)
         var i = 0
         //\(withName) and \(foldersOnly) and \(ownedByUser)"
         var query = "INSERT INTO \(table) ("

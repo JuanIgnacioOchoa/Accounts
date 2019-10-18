@@ -1,51 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingTop="50dp">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <!--<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/fragment_activity_moves_swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="top|left">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/moves_"
-                android:layout_alignParentTop="true"
-                android:id="@+id/tvTitleM"
-                android:textColor="#000000"
-                android:textSize="20dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gasto"
-                android:id="@+id/frag_moves_tvGasto"
-                android:layout_marginStart="47dp"
-                android:layout_alignTop="@+id/frag_moves_tvIngreso"
-                android:layout_alignParentStart="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ingreso"
-                android:id="@+id/frag_moves_tvIngreso"
-                android:layout_marginTop="15dp"
-                android:layout_below="@id/tvTitleM"
-                android:layout_centerHorizontal="true" />
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/frag_moves_spMoneda"
-                android:layout_alignBottom="@+id/frag_moves_tvIngreso"
-                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:id="@+id/tvHintMove"
@@ -54,9 +23,9 @@
                 android:text="@string/hint_no_moves"
                 android:maxLines="5"
                 android:lines="2"
-                android:paddingTop="30dp"
+                android:paddingTop="5dp"
                 android:visibility="gone"
-                android:layout_below="@id/frag_moves_spMoneda"
+                android:layout_alignParentTop="true"
                 android:layout_gravity="center" />
 
             <ListView
@@ -64,12 +33,19 @@
                 android:layout_height="match_parent"
                 android:id="@+id/listView_Movimientos"
                 android:layout_gravity="center"
-                android:layout_below="@id/frag_moves_spMoneda"
+                android:layout_alignParentTop="true"
                 android:layout_marginTop="20dp"/>
         </RelativeLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+   <!-- </androidx.swiperefreshlayout.widget.SwipeRefreshLayout> -->
 
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/add" />
 
 
 

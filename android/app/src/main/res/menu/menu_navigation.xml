@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_start"
+        android:icon="@drawable/power"
+        android:title="Start"/>
+
+    <item
+        android:id="@+id/navigation_movimientos"
+        android:icon="@drawable/arrow_inv_black"
+        android:title="Movimientos"/>
+
+    <item
+        android:id="@+id/navigation_cuentas"
+        android:icon="@drawable/bank_building"
+        android:title="Cuentas"/>
+
+    <item
+        android:id="@+id/navigation_reportes"
+        android:icon="@drawable/progress_report"
+        android:title="@string/reports"/>
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:title="@string/action_settings"
+        android:icon="@drawable/more"/>
+
+</menu>

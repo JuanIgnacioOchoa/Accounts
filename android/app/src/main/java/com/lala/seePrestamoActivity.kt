@@ -20,6 +20,10 @@ import java.text.NumberFormat
 import android.widget.RelativeLayout
 import java.text.DateFormatSymbols
 import java.util.*
+import android.widget.EditText
+import android.view.LayoutInflater
+import java.text.ParseException
+import java.text.SimpleDateFormat
 
 
 class seePrestamoActivity : AppCompatActivity() {
@@ -47,13 +51,14 @@ class seePrestamoActivity : AppCompatActivity() {
     private var cambio = 1.0
     private var comment:String? = ""
     private var fecha:String? = ""
+    private var totalPaid = 0.0
     private val instance = NumberFormat.getInstance()
     private lateinit var adapterMoneda: SimpleCursorAdapter
     private lateinit var adapterCuenta: SimpleCursorAdapter
     private lateinit var adapterPersona: SimpleCursorAdapter
     private var editable = false
     private lateinit var listView: ListView
-    private val calendar = Calendar.getInstance()
+    private var calendar = Calendar.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_see_prestamo)
@@ -69,6 +74,7 @@ class seePrestamoActivity : AppCompatActivity() {
         id = intent.getIntExtra("_id", 0)
         cursorPrestamo = Principal.getCursorPrestamo(id)
         cursorDetalle = Principal.getPrestamoDetalle(id)
+        totalPaid = Principal.getTotalPaid(id)
         instance.minimumFractionDigits = 2
 
         etCant = findViewById(R.id.ETCantidad)
@@ -99,7 +105,7 @@ class seePrestamoActivity : AppCompatActivity() {
         listView.adapter = adapterList
 
         cursorMoneda = Principal.getMoneda()
-        cursorCuenta = Principal.getTotales(false)
+        cursorCuenta = Principal.getTotalesWithPrestamo()
         cursorPersona = Principal.getPersonas()
         adapterMoneda = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
         adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
@@ -125,54 +131,99 @@ class seePrestamoActivity : AppCompatActivity() {
         spMonedas.isEnabled = editable
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+
+
             Toast.makeText(applicationContext, "$id", Toast.LENGTH_LONG).show()
             val oldCant = cursorDetalle.getDouble(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.Cantidad))
             val oldCambio = cursorDetalle.getDouble(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.Cambio))
             val oldCuenta = cursorDetalle.getInt(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.IdTotales))
             val oldMoneda = cursorDetalle.getInt(cursorDetalle.getColumnIndex(DBMan.DBPrestamoDetalle.IdMoneda))
-            val builder = AlertDialog.Builder(this@seePrestamoActivity)
+            var gasto = false
+            var fechaPayment: String? = null
 
-            // Set the alert dialog title
-            builder.setTitle("Agregar Pago")
-            val tvMoneda = TextView(applicationContext)
-            val spCuenta = Spinner(applicationContext)
+            val dialogBuilder = AlertDialog.Builder(this@seePrestamoActivity)
+            dialogBuilder.setTitle(getString(R.string.add_payment))
+
+            val inflater = this.layoutInflater
+            val dialogView = inflater.inflate(R.layout.dialog_add_payment, null)
+            dialogBuilder.setView(dialogView)
+
+            val tvMoneda = dialogView.findViewById(R.id.lblMoneda) as TextView
+            val spCuenta = dialogView.findViewById(R.id.spCuenta) as Spinner
+            val etCantidad = dialogView.findViewById(R.id.etCantidad) as EditText
+            val etCambio = dialogView.findViewById(R.id.etCambio) as EditText
+            val gastoBtn = dialogView.findViewById(R.id.gastoBtn) as RadioButton
+            val ingresoBtn = dialogView.findViewById(R.id.ingresoBtn) as RadioButton
+            val hoyBtn = dialogView.findViewById(R.id.hoyBtn) as RadioButton
+            val ayerBtn = dialogView.findViewById(R.id.ayerBtn) as RadioButton
+            val otroDate = dialogView.findViewById(R.id.otroBtn) as RadioButton
+
             val cursorCuenta = Principal.getTotales(false)
             val adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
             spCuenta.adapter = adapterCuenta
-            val etCantidad = EditText(applicationContext)
-            val etCambio = EditText(applicationContext)
-            val layout = LinearLayout(applicationContext)
-            val linear2 = LinearLayout(applicationContext)
-            val relativeLayout = RelativeLayout(applicationContext)
-            layout.weightSum = 2f
-            linear2.weightSum = 2f
-            val lp2 = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,1f)
-            val rl = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
-            val r2 = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
-            relativeLayout.layoutParams = rl
-            spCuenta.layoutParams = lp2
-            tvMoneda.layoutParams = lp2
-            etCantidad.layoutParams = lp2
-            etCambio.layoutParams = lp2
-            layout.layoutParams = rl
-            layout.id = 2
-            linear2.layoutParams = r2
-            r2.addRule(RelativeLayout.BELOW, 2)
-            etCantidad.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            etCambio.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            etCantidad.setText(oldCant.toString())
+
+            var tmpCant = oldCant
+            etCantidad.setText("${(if(tmpCant < 0) tmpCant * -1 else tmpCant)}")
             etCambio.setText(oldCambio.toString())
+            if(tmpCant < 0){
+                gastoBtn.isChecked = true
+                gasto = true
+            } else {
+                ingresoBtn.isChecked = true
+            }
+            gastoBtn.setOnClickListener {
+                gasto = true
+            }
+            ingresoBtn.setOnClickListener {
+                gasto = false
+            }
+            hoyBtn.setOnClickListener {
+                fechaPayment = null
+            }
+            ayerBtn.setOnClickListener {
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val cal = Calendar.getInstance()
+                cal.add(Calendar.DAY_OF_MONTH, -1)
+                fechaPayment = dateFormat.format(cal.time)
+                val i = 0
+            }
+            otroDate.setOnClickListener {
+                val cal = Calendar.getInstance()
+                try {
+                    val sdf = SimpleDateFormat("MMM-dd-yyyy")
+                    if (fechaPayment != null) {
+                        cal.time = sdf.parse(fechaPayment)// all done
+                    }
+                } catch (e: ParseException) {
+                    e.printStackTrace()
+                }
+
+                val alertDialog = DatePickerDialog(this@seePrestamoActivity, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                    val dfs = DateFormatSymbols()
+                    val months = dfs.months
+                    val date = months[monthOfYear].substring(0, 3) + "-" + dayOfMonth.toString() + "-" + year.toString()
+                    otroDate.text = date
+                    val m: String
+                    val d: String
+                    if (dayOfMonth < 10)
+                        d = "0$dayOfMonth"
+                    else
+                        d = "" + dayOfMonth
+                    if (monthOfYear < 9)
+                        m = "0" + (monthOfYear + 1)
+                    else
+                        m = (monthOfYear + 1).toString() + ""
+                    fechaPayment = "$year-$m-$d"
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+                //AlertDialog alertDialog2 = alertDialog.show();
+                alertDialog.show()
+                alertDialog.setCanceledOnTouchOutside(false)
+            }
             var j = 0
             while (j < spCuenta.adapter.count) {
                 val value = spCuenta.getItemAtPosition(j) as Cursor
                 val id = value.getInt(value.getColumnIndex("_id"))
-                if (id == idCuenta) {
+                if (id == oldCuenta) {
                     spCuenta.setSelection(j)
                     j = spCuenta.adapter.count + 1
                 }
@@ -199,15 +250,17 @@ class seePrestamoActivity : AppCompatActivity() {
                     }
                 }
             })
-            builder.setPositiveButton("OK") { dialog, which ->
-                val cant = etCantidad.text.toString().toDouble()
+
+            dialogBuilder.setPositiveButton("OK") { dialog, which ->
+                var cant = etCantidad.text.toString().toDouble()
                 val idCuenta = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"))
                 val idMon = Principal.getIdMonedaTotales(idCuenta)
+                if(gasto) cant = cant*-1
                 if(idMon != Principal.getIdMonedaTotales(idCuenta)){
                     Toast.makeText(applicationContext, "No se puede modificar porque las monedas no coinciden",Toast.LENGTH_LONG).show()
                 } else {
                     val cambio = etCambio.text.toString().toDouble()
-                    Principal.updatePrestamoDetalle(cant, idCuenta, idMon, this.id, cambio, id.toInt())
+                    Principal.updatePrestamoDetalle(cant, idCuenta, idMon, this.id, cambio, id.toInt(), fechaPayment)
                     if(idMove != null && idMove != 0){
                         Principal.updateTotalesFromPrestamo(oldCant, idCuenta)
                         Principal.updateTotalesFromPrestamo(cant * -1, idCuenta)
@@ -218,19 +271,13 @@ class seePrestamoActivity : AppCompatActivity() {
                 }
             }
 
-            builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
-            layout.addView(spCuenta)
-            layout.addView(tvMoneda)
-            linear2.addView(etCantidad)
-            linear2.addView(etCambio)
-            relativeLayout.addView(linear2)
-            relativeLayout.addView(layout)
-            builder.setView(relativeLayout)
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
-            // Display the alert dialog on app interface
-            val alertDialog = builder.show()
+            dialogBuilder.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
+            val alertDialog = dialogBuilder.create()
+            alertDialog.show()
             alertDialog.setCanceledOnTouchOutside(false)
+
+
+
         }
 
         fab.setOnClickListener {
@@ -415,43 +462,85 @@ class seePrestamoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if(id == R.id.action_pago){
-            val builder = AlertDialog.Builder(this@seePrestamoActivity)
 
-            // Set the alert dialog title
-            builder.setTitle(getString(R.string.add_payment))
-            val tvMoneda = TextView(applicationContext)
-            val spCuenta = Spinner(applicationContext)
+            var gasto = false
+            var fechaPayment: String? = null
+            val dialogBuilder = AlertDialog.Builder(this@seePrestamoActivity)
+            dialogBuilder.setTitle(getString(R.string.add_payment))
+
+            val inflater = this.layoutInflater
+            val dialogView = inflater.inflate(R.layout.dialog_add_payment, null)
+            dialogBuilder.setView(dialogView)
+
+            val tvMoneda = dialogView.findViewById(R.id.lblMoneda) as TextView
+            val spCuenta = dialogView.findViewById(R.id.spCuenta) as Spinner
+            val etCantidad = dialogView.findViewById(R.id.etCantidad) as EditText
+            val etCambio = dialogView.findViewById(R.id.etCambio) as EditText
+            val gastoBtn = dialogView.findViewById(R.id.gastoBtn) as RadioButton
+            val ingresoBtn = dialogView.findViewById(R.id.ingresoBtn) as RadioButton
+            val hoyBtn = dialogView.findViewById(R.id.hoyBtn) as RadioButton
+            val ayerBtn = dialogView.findViewById(R.id.ayerBtn) as RadioButton
+            val otroDate = dialogView.findViewById(R.id.otroBtn) as RadioButton
+
             val cursorCuenta = Principal.getTotales(false)
             val adapterCuenta = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorCuenta, arrayOf("Cuenta"), intArrayOf(android.R.id.text1), 0)
             spCuenta.adapter = adapterCuenta
-            val etCantidad = EditText(applicationContext)
-            val etCambio = EditText(applicationContext)
-            val layout = LinearLayout(applicationContext)
-            val linear2 = LinearLayout(applicationContext)
-            val relativeLayout = RelativeLayout(applicationContext)
-            layout.weightSum = 2f
-            linear2.weightSum = 2f
-            val lp2 = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,1f)
-            val rl = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
-            val r2 = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
-            relativeLayout.layoutParams = rl
-            spCuenta.layoutParams = lp2
-            tvMoneda.layoutParams = lp2
-            etCantidad.layoutParams = lp2
-            etCambio.layoutParams = lp2
-            layout.layoutParams = rl
-            layout.id = 1
-            linear2.layoutParams = r2
-            r2.addRule(RelativeLayout.BELOW, 1)
-            etCantidad.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            etCambio.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            etCantidad.setText((cant).toString())
+            var tmpCant = cant - totalPaid
+            etCantidad.setText("${(if(tmpCant < 0) tmpCant * -1 else tmpCant)}")
+            if(tmpCant < 0){
+                gastoBtn.isChecked = true
+                gasto = true
+            } else {
+                ingresoBtn.isChecked = true
+            }
+            gastoBtn.setOnClickListener {
+                gasto = true
+            }
+            ingresoBtn.setOnClickListener {
+                gasto = false
+            }
+            hoyBtn.setOnClickListener {
+                fechaPayment = null
+            }
+            ayerBtn.setOnClickListener {
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val cal = Calendar.getInstance()
+                cal.add(Calendar.DAY_OF_MONTH, -1)
+                fechaPayment = dateFormat.format(cal.time)
+                val i = 0
+            }
+            otroDate.setOnClickListener {
+                val cal = Calendar.getInstance()
+                try {
+                    val sdf = SimpleDateFormat("MMM-dd-yyyy")
+                   if (fechaPayment != null) {
+                        cal.time = sdf.parse(fechaPayment)// all done
+                   }
+                } catch (e: ParseException) {
+                    e.printStackTrace()
+                }
+
+                val alertDialog = DatePickerDialog(this@seePrestamoActivity, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                    val dfs = DateFormatSymbols()
+                    val months = dfs.months
+                    val date = months[monthOfYear].substring(0, 3) + "-" + dayOfMonth.toString() + "-" + year.toString()
+                    otroDate.text = date
+                    val m: String
+                    val d: String
+                    if (dayOfMonth < 10)
+                        d = "0$dayOfMonth"
+                    else
+                        d = "" + dayOfMonth
+                    if (monthOfYear < 9)
+                        m = "0" + (monthOfYear + 1)
+                    else
+                        m = (monthOfYear + 1).toString() + ""
+                    fechaPayment = "$year-$m-$d"
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+                //AlertDialog alertDialog2 = alertDialog.show();
+                alertDialog.show()
+                alertDialog.setCanceledOnTouchOutside(false)
+            }
             var j = 0
             while (j < spCuenta.adapter.count) {
                 val value = spCuenta.getItemAtPosition(j) as Cursor
@@ -480,37 +569,30 @@ class seePrestamoActivity : AppCompatActivity() {
                     }
                 }
             })
-            builder.setPositiveButton("OK") { dialog, which ->
-                val cant = etCantidad.text.toString().toDouble()
+
+            dialogBuilder.setPositiveButton("OK") { dialog, which ->
+                var cant = etCantidad.text.toString().toDouble()
                 val idCuenta = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"))
                 val idMon = Principal.getIdMonedaTotales(idCuenta)
+                if(gasto) cant = cant*-1
                 if(idMon != Principal.getIdMonedaTotales(idCuenta)){
                     Toast.makeText(applicationContext, getString(R.string.err_add_dif_curr),Toast.LENGTH_LONG).show()
                 } else {
                     val cambio = etCambio.text.toString().toDouble()
-                    if(idMove != null && idMove != 0){
-                        Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
-                        Principal.updateTotalesFromPrestamo(cant * -1, idCuenta)
-                    } else {
-                        Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
+                    //if(idMove != null && idMove != 0){
+                        Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio, fechaPayment)
                         Principal.updateTotalesFromPrestamo(cant, idCuenta)
-                    }
+                    //} else {
+                    //    Principal.insertPrestamoDetalle(cant, idCuenta, idMon, this.id, cambio)
+                    //    Principal.updateTotalesFromPrestamo(cant, idCuenta)
+                    //}
                 }
             }
-
-            builder.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
-            layout.addView(spCuenta)
-            layout.addView(tvMoneda)
-            linear2.addView(etCantidad)
-            linear2.addView(etCambio)
-            relativeLayout.addView(linear2)
-            relativeLayout.addView(layout)
-            builder.setView(relativeLayout)
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
-            // Display the alert dialog on app interface
-            val alertDialog = builder.show()
+            dialogBuilder.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
+            val alertDialog = dialogBuilder.create()
+            alertDialog.show()
             alertDialog.setCanceledOnTouchOutside(false)
+
         }
         return super.onOptionsItemSelected(item)
     }

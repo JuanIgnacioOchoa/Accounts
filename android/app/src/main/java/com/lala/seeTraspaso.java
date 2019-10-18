@@ -53,6 +53,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Principal.hideKeyboard(seeTraspaso.this);
                 finish();
                 //handleOnBackPress();
             }
@@ -160,6 +161,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
                     } else if (verificarDatos()) {
                         Principal.actualizarTraspaso(id,nCantidad,nIdFrom,nIdTo,nComment,nIdMotivo,nCambio, nDate);
                         //Principal.actualizarTipoDeCambio(Principal.getIdMoneda(nIdMoneda),Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta)),nCambio);
+                        Principal.hideKeyboard(seeTraspaso.this);
                         finish();
                     } else Toast.makeText(context, getString(R.string.err_data), Toast.LENGTH_SHORT).show();
                 }else{
@@ -209,6 +211,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         if(Principal.getMonedaId(idCuentaTo) == Principal.getMonedaId(idCuentaFrom)){
             etCambio.setVisibility(View.INVISIBLE);
             tvCambio.setVisibility(View.INVISIBLE);
+            nCambio = 1.0;
         } else {
             nCambio = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
             etCambio.setText((nCambio.toString()));
@@ -229,6 +232,8 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
             nCantidad = Double.parseDouble(sCantidad);
             if(Principal.getMonedaId(nIdFrom) != Principal.getMonedaId(nIdTo)){
                 nCambio = Double.parseDouble(etCambio.getText().toString());
+            } else {
+                nCambio = 1.0;
             }
         }catch (Exception e){
             return false;
@@ -278,6 +283,7 @@ public class seeTraspaso extends AppCompatActivity implements AdapterView.OnItem
         if(idM == R.id.action_delete){
             Principal.eliminarTras(id);
             Toast.makeText(context,getString(R.string.del_move), Toast.LENGTH_SHORT).show();
+            Principal.hideKeyboard(seeTraspaso.this);
             finish();
         }
         return super.onOptionsItemSelected(item);

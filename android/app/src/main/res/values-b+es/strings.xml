@@ -95,8 +95,6 @@
 
     <string name="account_edit">Editar Cuenta</string>
 
-    <string name="server_client_id">852881704240-s2bfpjonbu6s7p4iitdlj9ajese4uj26.apps.googleusercontent.com</string>
-
     <string name="conexion_err">Error de conexion</string>
     <string name="no_wifi">No existe conexion a wifi usar datos moviles</string>
     <string name="sync_err">No se pudo syncronizar, revisar conexion a internet</string>

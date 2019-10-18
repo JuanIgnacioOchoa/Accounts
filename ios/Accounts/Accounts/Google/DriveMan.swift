@@ -140,7 +140,7 @@ func downloadDataByIdAndDelete(service: GTLRDriveService, id: String, name: Stri
     }
     Database.deleteTable(table: name)
     for data in jsonArray!{
-        print(data)
+        //print(data)
         var keys: Array<String> = Array()
         var values: Array<String?> = Array()
         var x = 0
@@ -173,7 +173,7 @@ func listFiles(service: GTLRDriveService,  completion: @escaping (Any?) -> Void)
     service.executeQuery(query) { (_, result, error) in
         guard error == nil else {
             completion(nil)
-            return
+            fatalError(error!.localizedDescription)
         }
         
         let fileList = result as? GTLRDrive_FileList
@@ -200,13 +200,11 @@ func deletAll(service: GTLRDriveService, completion: @escaping (Any?) -> Void) {
                 
                 print("query: ", file.name!)
                 print("query: ", file.identifier!)
-                group.enter()
+                //group.enter()
                 service.executeQuery(query) { (_, result, error)  in
-                    print("ressas, ", result)
-                    print("ressas err, ", error)
-                    group.leave()
+                    //group.leave()
                 }
-                group.wait()
+                //group.wait()
             }
             completion(true)
         }
@@ -243,23 +241,19 @@ func uploadDataByIdAnd(service: GTLRDriveService, name: String, completion: @esc
     file.name = name
     file.parents = ["appDataFolder"]
     
-    //var url = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-    
-
-    do {
         //let fileManager = FileManager.default
         //let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         
         //let url = documentDirectory.appendingPathComponent(name)
         //try sData.write(to: url, atomically: false, encoding: .utf8)
-        let uploadParameters = GTLRUploadParameters(data: sData.data(using: .utf8)!, mimeType: "application/json")
+    let x = sData.data(using: .utf8)
+        let uploadParameters = GTLRUploadParameters(data: x!, mimeType: "application/json")
         let q = GTLRDriveQuery_FilesCreate.query(withObject: file, uploadParameters: uploadParameters)
         
         service.executeQuery(q) { (_, result, error)  in
             guard error == nil else {
                 print("error", error ?? "<#default value#>")
-                completion(nil)
-                return
+                fatalError(error!.localizedDescription)
             }
             print("Holaaa res: ", result)
             //do {
@@ -269,10 +263,6 @@ func uploadDataByIdAnd(service: GTLRDriveService, name: String, completion: @esc
             //}
             completion("Success")
         }
-    } catch {
-        completion(nil)
-        return
-    }
 
     //print("res", s)
     //completion(jsonArray)

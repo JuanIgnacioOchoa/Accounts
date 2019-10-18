@@ -23,6 +23,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import androidx.core.app.ActivityCompat;
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String APPLICATION_NAME = "Account";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
+    private BottomNavigationView navigationView;
 
     private static Fragment fragmentTotals;
     private static Fragment fragmentMoves;
@@ -121,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("Accoun Lifecycle", "onCreate");
         setContentView(R.layout.activity_main);
-
 
         MobileAds.initialize(this);
         mAdView = findViewById(R.id.adView);
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         fragmentTotals = FragmentTotals.getInstance();
@@ -281,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         //this.createAndInitAppDir();
         //DataBase helper = new DataBase(this.getApplicationContext(), AppDir, version);
         //Log.d("Accoun", getCacheDir()+"");
-        DataBase helper = new DataBase(this.getApplicationContext(), getCacheDir(), version);
+        DataBase helper = new DataBase(this.getApplicationContext(), getCacheDir());
         helper.getWritableDatabase();
         db = helper.getWritableDatabase();
 
@@ -326,6 +328,8 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
         Log.d("Accoun Lifecycle", "onResume");
+        Intent i = new Intent(this,prueba.class);
+        startActivity(i);
     }
     @Override
     protected void onPause(){
@@ -358,62 +362,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent i = new Intent(this, Settings.class);
-            startActivity(i);
-            return true;
-        }
-        else if(id == R.id.action_motivo){
-            Intent i = new Intent(this,NewMotive.class);
-            startActivity(i);
-        }
-        else if(id == R.id.Reportes){
-            Intent i = new Intent(this, Reportes.class);
-            startActivity(i);
-        }
-        else if(id == R.id.action_trips){
-            Intent i = new Intent(this, TripsMainActivity.class);
-            startActivity(i);
-        }
-        else if(id == R.id.action_prestamo){
-            Intent i = new Intent(this, PrestamoActivity.class);
-            startActivity(i);
-        }
-        else if(id == R.id.login){
+        if(id == R.id.login){
             if(signedIn){
                 signOut();
             } else {
                 signIn();
             }
-        }
-        else if(id == R.id.new_moneda){
-            AlertDialog.Builder builder = new AlertDialog.Builder(cont);
-            builder.setTitle(getString(R.string.currency));
-// Set up the input
-            final EditText input = new EditText(cont);
-// Specify the type of input expected;
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-            builder.setView(input);
-// Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(!EditTextError.checkError(input, getString(R.string.required_field))){
-                        String moneda = input.getText().toString();
-                        if(moneda.length()==3){
-                            Principal.guardarMoneda(moneda);
-                        }else Toast.makeText(cont,getString(R.string.chars_currency),Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alertDialog = builder.show();
-            alertDialog.setCanceledOnTouchOutside(false);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -564,6 +518,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (ApiException e){
             e.printStackTrace();
             Log.d("Accoun","Api error" + e.getStackTrace());
+            Log.d("Accoun","Api error" + e);
             signedIn = false;
             menu.findItem(R.id.login).setTitle(R.string.login);
         }

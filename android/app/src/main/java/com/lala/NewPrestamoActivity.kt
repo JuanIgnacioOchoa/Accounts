@@ -31,6 +31,7 @@ class NewPrestamoActivity : AppCompatActivity() {
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
 
         toolbar.setNavigationOnClickListener {
+            Principal.hideKeyboard(this);
             finish()
             //handleOnBackPress();
         }
@@ -97,6 +98,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                             Principal.newMoveCuenta(cant * tipoDeCambio * -1, cuenta)
                             Toast.makeText(applicationContext, getString(R.string.succes_saved), Toast.LENGTH_LONG).show()
                             //guardarDif()
+                            Principal.hideKeyboard(this);
                             finish()
                         }
                     }
@@ -111,6 +113,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                     Principal.createPrestamo(cant, cuenta, moneda, persona, descr, 1.0, 0)
                     Principal.newMoveCuenta(cant * -1, cuenta)
                     Toast.makeText(applicationContext, getString(R.string.succes_saved), Toast.LENGTH_LONG).show()
+                    Principal.hideKeyboard(this);
                     finish()
                 }
 
@@ -154,7 +157,9 @@ class NewPrestamoActivity : AppCompatActivity() {
             builder.setMessage(getString(R.string.alert_info_data_msg_pre))
 
 // Set up the buttons
-            builder.setPositiveButton("OK") { dialog, which -> finish() }
+            builder.setPositiveButton("OK") { dialog, which -> 
+            Principal.hideKeyboard(this);
+            finish() }
             val alertDialog = builder.show()
             alertDialog.setCanceledOnTouchOutside(false)
         }

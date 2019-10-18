@@ -122,4 +122,5 @@
     <string name="alert_info_data_msg_tri">You need to add a currency before adding a trip</string>
     <string name="alert_info_data_msg_pre">You need to add account currency and loaners/debtors before starting to add records.</string>
     <string name="alert_info_data_msg_tras">You need to add accounts before starting to add records.</string>
+
 </resources>

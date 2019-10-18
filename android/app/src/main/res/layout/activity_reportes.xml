@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.lala.Reportes">
+    tools:context="com.lala.ReportesFragment">
 
 
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:paddingTop="0dp">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
@@ -48,18 +40,5 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-    <!-- TEST ca-app-pub-3940256099942544/6300978111 -->
-    <!-- PROD ca-app-pub-5443791090032110/6866766886 -->
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="bottom|start"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-5443791090032110/6866766886"></com.google.android.gms.ads.AdView>
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>
 

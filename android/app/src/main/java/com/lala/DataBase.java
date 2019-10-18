@@ -3,6 +3,7 @@ package com.lala;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.File;
 
@@ -12,11 +13,11 @@ import java.io.File;
 public class DataBase extends SQLiteOpenHelper {
     private static SQLiteDatabase db;
     private static final String DB_NAME = "Account.sqlite"; // nombre de la base de datos sqlite, no es necesario que tenga extencion
-    private static final int DB_SCHEME_VERSION = 0; //es el numero de nuestra version de nuestar base de dator, es decir cada que modificamos
+    private static final int DB_SCHEME_VERSION = 2; //es el numero de nuestra version de nuestar base de dator, es decir cada que modificamos
     // la tabla este numero cambia
     private final String TOTALES = "Totales";
-    public DataBase(Context context, File AppDir, int version) {
-        super(context, AppDir.getAbsolutePath() + "/" + DB_NAME, null, version);
+    public DataBase(Context context, File AppDir) {
+        super(context, AppDir.getAbsolutePath() + "/" + DB_NAME, null, DB_SCHEME_VERSION);
 
     }
 
@@ -173,11 +174,30 @@ public class DataBase extends SQLiteOpenHelper {
                 " (_id, " + DBMan.DBTiposCuentas.Tipo + ") "
                 + "values ( 2 , 'Tarjeta Credito')");
 
+
+
+
+
+
+        // version 2
+        db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Tarjeta de Credito' where _id = 2");
+        db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Efectivo' where _id = 1");
+        db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (3, 'Tarjeta de Debito')");
+        db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (4, 'Cuentas de Inversion')");
+        db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (5, 'Prestamos')");
+
     }
 
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        Log.d("Accoubt DB", "onUpgrade from " + oldVersion + " to " + newVersion);
+        if(oldVersion <= 1){
+            db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Tarjeta de Credito' where _id = 2");
+            db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Efectivo' where _id = 1");
+            db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (3, 'Tarjeta de Debito')");
+            db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (4, 'Cuentas de Inversion')");
+            db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (5, 'Prestamos')");
+        }
     }
 
 }

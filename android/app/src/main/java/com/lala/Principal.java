@@ -6,13 +6,19 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -22,9 +28,16 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.TimeZone;
 
 /** Accounts
@@ -40,18 +53,26 @@ public class Principal {
     }
 
     // Totales
-    public static Cursor getTotalMoves(int id){
-        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE Fecha BETWEEN date('now', '-1 month') and date('now') " +
-                "and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC", new String[]{""+id, ""+id});
+    public static Cursor getTotalMovesFecha(int id){
+        return db.rawQuery("SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales " +
+                "and m.Fecha BETWEEN date('now', '-1 month') and date('now') " +
+                "and (IdTotales = ? or Traspaso = ?) Group by m.Fecha ORDER BY Fecha DESC, m._id DESC", new String[]{""+id, ""+id});
     }
-    public static Cursor getTotalMoves(int id, String year){
-        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == ? " +
-                "and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC", new String[]{year,""+id, ""+id});
+    public static Cursor getTotalMovesFecha(int id, String year){
+        return db.rawQuery("SELECT m._id, m.Fecha FROM AccountsTotales as t, AccountsMovimiento as m WHERE m.IdTotales = t._id and" +
+                " strftime('%Y',Fecha) == ? " +
+                "and (IdTotales = ? or Traspaso = ?) Group By m.Fecha ORDER BY Fecha DESC, m._id DESC", new String[]{year,""+id, ""+id});
     }
 
-    public static Cursor getTotalMoves(int id, String month, String year){
-        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? " +
-                "and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC", new String[]{year, month,""+id, ""+id});
+    public static Cursor getTotalMovesFecha(int id, String month, String year){
+        return db.rawQuery("SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales and " +
+                " strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? " +
+                "and (IdTotales = ? or Traspaso = ?) Group by m.Fecha ORDER BY Fecha DESC, m._id DESC", new String[]{year, month,""+id, ""+id});
+    }
+
+    public static Cursor getTotalMovesByFecha(String date, int id){
+        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE (IdTotales = ? or Traspaso = ?) and Fecha = ? ORDER BY Fecha DESC, _id DESC",
+                new String[]{""+id, ""+id, date});
     }
     public static Cursor getTotalCredit(){
         return db.rawQuery("SELECT * FROM AccountsTotales WHERE Activa == 1 and Tipo = 2",null);
@@ -75,14 +96,26 @@ public class Principal {
         }
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
                 "AccountsTotales.CurrentCantidad, AccountsTotales.Activa FROM AccountsTotales, AccountsMoneda LEFT JOIN " +
-                "AccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and date('now','-1 month') <= date('now') " +
+                "AccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and Fecha BETWEEN date('now', '-1 month') and date('now') " +
                 "WHERE " + activa + " AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id " +
                 "ORDER by activa desc, Count DESC" ,null);
+    }
+    public static Cursor getTotalesLineGraph(){
+        return db.rawQuery("SELECT (tc._id || m.Moneda) as _id, m.Moneda, (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as Count, SUM(t.CurrentCantidad) as CurrentCantidad, 2 as Activa\n" +
+                "\tFROM AccountsTotales as t, AccountsMoneda as m, AccountsTiposCuentas as tc\n" +
+                "\tWHERE t.IdMoneda = m._id and t.Tipo = tc._id and t.Activa = 1\n" +
+                "GROUP BY tc._id, m._id\n" +
+                "union\n" +
+                "SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , \n" +
+                "                AccountsTotales.CurrentCantidad, AccountsTotales.Activa FROM AccountsTotales, AccountsMoneda LEFT JOIN \n" +
+                "                AccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and Fecha BETWEEN date('now', '-1 month') and date('now') \n" +
+                "                WHERE Activa = 1 and AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id \n" +
+                "                ORDER by activa desc, Count DESC" ,null);
     }
     public static Cursor getTotalesWithPrestamo(){
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
                 "AccountsTotales.CurrentCantidad FROM AccountsTotales, AccountsMoneda LEFT JOIN " +
-                "AccountsMovimiento on AccountsMovimiento.IdTotales = AccountsTotales._id and date('now','-1 month') <= date('now') " +
+                "AccountsMovimiento on AccountsMovimiento.IdTotales = AccountsTotales._id and Fecha BETWEEN date('now', '-1 month') and date('now') " +
                 "WHERE Activa == 1 and AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id " +
                 "union\n" +
                 "SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, (-1) as Count , AccountsTotales.CurrentCantidad " +
@@ -90,6 +123,7 @@ public class Principal {
                 "where AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id == 1\n" +
                 "ORDER by Count DESC",null);
     }
+
     public static Cursor getSingleTotales(int id){
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
                 " AccountsTotales.CurrentCantidad FROM AccountsTotales, AccountsMoneda WHERE AccountsTotales.IdMoneda = AccountsMoneda._id and " +
@@ -102,12 +136,13 @@ public class Principal {
                 "WHERE (Activa == 1 or AccountsTotales._id == ?) and AccountsTotales.IdMoneda == AccountsMoneda._id " +
                 "GROUP BY AccountsTotales._id ORDER by Fecha DESC, Count DESC" ,new String[]{id+""});
     }
-    public static void insertTotales(String cuenta, Double cantidad, int moneda){
+    public static void insertTotales(String cuenta, Double cantidad, int moneda, int tipo){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBTotales.Cuenta, cuenta);
         contentValues.put(DBMan.DBTotales.CantidadInicial, cantidad);
         contentValues.put(DBMan.DBTotales.CantidadActual, cantidad);
         contentValues.put(DBMan.DBTotales.Moneda, moneda);
+        contentValues.put(DBMan.DBTotales.Tipo, tipo);
         db.insert(DBMan.DBTotales.TABLE_NAME, null, contentValues);
         updateLast();
     }
@@ -162,10 +197,11 @@ public class Principal {
         updateLast();
     }
 
-    public static void updateTotalesInfo(double cant, String cuenta, int id, boolean activa){
+    public static void updateTotalesInfo(double cant, String cuenta, int id, boolean activa, int tipo){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBTotales.CantidadActual, cant);
         contentValues.put(DBMan.DBTotales.Cuenta, cuenta);
+        contentValues.put(DBMan.DBTotales.Tipo, tipo);
         if(activa){
             contentValues.put(DBMan.DBTotales.Activa, 1);
         } else {
@@ -181,6 +217,88 @@ public class Principal {
                 "          select Sum(CurrentCantidad) as Negativo from AccountsTotales where Activa = 1 and CurrentCantidad < 0 and IdMoneda = ? " +
                 "        ) as t2", new String[]{""+moneda, ""+moneda});
     }
+
+    public static  Cursor getTotalesByType(int moneda, boolean inactivos){
+        String activa = "";
+        if(!inactivos){
+            activa = "Activa == 1 and ";
+        }
+        return db.rawQuery("Select tc.Tipo, tc._id, Sum(t.CurrentCantidad) as Cantidad From AccountsTiposCuentas as tc\n" +
+                "LEFT JOIN AccountsTotales as t on t.Tipo = tc._id where " + activa + " t.IdMoneda = ? group by tc._id", new String[]{""+moneda});
+    }
+
+    public static Double getTotalesCash(int moneda, boolean inactivos){
+        String activa = "";
+        if(!inactivos){
+            activa = "Activa == 1 and ";
+        }
+        Cursor c = db.rawQuery("Select Sum(t.CurrentCantidad) as Cantidad From AccountsTiposCuentas as tc\n" +
+                "LEFT JOIN AccountsTotales as t on t.Tipo = tc._id where " + activa + " t.IdMoneda = ? and (tc._id = 1 or tc._id = 3)", new String[]{""+moneda});
+        if(c.moveToNext()){
+            return c.getDouble(c.getColumnIndex("Cantidad"));
+        }
+        return 0.0;
+    }
+
+    public static Double getTotalesCreditCard(int moneda, boolean inactivos){
+        String activa = "";
+        if(!inactivos){
+            activa = "Activa == 1 and ";
+        }
+        Cursor c = db.rawQuery("Select Sum(t.CurrentCantidad) as Cantidad From AccountsTiposCuentas as tc\n" +
+                "LEFT JOIN AccountsTotales as t on t.Tipo = tc._id where " + activa + " t.IdMoneda = ? and (tc._id = 2)", new String[]{""+moneda});
+        if(c.moveToNext()){
+            return c.getDouble(c.getColumnIndex("Cantidad"));
+        }
+        return 0.0;
+    }
+
+    public static Double getTotalesInvests(int moneda, boolean inactivos){
+        String activa = "";
+        if(!inactivos){
+            activa = "Activa == 1 and ";
+        }
+        Cursor c = db.rawQuery("Select Sum(t.CurrentCantidad) as Cantidad From AccountsTiposCuentas as tc\n" +
+                "LEFT JOIN AccountsTotales as t on t.Tipo = tc._id where " + activa + " t.IdMoneda = ? and (tc._id = 4)", new String[]{""+moneda});
+        if(c.moveToNext()){
+            return c.getDouble(c.getColumnIndex("Cantidad"));
+        }
+        return 0.0;
+    }
+
+    public static Double getTotalesDeudores(int moneda){
+        Cursor c = db.rawQuery("" +
+                "SELECT * FROM ( " +
+                "   select (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad From( " +
+                "       (select sum(Cantidad) as Cantidad, IdMoneda from AccountsPrestamos where IdMovimiento == 0 and IdMoneda = ? ) as table1 " +
+                "   left join ( " +
+                "       select sum(pd.Cantidad * pd.Cambio) as CantidadMenos, pd.IdMoneda " +
+                "       from AccountsPrestamos as p, AccountsPrestamosDetalle as pd  " +
+                "       where p._id = pd.IdPrestamo and p.IdMovimiento == 0 and pd.IdMoneda = ?\n" +
+                "   group by p.IdMoneda) as table2 on table1.IdMoneda = table2.IdMoneda)\n" +
+                ")", new String[]{"" + moneda, "" + moneda});
+        if(c.moveToNext()){
+            return c.getDouble(c.getColumnIndex("Cantidad"));
+        }
+        return 0.0;
+    }
+
+    public static Double getTotalesDeudas(int moneda){
+        Cursor c = db.rawQuery("" +
+                "SELECT * FROM ( " +
+                "   select (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad From( " +
+                "       (select sum(Cantidad) as Cantidad, IdMoneda from AccountsPrestamos where IdMovimiento <> 0 and IdMoneda = ? ) as table1 " +
+                "   left join ( " +
+                "       select sum(pd.Cantidad * pd.Cambio) as CantidadMenos, pd.IdMoneda " +
+                "       from AccountsPrestamos as p, AccountsPrestamosDetalle as pd  " +
+                "       where p._id = pd.IdPrestamo and p.IdMovimiento <> 0 and pd.IdMoneda = ?\n" +
+                "   group by p.IdMoneda) as table2 on table1.IdMoneda = table2.IdMoneda)\n" +
+                ")", new String[]{"" + moneda, "" + moneda});
+        if(c.moveToNext()){
+            return c.getDouble(c.getColumnIndex("Cantidad"));
+        }
+        return 0.0;
+    }
     //Movimientos
     public static Cursor getMovimientos() {
         return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = strftime('%Y', date('now'))and " +
@@ -189,7 +307,48 @@ public class Principal {
 
         //return db.rawQuery("SELECT * FROM Movimiento WHERE date('now','-1 month') <= date('now') ORDER BY Fecha",null);
     }
-    public static long newMove(Double cantidad, int cuenta, String comment,String motivo, String moneda, double cambio){
+    public static Cursor getMovimientosMonthly(String month, String year) {
+        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = ? and " +
+                "strftime('%m',Fecha) = ? and strftime('%d',Fecha) >= 1 and " +
+                "Traspaso is null ORDER BY Fecha DESC, _id DESC", new String[]{year, month});
+    }
+    public static Cursor getMovimientosYearly(String year) {
+        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = ? and " +
+                "strftime('%d',Fecha) >= 1 and " +
+                "Traspaso is null ORDER BY Fecha DESC, _id DESC", new String[]{year});
+    }
+
+    public static Cursor getMovimientosFecha() {
+        return db.rawQuery("SELECT _id, Fecha FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = strftime('%Y', date('now'))and \n" +
+                "                strftime('%m',Fecha) = strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and \n" +
+                "                Traspaso is null GROUP BY Fecha ORDER BY Fecha DESC, _id DESC", null);
+    }
+    public static Cursor getMovimientosFechaMonthly(String month, String year) {
+        return db.rawQuery("SELECT _id, Fecha FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = ? and \n" +
+                "                strftime('%m',Fecha) = ? and strftime('%d',Fecha) >= 1 and \n" +
+                "                Traspaso is null GROUP BY Fecha ORDER BY Fecha DESC, _id DESC", new String[]{year, month});
+    }
+    public static Cursor getMovimientosFechaYearly(String year) {
+        return db.rawQuery("SELECT _id, Fecha FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = ? and \n" +
+                "                 strftime('%d',Fecha) >= 1 and \n" +
+                "                Traspaso is null GROUP BY Fecha ORDER BY Fecha DESC, _id DESC", new String[]{year});
+    }
+    public static Cursor getMovimientosFecha(int id, String month, String year, int idMoneda) {
+        if(month == null){
+            return db.rawQuery("SELECT _id, Fecha FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = ? and \n" +
+                    "                 strftime('%d',Fecha) >= 1 and IdMotivo = ? and IdMoneda = ?" +
+                    " GROUP BY Fecha ORDER BY Fecha DESC, _id DESC", new String[]{year, id+"", idMoneda+""});
+        }
+        return db.rawQuery("SELECT _id, Fecha FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = ? and \n" +
+                "                strftime('%m',Fecha) = ? and strftime('%d',Fecha) >= 1 and \n" +
+                "                IdMotivo = ? and IdMoneda = ? GROUP BY Fecha ORDER BY Fecha DESC, _id DESC", new String[]{year, month, id+"", idMoneda+""});
+    }
+    public static Cursor getMovimientosByDate(String date) {
+        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE Fecha = ? ORDER BY Fecha DESC, _id DESC", new String[]{date});
+
+        //return db.rawQuery("SELECT * FROM Movimiento WHERE date('now','-1 month') <= date('now') ORDER BY Fecha",null);
+    }
+    public static long newMove(Double cantidad, int cuenta, String comment, int motivo, int moneda, double cambio, String fecha){
 
         ContentValues contentValues;
         updateLast();
@@ -198,11 +357,13 @@ public class Principal {
         contentValues.put(DBMan.DBMovimientos.Cantidad,cantidad);
 
         contentValues.put(DBMan.DBMovimientos.Comment, comment);
-        contentValues.put(DBMan.DBMovimientos.IdMotivo,getMotiveId(motivo));
-        contentValues.put("IdMoneda", getIdMoneda(moneda));
+        contentValues.put(DBMan.DBMovimientos.IdMotivo,(motivo));
+        contentValues.put("IdMoneda", (moneda));
         contentValues.put("IdTotales", cuenta);
-        if(cambio != -1) contentValues.put("Cambio", cambio);
-
+        contentValues.put("Cambio", cambio);
+        if(!(fecha == null || fecha == "")){
+            contentValues.put(DBMan.DBMovimientos.Fecha, fecha);
+        }
         return db.insert(DBMan.DBMovimientos.TABLE_NAME,null,contentValues);
     }
     public static Cursor getData(int id){
@@ -236,7 +397,14 @@ public class Principal {
         contentValues.put(DBMan.DBMovimientos.IdMotivo, motivo);
         contentValues.put(DBMan.DBMovimientos.IdMoneda, moneda);
         contentValues.put(DBMan.DBMovimientos.Cambio, sCambio);
-        contentValues.put(DBMan.DBMovimientos.Fecha, date);
+        if(date == null){
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar calendar = Calendar.getInstance();
+            String d = dateFormat.format(calendar.getTime());
+            contentValues.put(DBMan.DBMovimientos.Fecha, d);
+        } else {
+            contentValues.put(DBMan.DBMovimientos.Fecha, date);
+        }
         contentValues.put(DBMan.DBMovimientos.Comment, comment);
         db.update(DBMan.DBMovimientos.TABLE_NAME,contentValues, "_id = ?", new String[]{id+""});
         Cursor c = db.rawQuery("SELECT " + DBMan.DBTotales.CantidadActual + " FROM " + DBMan.DBTotales.TABLE_NAME + " WHERE _id = ?", new String[]{cuenta+""});
@@ -365,6 +533,8 @@ public class Principal {
         return gasto;
     }
 
+
+
     public static Cursor getSumByMotivesMonth(int Moneda, String month, String year){
         return db.rawQuery("SELECT \n" +
                         "    AccountsMotivo._id as _id, SUM(Gasto) as Gasto, Ingreso , AccountsMotivo.Motivo as Motivo, (COALESCE(Ingreso,0) - COALESCE(SUM(Gasto),0)) as count1, (0) as isViaje\n" +
@@ -459,7 +629,7 @@ public class Principal {
                         "                            WHERE table3.IdViaje == AccountsTrips._id GROUP BY IdViaje\n" +
                         "                        ) as table2 on table1.IdViaje = table2.IdViaje ,  AccountsTrips\n" +
                         "                        WHERE table1.IdViaje == AccountsTrips._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC",
-                new String[]{Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month});
+                new String[]{Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month, Moneda+"", year, month});
     }
     public static Cursor getSumByMotivesYear(int Moneda, String year){
         return db.rawQuery("SELECT \n" +
@@ -558,6 +728,141 @@ public class Principal {
                 new String[]{Moneda+"", year, Moneda+"", year ,Moneda+"",year, Moneda+"",year, Moneda+"",year, Moneda+"", year ,Moneda+"",year, Moneda+"",year, Moneda+"",year});
     }
 
+    public static Cursor getTotalesGastoByYearByMotive(String moneda, String year){
+        return db.rawQuery("SELECT \n" +
+                "    AccountsMotivo._id as _id, SUM(Gasto) as Gasto , AccountsMotivo.Motivo as Motivo, (0) as isViaje\n" +
+                "    FROM(\n" +
+                "        SELECT \n" +
+                "            sum(Cantidad ) as Gasto, IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE  IdMoneda == ? and strftime('%Y',Fecha) = ? and Cantidad < 0 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM( CASE WHEN (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ? \n" +
+                "                then Cantidad * Cambio end) as Gasto,\n" +
+                "                IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE Cantidad < 0 and strftime('%Y',Fecha) = ? and Cambio <> 1 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM (CASE WHEN idMotivo == 3 and (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales) == ? THEN\n" +
+                "                    Cantidad * Cambio * -1 end) as Gasto, \n" +
+                "                IdMotivo\n" +
+                "                FROM AccountsMovimiento \n" +
+                "                WHERE strftime('%Y',Fecha) = ? GROUP BY IdMotivo) as table1, AccountsMotivo \n" +
+                "    WHERE table1.IdMotivo == AccountsMotivo._id and (Gasto IS NOT NULL) \n" +
+                "GROUP BY Motivo ORDER BY Gasto\n", new String[]{moneda, year, moneda, year, moneda, year});
+    }
+    public static Cursor getTotalesGastoMonthlyByMotive(String moneda, String month, String year){
+        return db.rawQuery("SELECT \n" +
+                "    AccountsMotivo._id as _id, SUM(Gasto) as Gasto , AccountsMotivo.Motivo as Motivo, (0) as isViaje\n" +
+                "    FROM(\n" +
+                "        SELECT \n" +
+                "            sum(Cantidad ) as Gasto, IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE  IdMoneda == ? and strftime('%Y',Fecha) = ? and strftime('%m',Fecha) = ? and Cantidad < 0 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM( CASE WHEN (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ? \n" +
+                "                then Cantidad * Cambio end) as Gasto,\n" +
+                "                IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE Cantidad < 0 and strftime('%Y',Fecha) = ? and strftime('%m',Fecha) = ? and Cambio <> 1 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM (CASE WHEN idMotivo == 3 and (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales) == ? THEN\n" +
+                "                    Cantidad * Cambio * -1 end) as Gasto, \n" +
+                "                IdMotivo\n" +
+                "                FROM AccountsMovimiento \n" +
+                "                WHERE strftime('%Y',Fecha) = ? and strftime('%m',Fecha) = ? GROUP BY IdMotivo) as table1, AccountsMotivo \n" +
+                "    WHERE table1.IdMotivo == AccountsMotivo._id and (Gasto IS NOT NULL) \n" +
+                "GROUP BY Motivo ORDER BY Gasto\n", new String[]{moneda, year, month, moneda, year, month, moneda, year, month});
+    }
+
+    public static Cursor getTotalesIngresoByYearByMotive(String moneda, String year){
+        return db.rawQuery("SELECT \n" +
+                "    AccountsMotivo._id as _id, SUM(Ingreso) as Ingreso , AccountsMotivo.Motivo as Motivo, (0) as isViaje\n" +
+                "    FROM(\n" +
+                "        SELECT \n" +
+                "            sum(Cantidad ) as Ingreso, IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE IdMoneda > 0 and IdMoneda == ? and strftime('%Y',Fecha) = ? and Cantidad > 0 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM( CASE WHEN (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ? \n" +
+                "                then Cantidad * Cambio end) as Ingreso,\n" +
+                "                IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE IdMoneda > 0 and Cantidad > 0 and strftime('%Y',Fecha) = ? and Cambio <> 1 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM (CASE WHEN idMotivo == 3 and (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales) == ? THEN\n" +
+                "                    Cantidad * Cambio * -1 end) as Ingreso, \n" +
+                "                IdMotivo\n" +
+                "                FROM AccountsMovimiento \n" +
+                "                WHERE IdMoneda > 0 and strftime('%Y',Fecha) = ? GROUP BY IdMotivo) as table1, AccountsMotivo \n" +
+                "    WHERE table1.IdMotivo == AccountsMotivo._id and (Ingreso IS NOT NULL) \n" +
+                "GROUP BY Motivo ORDER BY Ingreso desc\n", new String[]{moneda, year, moneda, year, moneda, year});
+    }
+
+    public static Cursor getTotalesIngresoMonthlyByMotive(String moneda, String month, String year){
+        return db.rawQuery("SELECT \n" +
+                "    AccountsMotivo._id as _id, SUM(Ingreso) as Ingreso , AccountsMotivo.Motivo as Motivo, (0) as isViaje\n" +
+                "    FROM(\n" +
+                "        SELECT \n" +
+                "            sum(Cantidad ) as Ingreso, IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE IdMoneda > 0 and IdMoneda == ? and strftime('%Y',Fecha) = ? and strftime('%m',Fecha) = ? and Cantidad > 0 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM( CASE WHEN (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ? \n" +
+                "                then Cantidad * Cambio end) as Ingreso,\n" +
+                "                IdMotivo\n" +
+                "            FROM AccountsMovimiento \n" +
+                "            WHERE IdMoneda > 0 and Cantidad > 0 and strftime('%Y',Fecha) = ? and strftime('%m',Fecha) = ? and Cambio <> 1 GROUP BY IdMotivo\n" +
+                "        union\n" +
+                "        SELECT \n" +
+                "            SUM (CASE WHEN idMotivo == 3 and (\n" +
+                "                SELECT \n" +
+                "                    AccountsTotales.idMoneda\n" +
+                "                    FROM AccountsTotales, AccountsMovimiento \n" +
+                "                    WHERE AccountsTotales._id == IdTotales) == ? THEN\n" +
+                "                    Cantidad * Cambio * -1 end) as Ingreso, \n" +
+                "                IdMotivo\n" +
+                "                FROM AccountsMovimiento \n" +
+                "                WHERE IdMoneda > 0 and strftime('%Y',Fecha) = ? and strftime('%m',Fecha) = ? GROUP BY IdMotivo) as table1, AccountsMotivo \n" +
+                "    WHERE table1.IdMotivo == AccountsMotivo._id and (Ingreso IS NOT NULL) and table1.IdMotivo \n" +
+                "GROUP BY Motivo ORDER BY Ingreso desc\n", new String[]{moneda, year, month, moneda, year, month, moneda, year, month});
+    }
+
     public static int getIdPrestamoByMoveId(int id){
         Cursor c = db.rawQuery("SELECT * FROM " + DBMan.DBPrestamo.TABLE_NAME + " WHERE " + DBMan.DBPrestamo.IdMovimiento + " == " +
                 id + " LIMIT 1", null);
@@ -587,6 +892,10 @@ public class Principal {
         return db.rawQuery("SELECT AccountsMovimiento._id, cuenta, Cantidad, Comment, Fecha, AccountsMovimiento.IdMoneda FROM AccountsMovimiento, AccountsTotales \n" +
                 "WHERE idTotales = AccountsTotales._id and strftime('%Y',Fecha) == \""+ year+ "\" and " +
                 "strftime('%m',Fecha) == \"" + month +"\" and AccountsMovimiento.idMotivo == " + id ,null);
+    }
+    public static Cursor getMotiveByFecha(int id, String date, int idMoneda){
+        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE Fecha = ? and IdMotivo = ? " +
+                "and IdMoneda = ? ORDER BY Fecha DESC, _id DESC", new String[]{date, id+"", idMoneda+""});
     }
     public static Cursor getTotalesCuentasByMonth(String month, String year){
         return db.rawQuery("select AccountsTotales._id, AccountsTotales.Cuenta, COALESCE(Gasto,0) as Gasto, COALESCE(Ingreso,0) as Ingreso\n" +
@@ -690,6 +999,104 @@ public class Principal {
                 "group by AccountsTotales._id\n" +
                 "\n",new String[]{year, year, year, year, year});
     }
+
+    public static Cursor getTotalsHistoryByMonth(String y){
+        y = "-" + y + " year";
+        return db.rawQuery("SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo FROM ( \n" +
+                "    select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo \n" +
+                "        from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "        WHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN date('now', 'start of year', ?)  and date('now')  \n" +
+                "    GROUP BY t._id, y, mo \n" +
+                "    UNION \n" +
+                "    select SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "                then m.Cantidad * -1 \n" +
+                "                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo \n" +
+                "        from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "        WHERE m.Traspaso = t._id and m.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
+                "    GROUP BY t._id, y, mo \n" +
+                "    UNION \n" +
+                "    select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo \n" +
+                "        from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "        WHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
+                "    GROUP BY t._id, y, mo \n" +
+                "    UNION  \n" +
+                "    select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo \n" +
+                "        from AccountsPrestamos as p, AccountsTotales as t \n" +
+                "        WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
+                "    GROUP by t._id, y, mo \n" +
+                "    UNION \n" +
+                "    select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo \n" +
+                "        from AccountsPrestamosDetalle as p, AccountsTotales as t \n" +
+                "        WHERE p.IdTotales = t._id and p.Fecha BETWEEN date('now', 'start of year', ?)  and date('now')  \n" +
+                "    GROUP by t._id, y, mo \n" +
+                ")as s, AccountsTotales t WHERE s._id = t._id  \n" +
+                "GROUP BY t._id, y, mo order by y desc, mo desc, t._id", new String[]{y,y,y,y,y});
+    }
+
+    public static Cursor getTotalsHistoryByDay(String m){
+        m = "-" + m + " month";
+        return db.rawQuery("SELECT (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as CurrentCantidad, SUM(Cantidad) as Cantidad, (tc._id ||m.Moneda) as _id, y, mo, dd FROM ( \n" +
+                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "\t\tWHERE m.IdTotales = t._id and Traspaso is null and IdTotales > 15 \n" +
+                "\t\t\tand m.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
+                "\tGROUP BY t.Tipo, t.IdMoneda, y, mo, dd\n" +
+                "\tUNION \n" +
+                "\tselect SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "\t\t\t\tthen m.Cantidad * -1 \n" +
+                "\t\t\t\telse m.Cantidad * m.Cambio * -1 END) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "\t\tWHERE m.Traspaso = t._id and Traspaso > 15 and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
+                "\tGROUP BY t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "\tUNION \n" +
+                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "\t\tWHERE m.IdTotales = t._id and Traspaso is not null and m.IdTotales > 15 and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
+                "\tGROUP BY t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "\tUNION  \n" +
+                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsPrestamos as p, AccountsTotales as t \n" +
+                "\t\tWHERE p.IdTotales = t._id and IdMovimiento = 0 and p.IdTotales > 15 and p.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
+                "\tGROUP by t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "\tUNION \n" +
+                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsPrestamosDetalle as p, AccountsTotales as t\n" +
+                "\t\tWHERE p.IdTotales = t._id and p.IdTotales > 15 and p.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
+                "\tGROUP by t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                ")as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0\n" +
+                "GROUP BY tc._id, y, mo, s.IdMoneda, dd\n" +
+                "UNION\n" +
+                "SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo, dd FROM ( \n" +
+                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "\t\tWHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
+                "\tGROUP BY t._id, y, mo, dd\n" +
+                "\tUNION \n" +
+                "\tselect SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "\t\t\t\tthen m.Cantidad * -1 \n" +
+                "\t\t\t\telse m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "\t\tWHERE m.Traspaso = t._id and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
+                "\tGROUP BY t._id, y, mo, dd\n" +
+                "\tUNION \n" +
+                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "\t\tWHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
+                "\tGROUP BY t._id, y, mo, dd\n" +
+                "\tUNION  \n" +
+                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsPrestamos as p, AccountsTotales as t \n" +
+                "\t\tWHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
+                "\tGROUP by t._id, y, mo, dd\n" +
+                "\tUNION \n" +
+                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd\n" +
+                "\t\tfrom AccountsPrestamosDetalle as p, AccountsTotales as t \n" +
+                "\t\tWHERE p.IdTotales = t._id and p.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
+                "\tGROUP by t._id, y, mo, dd\n" +
+                ")as s, AccountsTotales t WHERE s._id = t._id  \n" +
+                "GROUP BY t._id, y, mo, dd\n" +
+                "order by y desc, mo desc, dd desc", new String[]{m,m,m,m,m,m,m,m,m,m});
+    }
     //Motivos
     public static void insertMotive(String mot){
         ContentValues contentValues = new ContentValues();
@@ -699,9 +1106,15 @@ public class Principal {
         updateLast();
     }
     public static Cursor getMotive(){
-        return db.rawQuery("SELECT AccountsMotivo._id, AccountsMotivo.Motivo, COUNT(AccountsMotivo.Motivo) as Cuenta FROM AccountsMotivo LEFT JOIN " +
-                "AccountsMovimiento on AccountsMovimiento.IdMotivo = AccountsMotivo._id and date('now','-1 month') <= date('now') " +
-                " WHERE Active == 1 GROUP BY AccountsMotivo._id ORDER by Fecha DESC, Cuenta DESC ",null);
+        return db.rawQuery("SELECT mot._id as _id, mot.Motivo as Motivo" +
+                ", Cuenta, Fecha FROM (\n" +
+                "\tSELECT * FROM AccountsMotivo WHERE _id > 15 and Active = 1\n" +
+                ") as mot\n" +
+                "left join(\n" +
+                "\tSELECT max(Fecha) as Fecha, IdMotivo, count(IdMotivo) as Cuenta FROM AccountsMovimiento \n" +
+                "\t\tWHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMotivo\n" +
+                ") as mov on mot._id = mov.IdMotivo\n" +
+                "GROUP BY mot._id, mot.Motivo Order By Cuenta desc, Fecha desc",null);
     }
     public static Cursor getMotiveAll(){
         return db.rawQuery("SELECT AccountsMotivo._id, AccountsMotivo.Motivo, AccountsMotivo.Active, COUNT(AccountsMotivo.Motivo) as Cuenta FROM AccountsMotivo LEFT JOIN " +
@@ -709,9 +1122,14 @@ public class Principal {
                 "WHERE AccountsMotivo._id > 15 GROUP BY AccountsMotivo._id ORDER by Active DESC, Fecha DESC, Cuenta DESC ",null);
     }
     public static Cursor getMotive(int id){
-        return db.rawQuery("SELECT AccountsMotivo._id, AccountsMotivo.Motivo, COUNT(AccountsMotivo.Motivo) as Cuenta FROM AccountsMotivo LEFT JOIN " +
-                "AccountsMovimiento on AccountsMovimiento.IdMotivo = AccountsMotivo._id and date('now','-1 month') <= date('now') " +
-                "WHERE Active == 1 or AccountsMotivo._id == ? GROUP BY AccountsMotivo._id ORDER by Fecha DESC, Cuenta DESC ",new String[]{""+id});
+        return db.rawQuery("SELECT mot._id, mot.Motivo, Cuenta, Fecha FROM (\n" +
+                "\tSELECT * FROM AccountsMotivo WHERE _id > 15 and Active = 1 or _id = ?\n" +
+                ") as mot\n" +
+                "left join(\n" +
+                "\tSELECT max(Fecha) as Fecha, IdMotivo, count(IdMotivo) as Cuenta FROM AccountsMovimiento \n" +
+                "\t\tWHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMotivo\n" +
+                ") as mov on mot._id = mov.IdMotivo\n" +
+                "GROUP BY mot._id, mot.Motivo Order By Cuenta desc, Fecha desc ",new String[]{""+id});
     }
     public static int getMotiveId(String motivo){
         Cursor c = db.rawQuery("SELECT _id FROM AccountsMotivo WHERE Motivo = ?",new String[]{motivo});
@@ -743,9 +1161,14 @@ public class Principal {
     }
     //Moneda
     public static Cursor getMoneda(){
-        return db.rawQuery("SELECT AccountsMoneda._id, AccountsMoneda.Moneda, COUNT(AccountsMoneda.Moneda) as Cuenta FROM AccountsMoneda LEFT JOIN" +
-                " AccountsMovimiento on AccountsMovimiento.IdMoneda = AccountsMoneda._id and date('now','-1 month') <= date('now') WHERE Active == 1" +
-                " GROUP BY AccountsMoneda._id ORDER by Fecha DESC, Cuenta DESC ",null);
+        return db.rawQuery("SELECT mon._id as _id, mon.Moneda as Moneda, Cuenta FROM (\n" +
+                "\tSELECT * FROM AccountsMoneda WHERE _id > 0\n" +
+                ") as mon\n" +
+                "left join(\n" +
+                "\tSELECT max(Fecha) as Fecha, IdMoneda, count(IdMoneda) as Cuenta FROM AccountsMovimiento \n" +
+                "\t\tWHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMoneda\n" +
+                ") as mov on mon._id = mov.IdMoneda\n" +
+                "GROUP BY mon._id, mon.Moneda Order By Cuenta desc, Fecha desc ",null);
     }
     public static Cursor getSingleMoneda(int id){
         return db.rawQuery("SELECT AccountsMoneda._id, AccountsMoneda.Moneda FROM AccountsMoneda WHERE _id = ?" +
@@ -770,7 +1193,9 @@ public class Principal {
                 "JOIN AccountsMoneda Moneda1 ON Moneda1._id = AccountsCambioMoneda.IdMoneda1 " +
                 "JOIN AccountsMoneda Moneda2 ON Moneda2._id = AccountsCambioMoneda.IdMoneda2 " +
                 "WHERE AccountsCambioMoneda.IdMoneda1 = ? and AccountsCambioMoneda.IdMoneda2 = ?", new String[]{MonedaFrom+"",MonedaTo+""});
-        c.moveToFirst();
+        if(!c.moveToFirst()){
+            return "1";
+        }
         return c.getString(c.getColumnIndex("Tipo_de_cambio"));
     }
     public static int getIdMoneda(String moneda){
@@ -1024,15 +1449,28 @@ public class Principal {
 
     //Trips
     public static Cursor getTrips(){
-        return db.rawQuery("SELECT t1._id, t1.Nombre, t1.Descripcion, t1.FechaCreacion, t1.FechaCierre, t1.FechaInicio, t1.FechaFin, CASE WHEN t2.Total is null then 0 else t2.Total END Total, t1.IdMoneda  FROM (\n" +
-                "\tSELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, t.IdMoneda  FROM AccountsTrips as t\n" +
-                ") as t1 LEFT JOIN (\n" +
+        return db.rawQuery("SELECT t3.* FROM (\n" +
+                "\tSELECT t1._id as _id, t1.Nombre, t1.Descripcion, t1.FechaCreacion, t1.FechaCierre, t1.FechaInicio, t1.FechaFin, CASE WHEN t2.Total is null then 0 else t2.Total END Total, t1.IdMoneda FROM (\n" +
+                "\t\tSELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, t.IdMoneda  FROM AccountsTrips as t\n" +
+                "\t) as t1 LEFT JOIN (\n" +
                 "\tSELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, sum(m.Cantidad) as Total, t.IdMoneda \n" +
-                "                FROM AccountsTrips as t, AccountsMovimiento as m \n" +
-                "                Where t._id = m.IdViaje \n" +
-                "                GROUP by t._id \n" +
-                "                order by FechaCreacion DESC\n" +
-                ") as t2 on t1._id = t2._id", null);
+                "\t\tFROM AccountsTrips as t, AccountsMovimiento as m \n" +
+                "\t\tWhere t._id = m.IdViaje \n" +
+                "\t\tGROUP by t._id \n" +
+                "\t\torder by FechaCreacion DESC\n" +
+                "\t) as t2 on t1._id = t2._id order by t1.FechaInicio desc\n" +
+                ") as t3\n" +
+                "LEFT JOIN (\n" +
+                "\tSELECT t1._id as _id, t1.Nombre, t1.Descripcion, t1.FechaCreacion, t1.FechaCierre, t1.FechaInicio, t1.FechaFin, CASE WHEN t2.Total is null then 0 else t2.Total END Total, t1.IdMoneda, 1 as Activa FROM (\n" +
+                "\t\tSELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, t.IdMoneda  FROM AccountsTrips as t where date('now') BETWEEN FechaInicio and FechaFin \n" +
+                "\t) as t1 LEFT JOIN (\n" +
+                "\tSELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, sum(m.Cantidad) as Total, t.IdMoneda \n" +
+                "\t\tFROM AccountsTrips as t, AccountsMovimiento as m \n" +
+                "\t\tWhere t._id = m.IdViaje and date('now') BETWEEN FechaInicio and FechaFin \n" +
+                "\t\tGROUP by t._id \n" +
+                "\t\torder by FechaCreacion DESC\n" +
+                "\t) as t2 on t1._id = t2._id order by t1.FechaInicio desc\n" +
+                ") as t4 on t3._id = t4._id order by t4.Activa desc", null);
     }
     public static Cursor getTrip(int _id){
         Cursor c = db.rawQuery("SELECT * FROM " + DBMan.DBViaje.TABLE_NAME + " WHERE _id == " + _id
@@ -1069,8 +1507,10 @@ public class Principal {
         Cursor c = db.rawQuery("SELECT " + DBMan.DBViaje.Nombre +
                 " FROM " + DBMan.DBViaje.TABLE_NAME + " WHERE " +
                 "_id = ?",new String[]{String.valueOf(IdTrip)});
-        c.moveToFirst();
-        return c.getString(c.getColumnIndex(DBMan.DBViaje.Nombre));
+        if(c.moveToFirst()){
+            return c.getString(c.getColumnIndex(DBMan.DBViaje.Nombre));
+        }
+        return "";
     }
     public static boolean updateMoveTrip(int idMove, int idTrip, Double cantidad){
         //TODO make it boolean
@@ -1305,13 +1745,23 @@ public class Principal {
         c.moveToFirst();
         return c;
     }
-    public static boolean insertPrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio){
+    public static double getTotalPaid(int id){
+        Cursor c = db.rawQuery("SELECT SUM(Cantidad * Cambio) as Cantidad FROM AccountsPrestamosDetalle where IdPrestamo = ?", new String[]{id+""});
+        if(c.moveToNext()){
+            return c.getDouble(c.getColumnIndex("Cantidad"));
+        }
+        return 0.0;
+    }
+    public static boolean insertPrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio, String fecha){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBPrestamoDetalle.IdTotales, idTotales);
         contentValues.put(DBMan.DBPrestamoDetalle.Cantidad, cantidad);
         contentValues.put(DBMan.DBPrestamoDetalle.Cambio, cambio);
         contentValues.put(DBMan.DBPrestamoDetalle.IdMoneda, idMoneda);
         contentValues.put(DBMan.DBPrestamoDetalle.IdPrestamo, idPrestamo);
+        if(fecha != null){
+            contentValues.put(DBMan.DBPrestamoDetalle.Fecha, fecha);
+        }
         long a = db.insert(DBMan.DBPrestamoDetalle.TABLE_NAME,null,contentValues);
         if(a >= 0){
             updateLast();
@@ -1320,13 +1770,21 @@ public class Principal {
             return false;
         }
     }
-    public static void updatePrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio, int _id){
+    public static void updatePrestamoDetalle(double cantidad, int idTotales, int idMoneda, int idPrestamo, double cambio, int _id, String fecha){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBMan.DBPrestamoDetalle.Cantidad, cantidad);
         contentValues.put(DBMan.DBPrestamoDetalle.IdTotales, idTotales);
         contentValues.put(DBMan.DBPrestamoDetalle.IdMoneda, idMoneda);
         contentValues.put(DBMan.DBPrestamoDetalle.IdPrestamo, idPrestamo);
         contentValues.put(DBMan.DBPrestamoDetalle.Cambio, cambio);
+        if(fecha == null){
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar calendar = Calendar.getInstance();
+            String d = dateFormat.format(calendar.getTime());
+            contentValues.put(DBMan.DBMovimientos.Fecha, d);
+        } else {
+            contentValues.put(DBMan.DBPrestamoDetalle.Fecha, fecha);
+        }
         db.update(DBMan.DBPrestamoDetalle.TABLE_NAME, contentValues, "_id = ?", new String[]{_id+""});
         updateLast();
     }
@@ -1345,6 +1803,12 @@ public class Principal {
         return db.rawQuery("SELECT * FROM " + DBMan.DBPrestamoDetalle.TABLE_NAME + " WHERE " + DBMan.DBPrestamoDetalle.IdPrestamo + " == " + idPrestamo, null);
     }
 
+    //Tipos Cuentas
+
+
+    public  static Cursor getTiposCuentas(){
+        return db.rawQuery("SELECT * FROM " + DBMan.DBTiposCuentas.TABLE_NAME, null);
+    }
     //Config
     public static String getLastSync(){
         String [] columns = {DBMan.DBConfig.Value};
@@ -1502,6 +1966,13 @@ public class Principal {
         crs.close(); // close the cursor
         return arr.toString();
     }
+
+    public static ArrayList<Integer> colors = new ArrayList<Integer>(
+            Arrays.asList(Color.parseColor("#e6194B"), Color.parseColor("#3cb44b"), Color.parseColor("#ffe119"),
+                    Color.parseColor("#4363d8"), Color.parseColor("#f58231"), Color.parseColor("#911eb4"), Color.parseColor("#42d4f4"),
+                    Color.parseColor("#f032e6"), Color.parseColor("#bfef45"), Color.parseColor("#fabebe"), Color.parseColor("#469990"),
+                    Color.parseColor("#e6beff"), Color.parseColor("#9A6324"), Color.parseColor("#fffac8"), Color.parseColor("#800000"),
+                    Color.parseColor("#aaffc3"), Color.parseColor("#808000"), Color.parseColor("#ffd8b1"), Color.parseColor("#000075")));
 }
 /*
 SELECT Moneda1.Moneda, Moneda2.Moneda, CambioMoneda.Tipo_de_cambio

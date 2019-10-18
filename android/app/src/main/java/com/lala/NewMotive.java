@@ -32,6 +32,7 @@ public class NewMotive extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Principal.hideKeyboard(NewMotive.this);
                 finish();
                 //handleOnBackPress();
             }

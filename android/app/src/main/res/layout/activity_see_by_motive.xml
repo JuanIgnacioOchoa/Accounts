@@ -27,32 +27,42 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBar">
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:weightSum="2"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="56dp"
             android:paddingTop="5dp"
-            android:id="@+id/textView5" />
+            android:id="@+id/linear">
+            <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:textColor="@color/positive_green"
+                android:id="@+id/textViewIn"
+                android:gravity="center"
+                android:layout_weight="1"/>
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="72dp"
-            android:paddingTop="5dp"
-            android:id="@+id/textView13" />
+            <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:textColor="@android:color/holo_red_dark"
+                android:id="@+id/textViewGa"
+                android:gravity="center"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
 
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textView5"
+            android:layout_below="@+id/linear"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/listView"/>
 
     </RelativeLayout>

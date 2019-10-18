@@ -81,32 +81,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             getFileByName(name: Config.Table, service: googleDriveService) { result in
                 if let configId = result {
                     print("config result: ", configId)
-                    getFileDataById(id: configId, service: googleDriveService) { result in
-                        print("Last Sync: ", result![Config.LastSync-1])
-                        let configLastSync = result![Config.LastSync-1][Config.ValueCode] as? String
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                        dateFormatter.timeZone = TimeZone.current
-                        dateFormatter.locale = Locale.current
-                        let configLastSyncDate = dateFormatter.date(from: configLastSync!)
-                        let lastSyncDate = dateFormatter.date(from: lastSync!)
-                        if lastSyncDate == configLastSyncDate{
-                            //No changes
-                            print("No changes")
-                        } else if  (lastSyncDate! < configLastSyncDate!) {
-                            //Update Local with Drive
-                            print("Update Local with Drive")
-                            DispatchQueue.global(qos: .background).async {
-                                downloadFilesAndDeleteOlds(service: googleDriveService) { result in
-                                    print("Result: ", result)
-                                }
+                    if lastSync == nil {
+                        print("Update Local with Drive 1")
+                        DispatchQueue.global(qos: .background).async {
+                            downloadFilesAndDeleteOlds(service: googleDriveService) { result in
+                                print("Result: ", result)
                             }
-                        } else if lastSyncDate! > configLastSyncDate! {
-                            //Update drive with local
-                            print("Update drive with local")
-                            DispatchQueue.global(qos: .background).async {
-                                deletAll(service: googleDriveService) { res in
-                                    uploadFiles(service: googleDriveService)
+                        }
+                    } else {
+                        getFileDataById(id: configId, service: googleDriveService) { result in
+                            print("Last Sync: ", result![Config.LastSync-1])
+                            let configLastSync = result![Config.LastSync-1][Config.ValueCode] as? String
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                            dateFormatter.timeZone = TimeZone.current
+                            dateFormatter.locale = Locale.current
+                            let configLastSyncDate = dateFormatter.date(from: configLastSync!)
+                            let lastSyncDate = dateFormatter.date(from: lastSync!)
+                            if lastSyncDate == configLastSyncDate{
+                                //No changes
+                                print("No changes")
+                            } else if  (lastSyncDate! < configLastSyncDate!) {
+                                //Update Local with Drive
+                                print("Update Local with Drive 2")
+                                DispatchQueue.global(qos: .background).async {
+                                    downloadFilesAndDeleteOlds(service: googleDriveService) { result in
+                                        print("Result: ", result)
+                                    }
+                                }
+                            } else if lastSyncDate! > configLastSyncDate! {
+                                //Update drive with local
+                                print("Update drive with local 1")
+                                DispatchQueue.global(qos: .background).async {
+                                    deletAll(service: googleDriveService) { res in
+                                        uploadFiles(service: googleDriveService)
+                                    }
                                 }
                             }
                         }

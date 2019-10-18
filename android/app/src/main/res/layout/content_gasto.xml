@@ -16,7 +16,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/gasto_spFrom"
-        android:layout_below="@+id/gasto_etCantidad"
+        android:layout_below="@+id/see_move_Tipo_de_cambio"
         android:layout_toEndOf="@+id/space2" />
 
     <TextView
@@ -26,7 +26,7 @@
         android:id="@+id/textView2"
         android:gravity="center_vertical"
         android:textSize="20dp"
-        android:layout_below="@+id/gasto_etCantidad"
+        android:layout_below="@+id/see_move_Tipo_de_cambio"
         android:layout_alignBottom="@+id/gasto_spFrom"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/gasto_spFrom" />
@@ -40,13 +40,14 @@
         android:layout_toEndOf="@+id/textView3" />
 
     <EditText
+        android:id="@+id/gasto_etComment"
         android:layout_width="match_parent"
         android:layout_height="230dp"
-        android:hint="@string/comment_or_desc_hint"
-        android:gravity="center"
+        android:layout_below="@+id/segmented2"
+        android:layout_marginTop="18dp"
         android:backgroundTint="#FFFFFF"
-        android:id="@+id/gasto_etComment"
-        android:layout_below="@+id/new_move_otro" />
+        android:gravity="center"
+        android:hint="@string/comment_or_desc_hint" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -115,5 +116,109 @@
         android:textSize="20dp"
         android:id="@+id/TVPersona"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/currency_change"
+        android:id="@+id/see_move_tvCambio"
+        android:gravity="center_vertical"
+        android:textSize="15dp"
+        android:layout_alignTop="@+id/see_move_Tipo_de_cambio"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/see_move_Tipo_de_cambio"
+        android:visibility="gone"/>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/see_move_Tipo_de_cambio"
+        android:layout_below="@id/resultCant"
+        android:layout_alignStart="@id/gasto_spMoneda"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gasto_etCantidad"
+        android:id="@+id/resultCant"
+        android:layout_alignStart="@+id/gasto_etCantidad"
+        android:layout_alignEnd="@+id/gasto_etCantidad"
+        android:text="1000.00"/>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/new_move_otro"
+        android:weightSum="3"
+        >
+
+        <RadioButton
+            android:id="@+id/hoyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hoy"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ayerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ayer"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+
+
+        <RadioButton
+            android:id="@+id/otroBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Otro"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/segmented3"
+        android:weightSum="2"
+        >
+
+        <RadioButton
+            android:id="@+id/gastoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gasto"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ingresoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingreso"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+    </info.hoang8f.android.segmented.SegmentedGroup>
 
 </RelativeLayout>

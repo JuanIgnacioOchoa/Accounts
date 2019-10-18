@@ -6,7 +6,7 @@
 
     <TextView
         android:layout_width="177dp"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:text="New Text"
         android:id="@+id/LM_Cuenta"
         android:gravity="center_vertical"

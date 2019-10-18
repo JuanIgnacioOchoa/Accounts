@@ -2,10 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lala.MainActivity" >
+    <!--
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    -
     <item android:id="@+id/action_motivo"
         android:title="Motives"
         android:orderInCategory="100"
@@ -22,10 +24,12 @@
         android:title="@string/new_currency"
         android:orderInCategory="100"
         />
+    <!-
     <item android:id="@+id/Reportes"
         android:title="@string/reports"
         android:orderInCategory="100"
         />
+   -->
     <item android:id="@+id/login"
         android:title="@string/login"
         android:orderInCategory="10"

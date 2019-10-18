@@ -98,6 +98,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                             public void onClick(DialogInterface dialog, int which) {
                                 tipoDeCambio = Double.parseDouble(input.getText().toString());
                                 guardarDif();
+                                Principal.hideKeyboard(Traspaso.this);
                                 finish();
                             }
                         });
@@ -111,6 +112,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                         alertDialog.setCanceledOnTouchOutside(false);
                     }else {
                         guardar();
+                        Principal.hideKeyboard(Traspaso.this);
                         finish();
                     }
                 }
@@ -126,6 +128,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Principal.hideKeyboard(Traspaso.this);
                 finish();
                 //handleOnBackPress();
             }
@@ -140,6 +143,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    Principal.hideKeyboard(Traspaso.this);
                     finish();
                 }
             });
@@ -191,11 +195,11 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
 
     public void guardar(){
         if(!Retiro) {
-            Principal.newTraspaso(idCuentaFrom, idCuentaTo, cantidad, -1, comment);
+            Principal.newTraspaso(idCuentaFrom, idCuentaTo, cantidad, 1.0, comment);
             Principal.newMoveCuenta(cantidad * -1, idCuentaFrom);
             Principal.newMoveCuenta(cantidad, idCuentaTo);
         } else {
-            Principal.newRetiro(idCuentaFrom, idCuentaTo, cantidad, -1, comment);
+            Principal.newRetiro(idCuentaFrom, idCuentaTo, cantidad, 1.0, comment);
             Principal.newMoveCuenta(cantidad * -1, idCuentaFrom);
             Principal.newMoveCuenta(cantidad, idCuentaTo);
         }
@@ -208,6 +212,8 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             } else
                 comment += "  #-# " + cantidad + " x " + tipoDeCambio + " = " + (cantidad * tipoDeCambio);
             //Toast.makeText(context, comment, Toast.LENGTH_SHORT).show();
+            if(tipoDeCambio == null)
+                tipoDeCambio = 1.0;
             Principal.newTraspaso(idCuentaFrom, idCuentaTo, cantidad, tipoDeCambio, comment);
             //Principal.newMoveCuenta(cant*tipoDeCambio,idCuenta);
             Principal.actualizarTipoDeCambio(Principal.getMonedaTotales(idCuentaFrom), Principal.getMonedaTotales(idCuentaTo), tipoDeCambio);
@@ -219,6 +225,8 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                 comment = "# " + cantidad + " x " + tipoDeCambio + " = " + cantidad * tipoDeCambio;
             } else
                 comment += "  #-# " + cantidad + " x " + tipoDeCambio + " = " + (cantidad * tipoDeCambio);
+            if(tipoDeCambio == null)
+                tipoDeCambio = 1.0;
             Principal.newRetiro(idCuentaFrom, idCuentaTo, cantidad, tipoDeCambio, comment);
             Principal.actualizarTipoDeCambio(Principal.getMonedaTotales(idCuentaTo), Principal.getMonedaTotales(idCuentaFrom), tipoDeCambio);
             Toast.makeText(context, (cantidad * tipoDeCambio * -1 )+" a " + idCuentaFrom, Toast.LENGTH_SHORT).show();

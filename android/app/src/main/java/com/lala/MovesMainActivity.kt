@@ -116,9 +116,11 @@ class MovesMainActivity : Fragment() {
         spMonth.setSelection(0, false)
         spTimeLapse.setSelection(1, false)
         spMoneda.setSelection(0, false)
-
-        idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
-
+        if(cursorMoneda.count <= 0){
+            idMoneda = 0
+        } else {
+            idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
+        }
 
         val date = Date()
         val calendar = GregorianCalendar()

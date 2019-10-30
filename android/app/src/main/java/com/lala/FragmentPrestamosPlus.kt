@@ -97,10 +97,10 @@ class FragmentPrestamosPlus : Fragment() {
                 tvPersona.setTextColor(Color.rgb(11, 79, 34))
                 tvCuenta.setTextColor(Color.rgb(11, 79, 34))
             } else {
-                tvCantidad.setTextColor(Color.rgb(196, 145, 2))
-                tvFecha.setTextColor(Color.rgb(196, 145, 2))
-                tvPersona.setTextColor(Color.rgb(196, 145, 2))
-                tvCuenta.setTextColor(Color.rgb(196, 145, 2))
+                tvCantidad.setTextColor(Color.RED)
+                tvFecha.setTextColor(Color.RED)
+                tvPersona.setTextColor(Color.RED)
+                tvCuenta.setTextColor(Color.RED)
             }
         }
     }

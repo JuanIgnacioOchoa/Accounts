@@ -2,17 +2,15 @@ package com.lala
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.graphics.Color
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.cursoradapter.widget.CursorAdapter
 import androidx.fragment.app.Fragment
+import com.mynameismidori.currencypicker.CurrencyPicker
+
+
 
 
 
@@ -58,6 +56,9 @@ class MenuMoreActivity : Fragment(), AdapterView.OnItemClickListener {
                 startActivity(i)
             }
             3 -> {
+                val i = Intent(context, CurrencyActivity::class.java)
+                startActivity(i)
+                /*
                 val builder = AlertDialog.Builder(context!!)
                 builder.setTitle(getString(R.string.currency))
                 // Set up the input
@@ -78,6 +79,14 @@ class MenuMoreActivity : Fragment(), AdapterView.OnItemClickListener {
                 builder.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
                 val alertDialog = builder.show()
                 alertDialog.setCanceledOnTouchOutside(false)
+
+
+                val picker = CurrencyPicker.newInstance("Select Currency")  // dialog title
+                picker.setListener { name, code, symbol, flagDrawableResID ->
+                      val h = code
+                }
+                picker.show(childFragmentManager, "CURRENCY_PICKER")
+                 */
             }
             4 -> {
                 val i = Intent(context, Settings::class.java)

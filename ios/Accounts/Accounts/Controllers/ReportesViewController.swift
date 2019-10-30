@@ -14,10 +14,6 @@ class ReportesViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     @IBOutlet weak var timeType: UITextField!
     @IBOutlet weak var timeLapse: UITextField!
     @IBOutlet weak var contentView: UIView!
-    @IBOutlet weak var incomeLbl: UILabel!
-    @IBOutlet weak var outcomeLbl: UILabel!
-    @IBOutlet weak var totalLbl: UILabel!
-    @IBOutlet weak var porcentaLbl: UILabel!
     
     var viewController:ReportesDataViewController? = nil
     let months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
@@ -50,25 +46,6 @@ class ReportesViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         monedas = getMonedas()
         
-        let negativo = getGastoTotalByMonedaFromCurrentMonth(moneda: Int(monedas[selectedMoneda]["_id"] as! Int64)) as NSNumber
-        outcomeLbl.text = numberFormatter.string(from: negativo)
-        let positivo = getIngresoTotalByMonedaFromCurrentMonth(moneda: Int(monedas[selectedMoneda]["_id"] as! Int64)) as NSNumber
-        incomeLbl.text = numberFormatter.string(from: positivo)
-        let total = ((positivo as! Double) - (negativo as! Double)) as NSNumber
-
-        var porcentaje:NSNumber = 0.0
-        
-        if Int(truncating: total) < 0 {
-            porcentaje = NSNumber(value: ((total as! Double) / -(negativo as! Double)) * 100);
-            totalLbl.textColor = UIColor.red
-            porcentaLbl.textColor = UIColor.red
-        } else if Int(truncating: total) > 0{
-            porcentaje = NSNumber(value: ((total as! Double) / (positivo as! Double)) * 100);
-            totalLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
-            porcentaLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
-        }
-        totalLbl.text = numberFormatter.string(from: total)
-        porcentaLbl.text = numberFormatter.string(from: porcentaje)
         configurePickerView()
         pickerTimeType.selectRow(selectedType, inComponent: 0, animated: true)
         currency.delegate = self
@@ -298,11 +275,11 @@ class ReportesViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         return false
     }
-    
+    /*
     func getSubviewsOfView(v:UIView) ->  [ReportesDataViewController]{
         var circleArray = [ReportesDataViewController]()
 
-        for subview in v.subviews as! [UIView] {
+        for subview in v.subviews {
             circleArray += getSubviewsOfView(v: subview)
 
             if subview is ReportesDataViewController {
@@ -312,7 +289,7 @@ class ReportesViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
 
         return circleArray
     }
-    
+    */
     @objc func donePicker(_ btn: UIBarButtonItem){
 
         

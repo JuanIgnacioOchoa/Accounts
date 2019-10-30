@@ -241,7 +241,7 @@ class seePrestamoActivity : AppCompatActivity() {
                         if(idMon == oldMoneda){
                             etCambio.setText(oldCambio.toString())
                         } else {
-                            etCambio.setText(Principal.getTipodeCambio(idMon, idMoneda))
+                            etCambio.setText(Principal.getTipodeCambio(idMon, idMoneda).toString())
                         }
                         etCambio.visibility = View.VISIBLE
                     } else {
@@ -262,10 +262,10 @@ class seePrestamoActivity : AppCompatActivity() {
                     val cambio = etCambio.text.toString().toDouble()
                     Principal.updatePrestamoDetalle(cant, idCuenta, idMon, this.id, cambio, id.toInt(), fechaPayment)
                     if(idMove != null && idMove != 0){
-                        Principal.updateTotalesFromPrestamo(oldCant, idCuenta)
+                        Principal.updateTotalesFromPrestamo(oldCant, oldCuenta)
                         Principal.updateTotalesFromPrestamo(cant * -1, idCuenta)
                     } else {
-                        Principal.updateTotalesFromPrestamo(oldCant *-1, idCuenta)
+                        Principal.updateTotalesFromPrestamo(oldCant *-1, oldCuenta)
                         Principal.updateTotalesFromPrestamo(cant, idCuenta)
                     }
                 }
@@ -561,7 +561,7 @@ class seePrestamoActivity : AppCompatActivity() {
                     var idMon = Principal.getIdMonedaTotales(id.toInt())
                     tvMoneda.text = Principal.getIdMoneda(idMon)
                     if (idMon != idMoneda) {
-                        etCambio.setText(Principal.getTipodeCambio(idMon, idMoneda))
+                        etCambio.setText(Principal.getTipodeCambio(idMon, idMoneda).toString())
                         etCambio.visibility = View.VISIBLE
                     } else {
                         etCambio.setText("1.0")

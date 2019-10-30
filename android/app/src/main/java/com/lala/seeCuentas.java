@@ -380,7 +380,7 @@ public class seeCuentas extends AppCompatActivity {
                                     i = new Intent(context, Gasto.class);
                                     i.putExtra("id", localid);
                                 } else {
-                                    i = new Intent(context, seeTraspaso.class);
+                                    i = new Intent(context, Traspaso.class);
                                     i.putExtra("_id", localid);
                                 }
                                 startActivity(i);

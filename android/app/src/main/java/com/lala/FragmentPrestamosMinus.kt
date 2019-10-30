@@ -2,6 +2,7 @@ package com.lala
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.database.Cursor
 import android.graphics.Color
 import android.os.Bundle
@@ -97,10 +98,10 @@ class FragmentPrestamosMinus : Fragment() {
                 tvPersona.setTextColor(Color.rgb(11, 79, 34))
                 tvCuenta.setTextColor(Color.rgb(11, 79, 34))
             } else {
-                tvCantidad.setTextColor(Color.rgb(196, 145, 2))
-                tvFecha.setTextColor(Color.rgb(196, 145, 2))
-                tvPersona.setTextColor(Color.rgb(196, 145, 2))
-                tvCuenta.setTextColor(Color.rgb(196, 145, 2))
+                tvCantidad.setTextColor(Color.RED)
+                tvFecha.setTextColor(Color.RED)
+                tvPersona.setTextColor(Color.RED)
+                tvCuenta.setTextColor(Color.RED)
             }
         }
     }

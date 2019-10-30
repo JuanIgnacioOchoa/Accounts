@@ -84,7 +84,7 @@ class NewPrestamoActivity : AppCompatActivity() {
 // Specify the type of input expected;
                     input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                     val a = Principal.getTipodeCambio(moneda, monedaCuenta)
-                    input.setText(a)
+                    input.setText(a.toString())
                     builder.setView(input)
 // Set up the buttons
                     builder.setPositiveButton("OK") { dialog, which ->

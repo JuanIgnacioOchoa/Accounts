@@ -125,6 +125,7 @@ public class SeeByMotive extends AppCompatActivity {
                 cantidadTV.setLayoutParams(lp2);
                 String cuenta = Principal.getCuentaTotales(c.getInt(c.getColumnIndex("IdTotales")));
                 double cantidad = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cantidad));
+                double cambio = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
                 int idMoneda = c.getInt(c.getColumnIndex("IdMoneda"));
                 String moneda = Principal.getIdMoneda(idMoneda);
                 String motivo = Principal.getMotiveId(c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMotivo)));
@@ -148,8 +149,9 @@ public class SeeByMotive extends AppCompatActivity {
                 }
                 cuentaTV.setText(cuenta);
                 motivoTV.setText(motivo);
-                cantidadTV.setText(instance.format(cantidad)+" " + moneda);
+                cantidadTV.setText(instance.format(cantidad * cambio)+" " + moneda);
                 cantidadTV.setGravity(Gravity.RIGHT);
+
                 linear.addView(cuentaTV);
                 linear.addView(motivoTV);
                 linear.addView(cantidadTV);
@@ -169,7 +171,7 @@ public class SeeByMotive extends AppCompatActivity {
                                     i = new Intent(context, Gasto.class);
                                     i.putExtra("id", id);
                                 } else {
-                                    i = new Intent(context, seeTraspaso.class);
+                                    i = new Intent(context, Traspaso.class);
                                     i.putExtra("_id", id);
                                 }
                                 startActivity(i);

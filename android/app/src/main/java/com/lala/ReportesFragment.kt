@@ -111,11 +111,11 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val calendar = GregorianCalendar()
         calendar.setTime(date)
         val yearI = calendar.get(Calendar.YEAR)
-        val yearArraySize = yearI - 2016
+        val yearArraySize = yearI - focus.get(Calendar.YEAR)
         val years = arrayOfNulls<String>(yearArraySize + 1)
         var i = 0
         var y = yearI
-        while (y >= 2016) {
+        while (y >= focus.get(Calendar.YEAR)) {
             years[i] = Integer.toString(y)
             i++
             y--
@@ -147,13 +147,21 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         })
 
-        idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
+        if(cursorMoneda.count <= 0){
+            idMoneda = 0
+        } else {
+            idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
+        }
 
 
         spMonth.setSelection(0, false)
         spTimeLapse.setSelection(1, false)
         spMoneda.setSelection(0, false)
-        idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
+        if(cursorMoneda.count <= 0){
+            idMoneda = 0
+        } else {
+            idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
+        }
         val cal = Calendar.getInstance()
         val m = cal.get(Calendar.MONTH) + 1
         var sm = ""
@@ -255,16 +263,17 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
         balance.updateData(idMoneda, month, year) // TODO colocar moneda
         graphCuentas.updateData(month, year) // TODO colocar moneda
 
-        graphsGasto.updateAdapter(idMoneda, month, year)
-        graphsIngreso.updateAdapter(idMoneda, month, year)
-        balance.updateAdapter(idMoneda, month, year)
-        graphCuentas.updateAdapter(month, year)
-
+        if(cursorMoneda.count > 0) {
+            graphsGasto.updateAdapter(idMoneda, month, year)
+            graphsIngreso.updateAdapter(idMoneda, month, year)
+            balance.updateAdapter(idMoneda, month, year)
+            graphCuentas.updateAdapter(month, year)
+        }
     }
 
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        private val imageResId = intArrayOf(R.drawable.cuentas, R.drawable.profile_icon)
+        //private val imageResId = intArrayOf(R.drawable.cuentas, R.drawable.profile_icon)
         private val title = arrayOf("Balance", "Gasto", "Ingreso", "Cuentas")
 
         override fun getItem(position: Int): Fragment {

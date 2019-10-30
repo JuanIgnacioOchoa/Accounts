@@ -377,10 +377,11 @@ public class Reportes extends AppCompatActivity{
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        private int[] imageResId = {
-                R.drawable.cuentas,
-                R.drawable.profile_icon
-        };
+        //private int[] imageResId = {
+        //        R.drawable.cuentas,
+        //        R.drawable.profile_icon
+        //};
+
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -407,14 +408,14 @@ public class Reportes extends AppCompatActivity{
 
         @Override
         public CharSequence getPageTitle(int position) {
-            //Puts an image in the tabs.
+            /*/Puts an image in the tabs.
             Drawable image = ContextCompat.getDrawable(Reportes.this, imageResId[position]);
             image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
             SpannableString sb = new SpannableString(" ");
             ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BASELINE);
             sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            return sb;
+             */
+            return "ABCDEF";
         }
 
     }

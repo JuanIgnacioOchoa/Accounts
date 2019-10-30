@@ -35,7 +35,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/traspaso_spTo"
-        android:layout_below="@+id/traspaso_spFrom"
+        android:layout_below="@+id/res_from"
         android:layout_alignEnd="@+id/traspaso_etComment" />
 
     <EditText
@@ -45,12 +45,11 @@
         android:gravity="center"
         android:backgroundTint="#FFFFFF"
         android:id="@+id/traspaso_etComment"
-
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="49dp"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/traspaso_spTo" />
+        android:layout_below="@+id/segmented3" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -91,6 +90,46 @@
         android:hint="Cantidad $$"
         android:inputType="number|numberDecimal"
         android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/traspaso_spFrom"
+        android:layout_below="@+id/traspaso_spFrom"
+        android:id="@+id/res_from"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/traspaso_spTo"
+        android:layout_below="@+id/traspaso_spTo"
+        android:id="@+id/res_to"
+        android:visibility="invisible"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/res_to"
+        android:visibility="invisible"
+        android:layout_below="@id/res_to"
+        android:hint="1.0"
+        android:inputType="number|numberDecimal"
+        android:id="@+id/etCambio"/>
+
+
+    <TextView
+        android:id="@+id/tvCambio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/res_to"
+        android:layout_alignBottom="@id/etCambio"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/etCambio"
+        android:gravity="center_vertical"
+        android:text="Tipo de Cambio"
+        android:textSize="20dp"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -103,6 +142,49 @@
         android:layout_toEndOf="@+id/traspaso_etCantidad"
         android:textSize="30dp"
         android:gravity="center_vertical"/>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/etCambio"
+        android:weightSum="3"
+        >
+
+        <RadioButton
+            android:id="@+id/hoyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hoy"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ayerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ayer"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+
+
+        <RadioButton
+            android:id="@+id/otroBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Otro"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+    </info.hoang8f.android.segmented.SegmentedGroup>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/trasp_check"

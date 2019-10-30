@@ -6,18 +6,20 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.*
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 
 import kotlinx.android.synthetic.main.activity_see_trip_main.*
 import java.text.DateFormatSymbols
 import java.text.NumberFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class SeeTripMainActivity : AppCompatActivity() {
@@ -36,7 +38,8 @@ class SeeTripMainActivity : AppCompatActivity() {
     private val calendar = Calendar.getInstance()
     private lateinit var cursorTrip:Cursor
     private lateinit var cursorMoves:Cursor
-    private lateinit var adapterMoves:myAdapter
+    //private lateinit var adapterMoves:myAdapter
+    private lateinit var adapterMoves:myAdapterFecha
     private lateinit var cursorMoneda:Cursor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +57,7 @@ class SeeTripMainActivity : AppCompatActivity() {
         cursorTrip = Principal.getTrip(_id)
         val nombre = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre))
         cont = applicationContext
-        setTitle("$nombre($_id)")
+        setTitle("$nombre")
         etNombre = findViewById<EditText>(R.id.ET_TR_Nombre)
         etDesc = findViewById<EditText>(R.id.ET_TR_Desc)
         tvFechaInic = findViewById<TextView>(R.id.TV_TR_FechaInic)
@@ -67,7 +70,7 @@ class SeeTripMainActivity : AppCompatActivity() {
         etDesc.isEnabled = false
         spMoneda.isEnabled = false
         cursorMoves = Principal.getMovesByTrips(_id)
-        adapterMoves = myAdapter(applicationContext, cursorMoves)
+        adapterMoves = myAdapterFecha(applicationContext, cursorMoves)
         lvMovimientos.setAdapter(adapterMoves)
         lvMovimientos.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val i = Intent(applicationContext, seeMove::class.java)
@@ -76,12 +79,14 @@ class SeeTripMainActivity : AppCompatActivity() {
             i.putExtra("idTrip", _id)
             startActivity(i)
         }
+        fechaFin = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaFin))
+        fechaInic = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaInicio))
         cursorMoneda = Principal.getMoneda();
         spMoneda.adapter = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
         etNombre.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre)))
         etDesc.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Descripcion)))
-        tvFechaFin.text = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaFin))
-        tvFechaInic.text = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaInicio))
+        tvFechaFin.text = fechaFin
+        tvFechaInic.text = fechaInic
         var j = 0
         while (j < spMoneda.adapter.count) {
             val value = spMoneda.getItemAtPosition(j) as Cursor
@@ -238,33 +243,103 @@ class SeeTripMainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
     }
-    inner class myAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
+
+    inner class myAdapterFecha(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
         override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
-            return LayoutInflater.from(context).inflate(R.layout.list_movimientos, parent, false)
-            cursorMoves = Principal.getMovesByTrips(_id)
-            adapterMoves = myAdapter(applicationContext, cursorMoves)
+            return LayoutInflater.from(context).inflate(R.layout.inflate_dates, parent, false)
         }
 
         override fun bindView(view: View, context: Context, cursor: Cursor) {
             // Find fields to populate in inflated template
-            val tvCantidad = view.findViewById(R.id.LM_Cantidad) as TextView
-            val tvMoneda = view.findViewById(R.id.LM_Moneda) as TextView
-            val tvMotivo = view.findViewById(R.id.LM_Motivo) as TextView
-            val tvFecha = view.findViewById(R.id.LM_Fecha) as TextView
-            val tvCuenta = view.findViewById(R.id.LM_Cuenta) as TextView
+            val tvFecha = view.findViewById(R.id.tv_inflate_date) as TextView
+            val linearLayout = view.findViewById(R.id.linear_inflate_dates) as LinearLayout
+            linearLayout.removeAllViewsInLayout()
             // Extract properties from cursor
-            var cantidad: Double? = cursor.getDouble(cursor.getColumnIndex(DBMan.DBMovimientos.Cantidad))
-            val fecha = cursor.getString(cursor.getColumnIndex(DBMan.DBMovimientos.Fecha))
-            val cuenta = Principal.getCuentaTotales(cursor.getInt(cursor.getColumnIndex(DBMan.DBMovimientos.IdTotales)))
-            val moneda = Principal.getIdMoneda(cursor.getInt(cursor.getColumnIndex(DBMan.DBMovimientos.IdMoneda)))
-            val motivo = Principal.getMotiveId(cursor.getInt(cursor.getColumnIndex(DBMan.DBMovimientos.IdMotivo)))
-            //val descripcion = cursor.getColumnIndex(cursor.getString(cursor.getColumnIndex(DBMan.DBViaje.Descripcion)))
-            //set
+            //int id = 0;
+            //id = 0;
+            var fecha = cursor.getString(cursor.getColumnIndex(DBMan.DBMovimientos.Fecha))
+            val c = Principal.getTripMovesByFecha(fecha, _id)
+            val x = c.count
+            //c.moveToNext();
+            while (c.moveToNext()) {
+                val linear = LinearLayout(context)
+                linear.weightSum = 3f
+                val lp1 = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT)
+                val lp2 = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                val cuentaTV = TextView(context)
+                val motivoTV = TextView(context)
+                val cantidadTV = TextView(context)
+                linear.layoutParams = lp1
+                cuentaTV.layoutParams = lp2
+                motivoTV.layoutParams = lp2
+                cantidadTV.layoutParams = lp2
+                val cuenta = Principal.getCuentaTotales(c.getInt(c.getColumnIndex("IdTotales")))
+                val cantidad = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cantidad))
+                val idMoneda = c.getInt(c.getColumnIndex("IdMoneda"))
+                var moneda = Principal.getIdMoneda(idMoneda)
+                var motivo = Principal.getMotiveId(c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMotivo)))
+                val idTraspaso = c.getInt(c.getColumnIndex("Traspaso"))
+                val id = c.getInt(c.getColumnIndex("_id"))
+                if (idTraspaso != 0) {
+                    motivo += " " + Principal.getCuentaTotales(idTraspaso)
+                    moneda = ""
+                    cuentaTV.setTextColor(ContextCompat.getColor(context, R.color.neutral_yellow))
+                    motivoTV.setTextColor(ContextCompat.getColor(context, R.color.neutral_yellow))
+                    cantidadTV.setTextColor(ContextCompat.getColor(context, R.color.neutral_yellow))
+                } else if (cantidad < 0) {
+                    cuentaTV.setTextColor(Color.RED)
+                    motivoTV.setTextColor(Color.RED)
+                    cantidadTV.setTextColor(Color.RED)
+                } else {
+                    cuentaTV.setTextColor(ContextCompat.getColor(context, R.color.positive_green))
+                    motivoTV.setTextColor(ContextCompat.getColor(context, R.color.positive_green))
+                    cantidadTV.setTextColor(ContextCompat.getColor(context, R.color.positive_green))
+                }
+                cuentaTV.text = cuenta
+                motivoTV.text = motivo
+                cantidadTV.text = instance.format(cantidad) + " " + moneda
+                cantidadTV.gravity = Gravity.RIGHT
+                linear.addView(cuentaTV)
+                linear.addView(motivoTV)
+                linear.addView(cantidadTV)
+                linearLayout.addView(linear)
+
+                linear.setOnTouchListener { v, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> v.setBackgroundColor(Color.LTGRAY)
+                        MotionEvent.ACTION_UP -> {
+                            val i: Intent
+                            if (idTraspaso == 0) {
+                                i = Intent(context, Gasto::class.java)
+                                i.putExtra("id", id)
+                            } else {
+                                i = Intent(context, Traspaso::class.java)
+                                i.putExtra("_id", id)
+                            }
+                            startActivity(i)
+                        }
+                        MotionEvent.ACTION_MOVE -> v.setBackgroundColor(Color.TRANSPARENT)
+                    }
+                    true
+                }
+            }
+
+            // Populate fields with extracted properties
+            val calendar = Calendar.getInstance()
+            try {
+                var sdf = SimpleDateFormat("yyyy-MM-dd")
+                calendar.time = sdf.parse(fecha)// all done
+                sdf = SimpleDateFormat("EEEE, d MMMM, yyyy")
+                fecha = sdf.format(calendar.time)
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+
             tvFecha.text = fecha
-            tvMoneda.text = moneda
-            tvMotivo.text = motivo
-            tvCantidad.text = "$" + instance.format(cantidad)
-            tvCuenta.text = cuenta
         }
     }
 }

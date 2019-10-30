@@ -13,7 +13,7 @@ import java.io.File;
 public class DataBase extends SQLiteOpenHelper {
     private static SQLiteDatabase db;
     private static final String DB_NAME = "Account.sqlite"; // nombre de la base de datos sqlite, no es necesario que tenga extencion
-    private static final int DB_SCHEME_VERSION = 2; //es el numero de nuestra version de nuestar base de dator, es decir cada que modificamos
+    private static final int DB_SCHEME_VERSION = 3; //es el numero de nuestra version de nuestar base de dator, es decir cada que modificamos
     // la tabla este numero cambia
     private final String TOTALES = "Totales";
     public DataBase(Context context, File AppDir) {
@@ -197,6 +197,9 @@ public class DataBase extends SQLiteOpenHelper {
             db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (3, 'Tarjeta de Debito')");
             db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (4, 'Cuentas de Inversion')");
             db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (5, 'Prestamos')");
+        }
+        if(oldVersion <= 2){
+            db.execSQL("UPDATE AccountsMovimiento set Cambio = 1.0 WHERE Cambio is null");
         }
     }
 

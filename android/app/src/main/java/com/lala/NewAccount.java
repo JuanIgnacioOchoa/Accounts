@@ -3,6 +3,7 @@ package com.lala;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,13 @@ public class NewAccount extends AppCompatActivity {
         spTipoCuenta = findViewById(R.id.spTipoCuenta);
         bGuardar = (Button) findViewById(R.id.new_account_bGuardar);
         bCancelar = (Button) findViewById(R.id.new_account_bCancelar);
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         cursorMoneda = Principal.getMoneda();
         from   = new String[]{"Moneda"};
@@ -94,6 +102,13 @@ public class NewAccount extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Principal.hideKeyboard(NewAccount.this);
+                    Intent i = new Intent(getApplicationContext(), CurrencyActivity.class);
+                    startActivity(i);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
                     finish();
                 }
             });

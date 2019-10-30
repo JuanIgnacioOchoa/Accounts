@@ -344,7 +344,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
             }
         }else{
             String camb = c.getString(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
-            if(camb == null) nCambio = Double.parseDouble(Principal.getTipodeCambio(nIdMoneda,Principal.getMonedaId(nIdCuenta)));
+            if(camb == null) nCambio = Principal.getTipodeCambio(nIdMoneda,Principal.getMonedaId(nIdCuenta));
             else nCambio = c.getDouble(c.getColumnIndex(DBMan.DBMovimientos.Cambio));
             etCambio.setText(nCambio.toString());
             etCambio.setVisibility(View.VISIBLE);

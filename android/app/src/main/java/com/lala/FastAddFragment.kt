@@ -48,10 +48,14 @@ class FastAddFragment : Fragment(), View.OnClickListener{
     override fun onResume() {
         super.onResume()
         cursor = Principal.getTotales(false)
-        val im = cursor.count
         when(cursor.count){
             0 -> {
                 rl = view!!.findViewById(R.id.rl1)
+                val btn = view!!.findViewById<Button>(R.id.button1_0)
+                btn.setOnClickListener {
+                    val i = Intent(context, NewAccount::class.java)
+                    startActivity(i)
+                }
             }
             1 -> {
                 rl = view!!.findViewById(R.id.rl1)
@@ -104,7 +108,7 @@ class FastAddFragment : Fragment(), View.OnClickListener{
             var cantidad = cursor.getString(cursor.getColumnIndex(DBMan.DBTotales.CantidadActual))
             var idCuenta = cursor.getInt(cursor.getColumnIndex("_id"))
             var moneda = cursor.getString(cursor.getColumnIndex(DBMan.DBMoneda.Moneda))
-            btnArray[i]?.text = "$cuenta\n$cantidad\n900.00"
+            btnArray[i]?.text = "$cuenta\n$cantidad"
             btnArray[i]?.setOnClickListener(View.OnClickListener {
                 val i = Intent(context, Gasto::class.java)
                 i.putExtra("Totales", idCuenta)
@@ -185,7 +189,7 @@ class FastAddFragment : Fragment(), View.OnClickListener{
                 val a2 = dataSource[1]
                 if(position < a2.count()){
                     val cuenta = dataSource[1][position]
-                    btn2.text = "${cuenta.cuenta}\n${instance.format(cuenta.cantidad)}\n900.00"
+                    btn2.text = "${cuenta.cuenta}\n${instance.format(cuenta.cantidad)}"
                     btn2.setOnClickListener(View.OnClickListener {
                         val i = Intent(context, Gasto::class.java)
                         i.putExtra("Totales", cuenta.id)
@@ -195,7 +199,7 @@ class FastAddFragment : Fragment(), View.OnClickListener{
                 }
             }
             val cuenta = dataSource[0][position]
-            btn1.text = "${cuenta.cuenta}\n${instance.format(cuenta.cantidad)}\n900.00"
+            btn1.text = "${cuenta.cuenta}\n${instance.format(cuenta.cantidad)}"
             btn1.setOnClickListener(View.OnClickListener {
                 val i = Intent(context, Gasto::class.java)
                 i.putExtra("Totales", cuenta.id)
@@ -237,8 +241,8 @@ class FastAddFragment : Fragment(), View.OnClickListener{
             // Populate fields with extracted properties
             btn1.setSingleLine(false)
             btn2.setSingleLine(false)
-            btn1.text = "$cuenta\n$cantidad\n900.00"
-            btn2.text = "$cuenta\n$cantidad\n900.00"
+            btn1.text = "$cuenta\n$cantidad"
+            btn2.text = "$cuenta\n$cantidad"
         }
     }
 }

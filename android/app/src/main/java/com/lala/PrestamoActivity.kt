@@ -2,6 +2,7 @@ package com.lala
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import com.google.android.material.tabs.TabLayout
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import android.view.*
 import android.widget.CheckBox
 import android.widget.SimpleCursorAdapter
 import android.widget.Spinner
+import android.widget.SpinnerAdapter
 import kotlinx.android.synthetic.main.activity_prestamo.*
 
 class PrestamoActivity : AppCompatActivity() {
@@ -53,9 +55,11 @@ class PrestamoActivity : AppCompatActivity() {
         spMoneda = findViewById(R.id.spMoneda)
 
         val adapterMoneda = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
-        spMoneda.adapter = adapterMoneda
+        spMoneda.adapter = adapterMoneda as SpinnerAdapter?
         val tabLayout = findViewById<View>(R.id.tabs) as TabLayout
         tabLayout.setupWithViewPager(mViewPager)
+        tabLayout.setTabTextColors(Color.BLACK, resources.getColor(R.color.colorPrimaryDark))
+        tabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.colorPrimaryDark))
 
         fab.setOnClickListener {
             val colors = arrayOf<CharSequence>("Prestar")
@@ -112,8 +116,8 @@ class PrestamoActivity : AppCompatActivity() {
     }
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        private val imageResId = intArrayOf(R.drawable.people2, R.drawable.plus2, R.drawable.minus2)
-
+        //private val imageResId = intArrayOf(R.drawable.people2, R.drawable.plus2, R.drawable.minus2)
+        private val title = arrayOf("Totals", "Deudores", "Deudas")
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             when (position) {
@@ -130,13 +134,8 @@ class PrestamoActivity : AppCompatActivity() {
 
         override fun getPageTitle(position: Int): CharSequence? {
             //Puts an image in the tabs.
-            val image = ContextCompat.getDrawable(this@PrestamoActivity, imageResId[position])
-            image!!.setBounds(0, 0, image.intrinsicWidth, image.intrinsicHeight)
-            val sb = SpannableString(" ")
-            val imageSpan = ImageSpan(image, ImageSpan.ALIGN_BASELINE)
-            sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-            return sb
+            return title[position]
         }
 
     }

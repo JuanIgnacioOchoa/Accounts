@@ -25,7 +25,7 @@ class ReportesDataViewController: UIViewController, UITableViewDelegate, UITable
         tableView.delegate = self
         tableView.dataSource = self
         dataArrayMotives = getSumByMotivesMonthly(idMoneda: moneda, month: month!, year: year)
-        dataArrayTotales = getTotalesCuentasByMonth(year: year, month: month!)
+        //dataArrayTotales = getTotalesCuentasByMonth(year: year, month: month!)
         if index == 0{
             titleTxt.text = "Motives"
         } else {
@@ -37,11 +37,11 @@ class ReportesDataViewController: UIViewController, UITableViewDelegate, UITable
     
     func updateArrays(){
         if month == nil {
-            dataArrayMotives = getSumByMotivesYearly(idMoneda: moneda, year: year)
-            dataArrayTotales = getTotalesCuentasByYear(year: year)
+            //dataArrayMotives = getSumByMotivesYearly(idMoneda: moneda, year: year, nil)
+            //dataArrayTotales = getTotalesCuentasByYear(year: year)
         } else {
             dataArrayMotives = getSumByMotivesMonthly(idMoneda: moneda, month: month!, year: year)
-            dataArrayTotales = getTotalesCuentasByMonth(year: year, month: month!)
+            //dataArrayTotales = getTotalesCuentasByMonth(year: year, month: month!)
         }
         tableView.reloadData()
     }

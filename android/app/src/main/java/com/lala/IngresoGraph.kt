@@ -44,6 +44,7 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
     private val arrayList = ArrayList<GastoData>()
     private lateinit var adapter:RecipeAdapter
     private var selectedItem = -1
+    private lateinit var labelLayout: LinearLayout
     companion object {
         fun newInstance(): IngresoGraph{
             return IngresoGraph().getInstance() as IngresoGraph
@@ -68,6 +69,7 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
         instance.minimumFractionDigits = 2
         pieChart = view.findViewById(R.id.piechart)
         listView = view.findViewById(R.id.lvGrapsGasto)
+        labelLayout = view.findViewById(R.id.label)
         pieChart!!.setUsePercentValues(true)
         val desc = Description()
         desc.text = ""
@@ -81,6 +83,7 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
         pieChart!!.setOnChartValueSelectedListener(this)
         adapter = RecipeAdapter(context!!, arrayList)
         listView.adapter = adapter
+
         listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             if(selectedItem == position){
                 val i = Intent(context, SeeByMotive::class.java)
@@ -127,12 +130,13 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
         val value = ArrayList<PieEntry>()
         var i = 0
         arrayList.clear()
+        val inflater = LayoutInflater.from(context);
+        labelLayout.removeAllViewsInLayout()
         while (c.moveToNext()){
             gasto = c.getDouble(c.getColumnIndex("Ingreso"))
             if(c.getInt(c.getColumnIndex("isViaje")) == 1 || gasto == 0.0){
                 continue
             }
-
             val motivo = c.getString(c.getColumnIndex("Motivo"))
             val per:Float = (gasto/total).toFloat()
             arrayList.add(GastoData(motivo, gasto, c.getInt(c.getColumnIndex("_id")), per))
@@ -141,6 +145,12 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
             } else {
                 value.add(PieEntry(per))
             }
+            val rowView = inflater.inflate(R.layout.label_layout, null)
+            val tv = rowView.findViewById<TextView>(R.id.label)
+            val tvColor = rowView.findViewById<TextView>(R.id.color)
+            tvColor.setBackgroundColor(Principal.colors[i % Principal.colors.size])
+            tv.text = (motivo)
+            labelLayout.addView(rowView)
             i ++
         }
 
@@ -152,7 +162,7 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
 
         pieDataSet.colors = Principal.colors.toList()
         pieDataSet.setDrawValues(false)
-
+        pieChart!!.getLegend().setEnabled(false)
         pieChart!!.animateXY(700, 700)
 
         adapter.updateData(arrayList)

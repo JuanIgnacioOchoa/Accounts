@@ -39,4 +39,5 @@ dependencies {
     implementation 'info.hoang8f:android-segmented:1.0.6'
     implementation 'com.google.android.gms:play-services-ads:18.2.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.midorikocak:currency-picker-android:1.2.1'
 }

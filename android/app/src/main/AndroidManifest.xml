@@ -8,7 +8,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MenuMoreActivity"></activity>
+        <activity android:name=".CurrencyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+        <activity android:name=".MenuMoreActivity" />
         <activity android:name=".MainTotals" />
         <activity android:name=".LineChartCuentasActivity" />
         <activity android:name=".BalanceGraphActivity" />
@@ -165,8 +169,8 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5443791090032110~4435958949" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

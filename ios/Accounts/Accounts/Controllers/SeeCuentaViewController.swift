@@ -36,15 +36,15 @@ class SeeCuentaViewController: UIViewController, UITableViewDelegate, UITableVie
     */
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        /*
         if "seeMovimientoSegueCuentas" == segue.identifier {
             if let indexPath = tableView.indexPathForSelectedRow{
-                let viewController = segue.destination as! SeeMovimientoViewController
+                let viewController = segue.destination as! SeeM
                 viewController._id = dataArray[indexPath.row]["_id"] as! Int64
                 viewController.title = "Movimiento"
             }
         }
-        
+        */
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

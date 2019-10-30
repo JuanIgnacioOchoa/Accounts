@@ -26,8 +26,13 @@ class MainCuentasTableViewCell: UITableViewCell {
         monedaLbl.text = moneda
         if Int(truncating: cantidad) < 0{
             cantidadLbl.textColor = UIColor.red
+            cuentasLbl.textColor = UIColor.red
+            monedaLbl.textColor = UIColor.red
         } else if Int(truncating: cantidad) > 0 {
             cantidadLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+            cuentasLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+            monedaLbl.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
         }
+        
     }
 }

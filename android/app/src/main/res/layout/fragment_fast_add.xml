@@ -188,7 +188,7 @@
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:background="@drawable/cuentas_btn"
-            android:text="AMEX&#10;$1000.00&#10;900.00"
+            android:text="Agregar"
             android:textColor="#ffffff" />
 
     </RelativeLayout>

@@ -45,13 +45,13 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     private EditText etCantidad, etComment, etOtro, etCambio;
     private TextView tvPersona, tvCambio, tvResult;
     private Spinner spCuenta, spMotivo, spMoneda;
-    private boolean gasto, spSelectedResult = false;
+    private boolean gasto, spSelectedResult = false, fast;
     private Cursor cursorCuenta, cursorMoneda, cursorMotivo, cursorMov;
     private int[] to;
     private String[] from;
-    private SimpleCursorAdapter simpleCursorAdapter;
+    private SimpleCursorAdapter simpleCursorAdapterMoneda, simpleCursorAdapterCuenta, simpleCursorAdapterMotivo, simpleCursorAdapterPersonas;
     private double cant, tipoDeCambio;
-    private String coment;
+    private String coment, title;
     private int idCuenta, idPersona, idMotivo, idMoneda;
     private Context context;
     private NumberFormat instance;
@@ -71,13 +71,13 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         context = this;
         Intent i = this.getIntent();
         gasto = i.getBooleanExtra("Gasto",true);
-        Boolean fast = i.getBooleanExtra("FastAdd", false);
+        fast = i.getBooleanExtra("FastAdd", false);
         idViaje = i.getIntExtra("IdViaje", -1);
         idMove = i.getIntExtra("id",0);
+        cant = i.getDoubleExtra("Cantidad", 0.0);
 
 
-
-        String title = "";
+        title = "";
         if(idViaje >= 0){
             title = Principal.getTripNameById(idViaje) + " ";
         }
@@ -149,166 +149,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             }
         });
 
-        if(gasto){
-            //this.setTitle(getString(R.string.outcome) + " " + title + "(-)");
-            //gastoBtn.setBackgroundColor(Color.BLUE);
-            //ingresoBtn.setBackgroundColor(Color.TRANSPARENT);
-            etCantidad.setTextColor(Color.RED);
-        } else{
-            //this.setTitle(getString(R.string.income) + " " + title + "(+)");
-            //gastoBtn.setBackgroundColor(Color.TRANSPARENT);
-            //ingresoBtn.setBackgroundColor(Color.BLUE);
-            etCantidad.setTextColor(Color.rgb(11, 79, 34));
-        }
 
-
-
-        cursorMotivo = Principal.getMotive();
-        from = new String[]{DBMan.DBMotivo.Motivo};
-        to = new int[] {android.R.id.text1};
-        simpleCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMotivo, from, to,0);
-        spMotivo.setAdapter(simpleCursorAdapter);
-        if(idCuenta > 0 && !fast){
-            cursorCuenta = Principal.getSingleTotales(idCuenta);
-            cursorMoneda = Principal.getSingleMoneda(Principal.getMonedaId(idCuenta));
-            cant = i.getDoubleExtra("Cantidad", 0.0);
-            if(cant != 0.0)
-                etCantidad.setText(cant+"");
-        } else {
-            if (gasto) {
-                cursorCuenta = Principal.getTotalesWithPrestamo();
-            } else {
-                cursorCuenta = Principal.getTotales(false);
-            }
-            cursorMoneda = Principal.getMoneda();
-        }
-        from = new String[]{DBMan.DBTotales.Cuenta};
-        simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorCuenta,from,to,0);
-        spCuenta.setAdapter(simpleCursorAdapter);
-        from = new String[]{"Moneda"};
-        simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorMoneda,from,to,0);
-        spMoneda.setAdapter(simpleCursorAdapter);
-
-        spMoneda.setOnItemSelectedListener(this);
-        spCuenta.setOnItemSelectedListener(this);
-        spMotivo.setOnItemSelectedListener(this);
-        etOtro.setVisibility(View.GONE);
-
-        if(idCuenta > 0 && fast){
-            for(int j = 0; j < cursorCuenta.getCount(); j++){
-                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
-                int id = value.getInt(value.getColumnIndex("_id"));
-                if(id == idCuenta){
-                    spCuenta.setSelection(j);
-                    j = cursorCuenta.getCount()+1;
-                }
-            }
-            idMoneda = Principal.getIdMonedaTotales(idCuenta);
-            for(int j = 0; j < cursorMoneda.getCount(); j++){
-                Cursor value = (Cursor) spMoneda.getItemAtPosition(j);
-                int id = value.getInt(value.getColumnIndex("_id"));
-                if(id == idMoneda){
-                    spMoneda.setSelection(j);
-                    j = cursorMoneda.getCount()+1;
-                }
-            }
-        }
-        if(idMove != 0){
-            cursorMov = Principal.getData(idMove);
-            cursorMov.moveToNext();
-            idCuenta = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdTotales));
-            idMotivo = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdMotivo));
-            idMoneda = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdMoneda));
-            coment = cursorMov.getString(cursorMov.getColumnIndex(DBMan.DBMovimientos.Comment));
-            String nfecha = cursorMov.getString(cursorMov.getColumnIndex(DBMan.DBMovimientos.Fecha));
-            fecha = cursorMov.getString(cursorMov.getColumnIndex("nFecha"));
-            cant = cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cantidad));
-            if(Principal.getIdMonedaTotales(idCuenta) != idMoneda){
-                etCambio.setVisibility(View.VISIBLE);
-                tvCambio.setVisibility(View.VISIBLE);
-                tipoDeCambio = cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cambio));
-            } else {
-                etCambio.setVisibility(View.GONE);
-                tvCambio.setVisibility(View.GONE);
-                etCambio.setText(instance.format(1.0));
-                tipoDeCambio = 1.0;
-            }
-            idViaje = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdTrip));
-            title = Principal.getTripNameById(idViaje) + " ";
-
-            etCambio.setText((instance.format(tipoDeCambio)));
-            etComment.setText(coment);
-            otroDate.setChecked(true);
-            otroDate.setText(nfecha);
-            if(cant > 0){
-                ingresoBtn.setChecked(true);
-                etCantidad.setTextColor(Color.rgb(11, 79, 34));
-                gasto = false;
-            } else if (cant < 0){
-                cant = cant*-1;
-                gastoBtn.setChecked(true);
-                etCantidad.setTextColor(Color.RED);
-            } else {
-                etCantidad.setTextColor(Color.BLACK);
-            }
-            etCantidad.setText((cant + ""));
-            for(int j = 0; j < cursorCuenta.getCount(); j++){
-                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
-                int id = value.getInt(value.getColumnIndex("_id"));
-                if(id == idCuenta){
-                    spCuenta.setSelection(j);
-                    j = cursorCuenta.getCount()+1;
-                }
-            }
-            for(int j = 0; j < cursorMotivo.getCount(); j++){
-                Cursor value = (Cursor) spMotivo.getItemAtPosition(j);
-                int id = value.getInt(value.getColumnIndex("_id"));
-                if(id == idMotivo){
-                    spMotivo.setSelection(j);
-                    j = cursorMotivo.getCount()+1;
-                }
-            }
-            for(int j = 0; j < cursorMoneda.getCount(); j++){
-                Cursor value = (Cursor) spMoneda.getItemAtPosition(j);
-                int id = value.getInt(value.getColumnIndex("_id"));
-                if(id == idMoneda){
-                    spMoneda.setSelection(j);
-                    j = cursorMoneda.getCount()+1;
-                }
-            }
-
-        }
-        this.setTitle("Crear Movimiento " + title);
-
-
-
-        if(idCuenta > 1 && Principal.getIdMonedaTotales(idCuenta) != idMoneda && idCuenta != 1){
-            tvCambio.setVisibility(View.VISIBLE);
-            etCambio.setVisibility(View.VISIBLE);
-        } else {
-            tvCambio.setVisibility(View.GONE);
-            etCambio.setVisibility(View.GONE);
-            etCambio.setText(instance.format(1.0));
-            tipoDeCambio = 1.0;
-        }
-
-        if(cursorCuenta.getCount() == 0 || cursorMoneda.getCount() == 0 || cursorMotivo.getCount() == 0){
-            AlertDialog.Builder builder = new AlertDialog.Builder(Gasto.this);
-            builder.setTitle(getString(R.string.alert_info_data));
-            builder.setMessage(getString(R.string.alert_info_data_msg));
-
-// Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Principal.hideKeyboard(Gasto.this);
-                    finish();
-                }
-            });
-            AlertDialog alertDialog = builder.show();
-            alertDialog.setCanceledOnTouchOutside(false);
-
-        }
 
         ingresoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -405,6 +246,192 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(gasto){
+            //this.setTitle(getString(R.string.outcome) + " " + title + "(-)");
+            //gastoBtn.setBackgroundColor(Color.BLUE);
+            //ingresoBtn.setBackgroundColor(Color.TRANSPARENT);
+            etCantidad.setTextColor(Color.RED);
+        } else{
+            //this.setTitle(getString(R.string.income) + " " + title + "(+)");
+            //gastoBtn.setBackgroundColor(Color.TRANSPARENT);
+            //ingresoBtn.setBackgroundColor(Color.BLUE);
+            etCantidad.setTextColor(Color.rgb(11, 79, 34));
+        }
+
+
+
+        cursorMotivo = Principal.getMotive();
+        from = new String[]{DBMan.DBMotivo.Motivo};
+        to = new int[] {android.R.id.text1};
+        simpleCursorAdapterMotivo = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMotivo, from, to,0);
+        spMotivo.setAdapter(simpleCursorAdapterMotivo);
+        if(idCuenta > 0 && !fast){
+            cursorCuenta = Principal.getSingleTotales(idCuenta);
+            cursorMoneda = Principal.getSingleMoneda(Principal.getMonedaId(idCuenta));
+            if(cant != 0.0)
+                etCantidad.setText(cant+"");
+        } else {
+            if (gasto) {
+                cursorCuenta = Principal.getTotalesWithPrestamo();
+            } else {
+                cursorCuenta = Principal.getTotales(false);
+            }
+            cursorMoneda = Principal.getMoneda();
+        }
+        from = new String[]{DBMan.DBTotales.Cuenta};
+        simpleCursorAdapterCuenta = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorCuenta,from,to,0);
+        spCuenta.setAdapter(simpleCursorAdapterCuenta);
+        from = new String[]{"Moneda"};
+        simpleCursorAdapterMoneda = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorMoneda,from,to,0);
+        spMoneda.setAdapter(simpleCursorAdapterMoneda);
+
+        spMoneda.setOnItemSelectedListener(this);
+        spCuenta.setOnItemSelectedListener(this);
+        spMotivo.setOnItemSelectedListener(this);
+        etOtro.setVisibility(View.GONE);
+
+        if(idCuenta > 0 && fast){
+            for(int j = 0; j < cursorCuenta.getCount(); j++){
+                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idCuenta){
+                    spCuenta.setSelection(j);
+                    j = cursorCuenta.getCount()+1;
+                }
+            }
+            idMoneda = Principal.getIdMonedaTotales(idCuenta);
+            for(int j = 0; j < cursorMoneda.getCount(); j++){
+                Cursor value = (Cursor) spMoneda.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idMoneda){
+                    spMoneda.setSelection(j);
+                    j = cursorMoneda.getCount()+1;
+                }
+            }
+        }
+        if(idMove != 0){
+            cursorMov = Principal.getData(idMove);
+            cursorMov.moveToNext();
+            idCuenta = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdTotales));
+            idMotivo = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdMotivo));
+            idMoneda = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdMoneda));
+            coment = cursorMov.getString(cursorMov.getColumnIndex(DBMan.DBMovimientos.Comment));
+            String nfecha = cursorMov.getString(cursorMov.getColumnIndex(DBMan.DBMovimientos.Fecha));
+            cursorMoneda = Principal.getMonedaWith(idMoneda);
+            cursorCuenta = Principal.getTotalesWith(idCuenta);
+            cursorMotivo = Principal.getMotiveWith(idMotivo);
+            simpleCursorAdapterCuenta.changeCursor(cursorCuenta);
+            simpleCursorAdapterMoneda.changeCursor(cursorMoneda);
+            simpleCursorAdapterMotivo.changeCursor(cursorMotivo);
+            fecha = cursorMov.getString(cursorMov.getColumnIndex("nFecha"));
+            cant = cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cantidad));
+            if(Principal.getIdMonedaTotales(idCuenta) != idMoneda){
+                etCambio.setVisibility(View.VISIBLE);
+                tvCambio.setVisibility(View.VISIBLE);
+                tipoDeCambio = cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cambio));
+            } else {
+                etCambio.setVisibility(View.GONE);
+                tvCambio.setVisibility(View.GONE);
+                etCambio.setText(instance.format(1.0));
+                tipoDeCambio = 1.0;
+            }
+            idViaje = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdTrip));
+            title = Principal.getTripNameById(idViaje) + " ";
+
+            etCambio.setText((instance.format(tipoDeCambio)));
+            etComment.setText(coment);
+            otroDate.setChecked(true);
+            otroDate.setText(nfecha);
+            if(cant > 0){
+                ingresoBtn.setChecked(true);
+                etCantidad.setTextColor(Color.rgb(11, 79, 34));
+                gasto = false;
+            } else if (cant < 0){
+                cant = cant*-1;
+                gastoBtn.setChecked(true);
+                etCantidad.setTextColor(Color.RED);
+            } else {
+                etCantidad.setTextColor(Color.BLACK);
+            }
+            for(int j = 0; j < cursorCuenta.getCount(); j++){
+                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idCuenta){
+                    spCuenta.setSelection(j);
+                    j = cursorCuenta.getCount()+1;
+                }
+            }
+            for(int j = 0; j < cursorMotivo.getCount(); j++){
+                Cursor value = (Cursor) spMotivo.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idMotivo){
+                    spMotivo.setSelection(j);
+                    j = cursorMotivo.getCount()+1;
+                }
+            }
+            for(int j = 0; j < cursorMoneda.getCount(); j++){
+                Cursor value = (Cursor) spMoneda.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idMoneda){
+                    spMoneda.setSelection(j);
+                    j = cursorMoneda.getCount()+1;
+                }
+            }
+            etCantidad.setText((cant + ""));
+        }
+        if(idMove > 0){
+            this.setTitle(title);
+        } else {
+            this.setTitle("Crear Movimiento " + title);
+        }
+
+
+
+
+        if(idCuenta > 1 && Principal.getIdMonedaTotales(idCuenta) != idMoneda && idCuenta != 1){
+            tvCambio.setVisibility(View.VISIBLE);
+            etCambio.setVisibility(View.VISIBLE);
+        } else {
+            tvCambio.setVisibility(View.GONE);
+            etCambio.setVisibility(View.GONE);
+            etCambio.setText(instance.format(1.0));
+            tipoDeCambio = 1.0;
+        }
+
+        if(cursorCuenta.getCount() == 0 || cursorMoneda.getCount() == 0 || cursorMotivo.getCount() == 0){
+            AlertDialog.Builder builder = new AlertDialog.Builder(Gasto.this);
+            builder.setTitle(getString(R.string.alert_info_data));
+            builder.setMessage(getString(R.string.alert_info_data_msg));
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Principal.hideKeyboard(Gasto.this);
+                    if(cursorCuenta.getCount() == 0){
+                        Intent i = new Intent(context, NewAccount.class);
+                        startActivity(i);
+                    } else if(cursorMotivo.getCount() == 0){
+                        Intent i = new Intent(context, NewMotive.class);
+                        startActivity(i);
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            AlertDialog alertDialog = builder.show();
+            alertDialog.setCanceledOnTouchOutside(false);
+
+        }
+    }
+
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Spinner sp = (Spinner) parent;
         if(sp.getId()==R.id.gasto_spFrom) {
@@ -428,8 +455,8 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 input.setLayoutParams(lp);
                 final Cursor cursorPersonas = Principal.getPersonas();
                 from = new String[]{"Nombre"};
-                simpleCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorPersonas,from,to,0);
-                spinner.setAdapter(simpleCursorAdapter);
+                simpleCursorAdapterPersonas = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorPersonas,from,to,0);
+                spinner.setAdapter(simpleCursorAdapterPersonas);
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -475,7 +502,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 if(Principal.getIdMonedaTotales(idCuenta) != idMoneda){
                     etCambio.setVisibility(View.VISIBLE);
                     tvCambio.setVisibility(View.VISIBLE);
-                    double scambio = Double.parseDouble(Principal.getTipodeCambio(idMoneda, Principal.getIdMonedaTotales(idCuenta)));
+                    double scambio = Principal.getTipodeCambio(idMoneda, Principal.getIdMonedaTotales(idCuenta));
                     etCambio.setText(instance.format(scambio));
                 } else {
                     etCambio.setVisibility(View.GONE);
@@ -492,7 +519,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             if(Principal.getIdMonedaTotales(idCuenta) != idMoneda){
                 etCambio.setVisibility(View.VISIBLE);
                 tvCambio.setVisibility(View.VISIBLE);
-                double scambio = Double.parseDouble(Principal.getTipodeCambio(idMoneda, Principal.getIdMonedaTotales(idCuenta)));
+                double scambio = Principal.getTipodeCambio(idMoneda, Principal.getIdMonedaTotales(idCuenta));
                 etCambio.setText(instance.format(scambio));
             } else {
                 etCambio.setVisibility(View.GONE);
@@ -513,6 +540,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     }
 
     private void actualizarResulCant(){
+        //cursorCuenta.moveToFirst();
         double cantidadActual = cursorCuenta.getDouble(cursorCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
         if(idMove > 0){
             cantidadActual -= cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cantidad)) *

@@ -44,12 +44,13 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
     private val arrayList = ArrayList<GastoData>()
     private lateinit var adapter:RecipeAdapter
     private var selectedItem = -1
-    private val coloras: ArrayList<Int> = arrayListOf(Color.parseColor("#e6194B"), Color.parseColor("#3cb44b"), Color.parseColor("#ffe119"),
+    private lateinit var labelLayout: LinearLayout
+    /*private val coloras: ArrayList<Int> = arrayListOf(Color.parseColor("#e6194B"), Color.parseColor("#3cb44b"), Color.parseColor("#ffe119"),
             Color.parseColor("#4363d8"), Color.parseColor("#f58231"), Color.parseColor("#911eb4"), Color.parseColor("#42d4f4"),
             Color.parseColor("#f032e6"), Color.parseColor("#bfef45"), Color.parseColor("#fabebe"), Color.parseColor("#469990"),
             Color.parseColor("#e6beff"), Color.parseColor("#9A6324"), Color.parseColor("#fffac8"), Color.parseColor("#800000"),
             Color.parseColor("#aaffc3"), Color.parseColor("#808000"), Color.parseColor("#ffd8b1"), Color.parseColor("#000075")
-    )
+    )*/
     companion object {
         fun newInstance(): Graphs{
             return Graphs().getInstance() as Graphs
@@ -74,6 +75,7 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
         instance.minimumFractionDigits = 2
         pieChart = view.findViewById(R.id.piechart)
         listView = view.findViewById(R.id.lvGrapsGasto)
+        labelLayout = view.findViewById(R.id.label)
         pieChart!!.setUsePercentValues(true)
         val desc = Description()
         desc.text = ""
@@ -132,6 +134,8 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
         var gasto = 0.0
         val value = ArrayList<PieEntry>()
         var i = 0
+        val inflater = LayoutInflater.from(context);
+        labelLayout.removeAllViewsInLayout()
         arrayList.clear()
         while (c.moveToNext()){
             gasto = c.getDouble(c.getColumnIndex("Gasto"))
@@ -147,6 +151,12 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
             } else {
                 value.add(PieEntry(per))
             }
+            val rowView = inflater.inflate(R.layout.label_layout, null)
+            val tv = rowView.findViewById<TextView>(R.id.label)
+            val tvColor = rowView.findViewById<TextView>(R.id.color)
+            tvColor.setBackgroundColor(Principal.colors[i % Principal.colors.size])
+            tv.text = (motivo)
+            labelLayout.addView(rowView)
             i ++
         }
         pieChart!!.centerText = "Total\n${instance.format(Principal.round(total, 2))}"
@@ -162,6 +172,7 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
         pieChart!!.animateXY(700, 700)
 
         pieChart!!.rotationAngle = 225.0f
+        pieChart!!.getLegend().setEnabled(false);
         adapter.updateData(arrayList)
         val mv = CustomMarkerView(context, R.layout.custom_marker_view_layout);
         piechart.marker = mv

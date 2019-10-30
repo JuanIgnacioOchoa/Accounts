@@ -240,7 +240,7 @@ public class FragmentMoves extends Fragment{
                                     i = new Intent(context, Gasto.class);
                                     i.putExtra("id", id);
                                 } else {
-                                    i = new Intent(context, seeTraspaso.class);
+                                    i = new Intent(context, Traspaso.class);
                                     i.putExtra("_id", id);
                                 }
                                 startActivity(i);

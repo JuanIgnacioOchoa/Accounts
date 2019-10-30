@@ -102,7 +102,7 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
                 if(EditTextError.checkError(etCantidad, getString(R.string.required_field))){
                 }
                 else if (verificarDatos()){
-                    if(id > 0){
+                    if(id > 0) {
                         //Principal.actualizarTraspaso(id,nCantidad,nIdFrom,nIdTo,nComment,nIdMotivo,nCambio, nDate);
                         Principal.actualizarTraspaso(id,cantidad, idCuentaFrom, idCuentaTo, comment, idMotivo, tipoDeCambio, fecha);
                         //Principal.actualizarTipoDeCambio(Principal.getIdMoneda(nIdMoneda),Principal.getIdMoneda(Principal.getMonedaId(nIdCuenta)),nCambio);
@@ -508,7 +508,6 @@ public class Traspaso extends AppCompatActivity implements AdapterView.OnItemSel
             //    tipoDeCambio = 1.0;
             Principal.newRetiro(idCuentaFrom, idCuentaTo, cantidad, tipoDeCambio, comment, fecha);
             Principal.actualizarTipoDeCambio(Principal.getMonedaTotales(idCuentaTo), Principal.getMonedaTotales(idCuentaFrom), tipoDeCambio);
-            Toast.makeText(context, (cantidad * tipoDeCambio * -1 )+" a " + idCuentaFrom, Toast.LENGTH_SHORT).show();
             Principal.newMoveCuenta(cantidad * tipoDeCambio * -1, idCuentaFrom);
             Principal.newMoveCuenta(cantidad, idCuentaTo);
         }

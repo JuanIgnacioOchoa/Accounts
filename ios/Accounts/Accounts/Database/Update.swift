@@ -63,6 +63,36 @@ func actualizarMovimiento(id:Int64, cantidad:Double, idTotales:Int64, comment:St
     return false
 }
 
+func actualizarTraspaso(id: Int64, cantidad:Double, idFrom:Int64, idTo: Int64, comment:String?, idMot:Int64, cambio: Double, date:Date) -> Bool {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    dateFormatter.timeZone = TimeZone.current
+    var sCom = ""
+    if comment != nil {
+        sCom = comment!
+    }
+    let query = """
+        UPDATE \(Movimiento.Table) SET \(Movimiento.Cantidad) = ?, \(Movimiento.IdTotales) = ?, \(Movimiento.IdMotivo) = ?, \(Movimiento.Traspaso) = ?, \(Movimiento.Cambio) = ?, \(Movimiento.Fecha) = ?, \(Movimiento.Comment) = ?
+                   WHERE _id = ?
+       """
+    
+    do {
+        try Database.db.run(query, [cantidad, idFrom, idMot, idTo, cambio, dateFormatter.string(from: date), sCom, id])
+        if(idMot == 1) {
+            let _ = newMoveCuenta(cantidad: cantidad * -1, idCuenta: idFrom);
+            let _ = newMoveCuenta(cantidad: cantidad * cambio, idCuenta: idTo);
+        } else {
+            let _ = newMoveCuenta(cantidad: cantidad, idCuenta: idTo);
+            let _ = newMoveCuenta(cantidad: cantidad * cambio * -1, idCuenta: idFrom);
+        }
+        return true
+    } catch {
+        print("Error actualizar Movimiento: ", error)
+    }
+    
+    return false
+}
+
 //CambioMoneda
 
 func actualizarTipoCambio(moneda1:Int64, moneda2:Int64, cambio:Double) {

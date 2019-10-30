@@ -13,22 +13,23 @@ class FechaTableViewCell: UITableViewCell{
     @IBOutlet weak var fechaLbl: UILabel!
     @IBOutlet weak var content: UIView!
     var data:[[String:Any?]] = []
-    var parent: MovdataViewController?
+    var parent: UIViewController?
+    var parentType: Int = 0
     
-    func setCell(fecha: String, data:[[String:Any?]], parent: MovdataViewController){
+    func setCell(fecha: String, data:[[String:Any?]], parent: UIViewController, parentType: Int){
         self.parent = parent
-        fechaLbl.text = fecha
+        self.parentType = parentType
+        //"EEEE, d MMMM, yyyy"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let date:Date = dateFormatter.date(from: fecha)!
+        dateFormatter.dateFormat = "EEEE, d MMMM, yyyy"
+        fechaLbl.text = dateFormatter.string(from: date)
         var y:CGFloat = 0
         let screenSize = UIScreen.main.bounds
         let screenWidth = screenSize.width
         content.subviews.forEach { $0.removeFromSuperview() }
         for d in data {
-            let new_view:UIView! = UIView(frame: CGRect(x: 5, y: y, width: screenWidth - 20, height: 20));
-            //new_view.backgroundColor = UIColor.red;
-            let w = new_view.frame.width/3
-            let cantLbl = UILabel(frame: CGRect(x:w*2, y: 0, width: w, height: 20))
-            let motivoLbl = UILabel(frame: CGRect(x:w, y: 0, width: w, height: 20))
-            let cuentaLbl = UILabel(frame: CGRect(x:0, y: 0, width: w, height: 20))
             let numberFormatter = NumberFormatter()
             numberFormatter.numberStyle = .decimal
             numberFormatter.minimumFractionDigits = 2
@@ -36,17 +37,40 @@ class FechaTableViewCell: UITableViewCell{
             let idTraspaso = d[Movimiento.Traspaso]
             let id = d["_id"] as! NSNumber
             let cuenta = d[Totales.Cuenta] as! String
-            //let moneda = d[Moneda.Moneda] as! String
+            var moneda = d[Moneda.Moneda] as! String
             let motivo = d[Motivo.Motivo] as! String
+            if idTraspaso != nil {
+                moneda = ""
+            }
+            let new_view:UIView! = UIView(frame: CGRect(x: 5, y: y, width: screenWidth - 20, height: 20));
+           
+            var w = new_view.frame.width/3
+            var cantLbl = UILabel()
+            var motivoLbl = UILabel()
+            var cuentaLbl = UILabel()
+            if parentType == 1 || parentType == 3{
+                w = new_view.frame.width/3
+                cantLbl = UILabel(frame: CGRect(x:w*2, y: 0, width: w, height: 20))
+                motivoLbl = UILabel(frame: CGRect(x:w, y: 0, width: w, height: 20))
+                cuentaLbl = UILabel(frame: CGRect(x:0, y: 0, width: w, height: 20))
+                cuentaLbl.text = cuenta
+                new_view.addSubview(cuentaLbl)
+            } else if parentType == 2 {
+                w = new_view.frame.width/2
+                cantLbl = UILabel(frame: CGRect(x:w, y: 0, width: w, height: 20))
+                motivoLbl = UILabel(frame: CGRect(x:0, y: 0, width: w, height: 20))
+                //cuentaLbl = UILabel(frame: CGRect(x:0, y: 0, width: w, height: 20))
+            }
+
             
-            cantLbl.text = numberFormatter.string(from: cantidad)
-            cuentaLbl.text = cuenta
+            cantLbl.text = "\(numberFormatter.string(from: cantidad)!) \(moneda)"
+            
             motivoLbl.text = motivo
             cantLbl.textAlignment = .right
             
             new_view.addSubview(cantLbl)
-            new_view.addSubview(cuentaLbl)
             new_view.addSubview(motivoLbl)
+            
             if idTraspaso != nil{
                 cantLbl.textColor = UIColor.init(red: 255/255, green: 119/255, blue: 0/255, alpha: 1.0)
                 motivoLbl.textColor = UIColor.init(red: 255/255, green: 119/255, blue: 0/255, alpha: 1.0)
@@ -71,7 +95,16 @@ class FechaTableViewCell: UITableViewCell{
     }
     @objc
     func tapFunction1(sender:MyTapGesture) {
-        parent!.selectedId = sender.id
+        if parentType == 1 {
+            let vc = parent as! MovdataViewController
+            vc.selectedId = sender.id
+        } else if parentType == 2 {
+            let vc = parent as! SeeCuentaViewController//SeeCuentaViewController
+            vc.selectedId = sender.id
+        } else if parentType == 3 {
+            let vc = parent as! SeeMotivoViewController
+            vc.selectedId = sender.id
+        }
         if sender.traspaso == nil {
             parent!.performSegue(withIdentifier: "verMovimiento", sender: self)
         } else {

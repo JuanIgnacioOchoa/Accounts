@@ -1428,6 +1428,7 @@ public class Principal {
         }
         updateLast();
     }
+
     public static void actualizarTraspaso(int id,Double cantidad,int idFrom,int idTo,
                                           String comment,int motivo,Double cambio, String date){
         deshacerTras(id);
@@ -1458,6 +1459,7 @@ public class Principal {
         updateLast();
 
     }
+
     public static void deshacerTras(int id){
         Double cantidad;
         int motivo, idCuentaTo, idCuentaFrom;

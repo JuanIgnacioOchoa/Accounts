@@ -80,13 +80,31 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         if _id == 0 {
             dataArrayTotales = getTotales()
+            
+            idTotalesFrom = dataArrayTotales[0]["_id"] as! Int64
+            idTotalesTo = dataArrayTotales[1]["_id"] as! Int64
+            if !retiro {
+                monedaLbl.text = (dataArrayTotales[0][Moneda.Moneda] as! String)
+                idMotivo = 1
+            } else {
+                monedaLbl.text = (dataArrayTotales[1][Moneda.Moneda] as! String)
+                idMotivo = 2
+            }
+            totalesFrom = (dataArrayTotales[0][Totales.Cuenta] as! String)
+            totalesTo = (dataArrayTotales[1][Totales.Cuenta] as! String)
+            
+            selectedTotalesFrom = 0
+            oldSelectedTotalesFrom = 0
+            selectedTotalesTo = 1
+            oldSelectedTotalesTo = 1
         } else {
             dataArrayMove = getMoveData(id: _id)
 
             idTotalesFrom = dataArrayMove[0][Movimiento.IdTotales] as! Int64
             idTotalesTo = dataArrayMove[0][Movimiento.Traspaso] as! Int64
             idMotivo = dataArrayMove[0][Movimiento.IdMotivo] as! Int64
-            
+            let cant = dataArrayMove[0][Movimiento.Cantidad] as! NSNumber
+            let doubleCant:Double = Double(cant)
             dataArrayTotales = getTotales(id: idTotalesFrom)//TODO
             
             if idMotivo == 1 {
@@ -116,12 +134,13 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 }
                 c = c + 1
             }
+            cantidadTxt.text = numberFormatter.string(from: NSNumber(value: doubleCant))
         }
         
         preparePickerView()
         
         let monedaFrom = dataArrayTotales[selectedTotalesFrom][Totales.IdMoneda] as? Int64
-        let monedaTo = dataArrayTotales[selectedTotalesFrom]["_id"] as? Int64
+        let monedaTo = dataArrayTotales[selectedTotalesFrom][Totales.IdMoneda] as? Int64
         cambioH = monedaFrom == monedaTo
         cambioLbl.isHidden = cambioH
         cambioTxt.isHidden = cambioH
@@ -331,7 +350,7 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             cantidadTxt.setError("Error")
             return
         }
-        let com:String? = commentTxt.text
+        var com:String? = commentTxt.text
         var idMoneda:Int64 = 0
         if !retiro {
             idMoneda = dataArrayTotales[selectedTotalesFrom][Totales.IdMoneda] as! Int64
@@ -341,22 +360,37 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             idMoneda = dataArrayTotales[selectedTotalesTo][Totales.IdMoneda] as! Int64
             monedaLbl.text = (dataArrayTotales[selectedTotalesTo][Moneda.Moneda] as! String)
         }
+        let monedaCuentaFrom = (dataArrayTotales[selectedTotalesFrom][Totales.IdMoneda] as? Int64)!
+        let monedaCuentaTo = dataArrayTotales[selectedTotalesTo][Totales.IdMoneda] as? Int64
+        if monedaCuentaFrom != monedaCuentaTo {
+            if com == nil {
+                com = "# \(dCantidad!) x \(dcambio ?? 1.0)  = \(dCantidad! * dcambio!) cantidad * tipoDeCambio"
+            }
+        }
         let g = "cantidad: \(dCantidad ?? 0.0), idTotales: \(idTotalesFrom), comment: \(com)), idMotivo: \(idMotivo), idMoneda: \(idMoneda), cambio: \(dcambio), fecha: \(date), id: \(_id)"
         print(g)
-        if _id == 0 {
-            ///Nuevo
-            //let x = newMove(cantidad: dCantidad ?? 0.0, idCuenta: idTotales, comment: com, idMotivo: idMotivo, idMoneda: idMoneda, cambio: dcambio!, date: date)
-            //let y = newMoveCuenta(cantidad: dCantidad! * dcambio!, idCuenta: idTotales)
-            //if x && y{
-            //    navigationController?.popViewController(animated: true)
-            //}
+
+        if(_id > 0){
+            let _ = actualizarTraspaso(id: _id, cantidad: dCantidad!, idFrom: idTotalesFrom, idTo: idTotalesTo, comment: com, idMot: idMotivo, cambio: dcambio!, date: date)
+            if !retiro {
+                let _ = actualizarTipoCambio(moneda1: monedaCuentaFrom, moneda2: monedaCuentaTo!, cambio: dcambio!);
+            } else {
+                actualizarTipoCambio(moneda1: monedaCuentaTo!, moneda2: monedaCuentaFrom, cambio: dcambio!);
+            }
+           
         } else {
-            ///Actualizar
-            //let x = actualizarCuentaMove(cantidad: dCantidad! * dcambio!, idCuenta: idTotales, idMove: _id!)
-            //let y = actualizarMovimiento(id: _id!, cantidad: dCantidad!, idTotales: idTotales, comment: com!, idMotivo: idMotivo, idMoneda: idMoneda, cambio: dcambio!, date: date)
-            //if x && y{
-            //    navigationController?.popViewController(animated: true)
-            //}
+            if !retiro {
+                newTraspaso(cuentaFrom: idTotalesFrom, cuentaTo: idTotalesTo, cantidad: dCantidad!, cambio: dcambio!, comment: com, date: date, idMot: 1, idMon: -1)
+                actualizarTipoCambio(moneda1: monedaCuentaFrom, moneda2: monedaCuentaTo!, cambio: dcambio!)
+                let _ = newMoveCuenta(cantidad: dCantidad!, idCuenta: idTotalesFrom);
+                let _ = newMoveCuenta(cantidad: dCantidad! * dcambio!, idCuenta: idTotalesTo);
+                let _ = actualizarTipoCambio(moneda1: monedaCuentaFrom, moneda2: monedaCuentaTo!, cambio: dcambio!);
+            } else {
+                newTraspaso(cuentaFrom: idTotalesFrom, cuentaTo: idTotalesTo, cantidad: dCantidad!, cambio: dcambio!, comment: com, date: date, idMot: 2, idMon: -2)
+                actualizarTipoCambio(moneda1: monedaCuentaTo!, moneda2: monedaCuentaFrom, cambio: dcambio!)
+                let _ = newMoveCuenta(cantidad: dCantidad! * dcambio! * -1, idCuenta: idTotalesFrom);
+                let _ = newMoveCuenta(cantidad: dCantidad!, idCuenta: idTotalesTo);
+            }
         }
     }
     
@@ -404,7 +438,6 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
         if textField.tag == txtTypeNone {
             return false
         } else if textField.tag == txtTypeNumber {
@@ -413,7 +446,6 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             }
             textField.rightView?.isHidden = true
         }
-        
         return true
     }
 }

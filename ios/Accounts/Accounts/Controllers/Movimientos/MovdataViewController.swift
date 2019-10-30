@@ -62,10 +62,10 @@ class MovdataViewController: UIViewController, UITableViewDelegate, UITableViewD
         //let cell: UITableViewCell
         let cell = tableView.dequeueReusableCell(withIdentifier: "FechaTableCell") as! FechaTableViewCell
         //if(index == 0){
-            let fecha = fechaDataSource[row][Movimiento.Fecha] as! String
-            let data = gteMovimientosByDate(date: fecha)
-            tableView.rowHeight = CGFloat(40 + (25 * data.count))
-            cell.setCell(fecha: fecha, data:data, parent: self)
+        let fecha = fechaDataSource[row][Movimiento.Fecha] as! String
+        let data = gteMovimientosByDate(date: fecha)
+        tableView.rowHeight = CGFloat(40 + (25 * data.count))
+        cell.setCell(fecha: fecha, data:data, parent: self, parentType: 1)
         //} else {
             //cell.setCell(fecha: "ABCD", parent: tableView)
         //}
@@ -73,34 +73,31 @@ class MovdataViewController: UIViewController, UITableViewDelegate, UITableViewD
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //verMovimiento
-        //self.performSegue(withIdentifier: "verMovimiento", sender: nil)
-    }
+
     
-       override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-           
-           if "crearMovimiento" == segue.identifier {
-                let viewController = segue.destination as! SeeMovimientoViewController
-                viewController.title = "Crear Movimiento"
-                viewController._id = 0
-    /*
-                   if let indexPath = tableView.indexPathForSelectedRow{
-                       let viewController = segue.destination as! SeeCuentaViewController
-                       let cuenta = dataArrayTotales[indexPath.row][Totales.Cuenta] as! String
-                       let moneda = dataArrayTotales[indexPath.row][Moneda.Moneda] as! String
-                       viewController.title = "\(cuenta) \(moneda)"
-                       viewController._id = dataArrayTotales[indexPath.row]["_id"] as! Int64
-                   }
-     */
-           } else if "verMovimiento" == segue.identifier {
-                let viewController = segue.destination as! SeeMovimientoViewController
-                viewController.title = "Ver Movimiento"
-                viewController._id = selectedId
-           } else if "verTraspaso" == segue.identifier {
-                let viewController = segue.destination as! TraspasoViewController
-                viewController.title = "Ver Traspaso"
-                viewController._id = selectedId
-           }
+   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       
+       if "crearMovimiento" == segue.identifier {
+            let viewController = segue.destination as! SeeMovimientoViewController
+            viewController.title = "Crear Movimiento"
+            viewController._id = 0
+/*
+               if let indexPath = tableView.indexPathForSelectedRow{
+                   let viewController = segue.destination as! SeeCuentaViewController
+                   let cuenta = dataArrayTotales[indexPath.row][Totales.Cuenta] as! String
+                   let moneda = dataArrayTotales[indexPath.row][Moneda.Moneda] as! String
+                   viewController.title = "\(cuenta) \(moneda)"
+                   viewController._id = dataArrayTotales[indexPath.row]["_id"] as! Int64
+               }
+ */
+       } else if "verMovimiento" == segue.identifier {
+            let viewController = segue.destination as! SeeMovimientoViewController
+            viewController.title = "Ver Movimiento"
+            viewController._id = selectedId
+       } else if "verTraspaso" == segue.identifier {
+            let viewController = segue.destination as! TraspasoViewController
+            viewController.title = "Ver Traspaso"
+            viewController._id = selectedId
        }
+   }
 }

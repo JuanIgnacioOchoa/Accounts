@@ -9,7 +9,7 @@
 import Foundation
 
 
-//Totales
+//--------------------------------Totales
 
 func newTotales(cantidad:Double, cuenta:String, idMoneda:Int64) -> Bool{
     let query = """
@@ -24,7 +24,8 @@ func newTotales(cantidad:Double, cuenta:String, idMoneda:Int64) -> Bool{
     }
     return false
 }
-//Movimientos
+//-----------------------------End Totales------------------
+//-----------------------------------Movimientos
 
 func newMove(cantidad:Double, idCuenta:Int64, comment:String? , idMotivo:Int64, idMoneda:Int64, cambio:Double, date: Date) -> Bool{
     //updateLastSync()
@@ -54,3 +55,24 @@ func newMove(cantidad:Double, idCuenta:Int64, comment:String? , idMotivo:Int64, 
     }
     return false
 }
+
+func newTraspaso(cuentaFrom:Int64, cuentaTo:Int64, cantidad:Double, cambio:Double, comment:String?, date:Date, idMot:Int, idMon: Int) -> Bool{
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    dateFormatter.timeZone = TimeZone.current
+    var sComment = ""
+    if comment != nil {
+        sComment = comment!
+    }
+    let query = """
+    INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.Comment), \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.IdTotales), \(Movimiento.Traspaso), \(Movimiento.Fecha), \(Movimiento.Cambio) Values (?, ?, ?, ?, ?, ?, ?)
+    """
+    do {
+        try Database.db.run(query, [cantidad, sComment,idMot, idMon, cuentaFrom, cuentaTo, dateFormatter.string(from: date), cambio])
+        return true
+    } catch {
+        print("Error New Move: ", error)
+    }
+    return false
+}
+//------------------------------------End Movimientos--------------------------

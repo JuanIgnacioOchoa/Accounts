@@ -67,4 +67,21 @@ class AnalisisViewController: UIViewController, UITableViewDelegate, UITableView
         
         return cell
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "verMotivos", sender: nil)
+    }
+    
+   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       
+       if "verMotivos" == segue.identifier {
+            if let indexPath = tableView.indexPathForSelectedRow{
+                let viewController = segue.destination as! SeeMotivoViewController
+                viewController.title = "Ver Cuentas"
+                viewController._id = dataArray[indexPath.row]["_id"] as! Int64
+                viewController.month = month
+                viewController.year = year
+            }
+       }
+   }
+    
 }

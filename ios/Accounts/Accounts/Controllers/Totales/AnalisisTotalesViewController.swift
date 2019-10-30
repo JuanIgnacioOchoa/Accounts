@@ -267,5 +267,17 @@ class AnalisisTotalesViewController: UIViewController, UIPickerViewDelegate, UIP
         
         return cell
     }
-
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "seeCuentasSegue", sender: nil)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if "seeCuentasSegue" == segue.identifier {
+            if let indexPath = tableView.indexPathForSelectedRow{
+                let vc = segue.destination as! SeeCuentaViewController
+                vc._id = dataArray[indexPath.row]["_id"] as! Int64
+                vc.month = month
+                vc.year = year
+            }
+        }
+    }
 }

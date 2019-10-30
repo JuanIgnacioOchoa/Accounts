@@ -98,10 +98,13 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             idMotivo = dataArrayMove[0][Movimiento.IdMotivo] as! Int64
             comment = dataArrayMove[0][Movimiento.Comment] as? String
             fecha = dataArrayMove[0][Movimiento.Fecha] as! String
-            
+            let nFecha = dataArrayMove[0]["nFecha"] as! String
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            date = dateFormatter.date(from: nFecha)!
             dataArrayMotivo = getMotives(id: idMotivo)
             dataArrayTotales = getTotales(id: idTotales)
-            
+            let doubleCant:Double = Double(cantidad)
             var c = 0
             for m in dataArrayMotivo {
                 if m["_id"] as! Int64 == idMotivo{
@@ -139,7 +142,11 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
                 self.segmentedGasto.selectedSegmentIndex = 1
                 self.cantidadTxt.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
             }
-            cantidadTxt.text = numberFormatter.string(from: cantidad)
+            cantidadTxt.text = numberFormatter.string(from: NSNumber(value: doubleCant))
+            segmentedFecha.selectedSegmentIndex = 2
+            dateFormatter.dateFormat = "dd-MMM-yyyy"
+            //fechaTxt.text = formatter.string(from: datePicker.date)
+            segmentedFecha.setTitle(dateFormatter.string(from: date), forSegmentAt: 2)
         }
         
         preparePickerView()
@@ -197,7 +204,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
 
     @objc func donedatePicker(){
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd/MM/yyyy"
+        formatter.dateFormat = "dd-MMM-yyyy"
         //fechaTxt.text = formatter.string(from: datePicker.date)
         segmentedFecha.setTitle(formatter.string(from: datePicker.date), forSegmentAt: 2)
         date = datePicker.date

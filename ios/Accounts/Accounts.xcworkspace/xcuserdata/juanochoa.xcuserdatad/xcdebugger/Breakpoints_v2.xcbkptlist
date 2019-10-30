@@ -323,7 +323,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "302"
             endingLineNumber = "302"
-            landmarkName = "getMovimientosFecha()"
+            landmarkName = "getTotalesMovFecha(id:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -423,8 +423,8 @@
             timestampString = "590987396.887825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "755"
-            endingLineNumber = "755"
+            startingLineNumber = "796"
+            endingLineNumber = "796"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -491,9 +491,9 @@
             timestampString = "590987396.8882051"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "776"
-            endingLineNumber = "776"
-            landmarkName = "getReportesTotales(year:month:)"
+            startingLineNumber = "817"
+            endingLineNumber = "817"
+            landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -948,8 +948,8 @@
             timestampString = "590987396.8893239"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "762"
-            endingLineNumber = "762"
+            startingLineNumber = "803"
+            endingLineNumber = "803"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -965,8 +965,8 @@
             timestampString = "590987396.889396"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "772"
-            endingLineNumber = "772"
+            startingLineNumber = "813"
+            endingLineNumber = "813"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -982,8 +982,8 @@
             timestampString = "590987396.889461"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "769"
-            endingLineNumber = "769"
+            startingLineNumber = "810"
+            endingLineNumber = "810"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1161,74 +1161,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E6A909BB-BBC0-446C-902C-3A1A9EE8E510"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/SeeCuentaViewController.swift"
-            timestampString = "590865933.88719"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "tableView(_:numberOfRowsInSection:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "01BF6270-DC59-4A81-ACBC-65A504838974"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/SeeCuentaViewController.swift"
-            timestampString = "590865933.887238"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "tableView(_:cellForRowAt:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "327B2354-FB06-444D-9385-05F8AD2D8E25"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/SeeCuentaViewController.swift"
-            timestampString = "590865933.887282"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "prepare(for:sender:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "16E12AFE-838F-4FB5-BDBF-3703FC86E006"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/SeeCuentaViewController.swift"
-            timestampString = "590865933.887323"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "9287A625-696D-4CE9-A288-07E547D3DB5C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1254,8 +1186,8 @@
             timestampString = "590987396.890455"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "745"
-            endingLineNumber = "745"
+            startingLineNumber = "786"
+            endingLineNumber = "786"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1802,8 +1734,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "733"
-            endingLineNumber = "733"
+            startingLineNumber = "774"
+            endingLineNumber = "774"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1818,8 +1750,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "734"
-            endingLineNumber = "734"
+            startingLineNumber = "775"
+            endingLineNumber = "775"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1850,8 +1782,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "740"
-            endingLineNumber = "740"
+            startingLineNumber = "781"
+            endingLineNumber = "781"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1866,8 +1798,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "735"
-            endingLineNumber = "735"
+            startingLineNumber = "776"
+            endingLineNumber = "776"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1946,8 +1878,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "716"
-            endingLineNumber = "716"
+            startingLineNumber = "757"
+            endingLineNumber = "757"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1978,9 +1910,9 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "491"
-            endingLineNumber = "491"
-            landmarkName = "getTotalesByMonth(month:year:)"
+            startingLineNumber = "532"
+            endingLineNumber = "532"
+            landmarkName = "getGastoTotalByMoneda(moneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1994,9 +1926,9 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getIngresoTotalByMoneda(moneda:year:month:)"
+            startingLineNumber = "522"
+            endingLineNumber = "522"
+            landmarkName = "getGastoTotalByMoneda(moneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2026,9 +1958,9 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "483"
-            endingLineNumber = "483"
-            landmarkName = "getIngresoTotalByMoneda(moneda:year:month:)"
+            startingLineNumber = "524"
+            endingLineNumber = "524"
+            landmarkName = "getGastoTotalByMoneda(moneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2042,8 +1974,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "721"
-            endingLineNumber = "721"
+            startingLineNumber = "762"
+            endingLineNumber = "762"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2195,22 +2127,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5A88F988-5CAB-49B7-8723-F69DB8F0F5F2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Cells/FechaTableViewCell.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
-            landmarkName = "setCell(fecha:data:parent:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "643F63BA-4DF4-41C1-905B-59962F9B6471"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -2218,9 +2134,9 @@
             filePath = "Accounts/Cells/FechaTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "setCell(fecha:data:parent:)"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "setCell(fecha:data:parent:parentType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2250,9 +2166,9 @@
             filePath = "Accounts/Cells/FechaTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "setCell(fecha:data:parent:)"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "setCell(fecha:data:parent:parentType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2266,9 +2182,9 @@
             filePath = "Accounts/Cells/FechaTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
-            landmarkName = "setCell(fecha:data:parent:)"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "setCell(fecha:data:parent:parentType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2330,8 +2246,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "757"
-            endingLineNumber = "757"
+            startingLineNumber = "798"
+            endingLineNumber = "798"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2346,8 +2262,8 @@
             filePath = "Accounts/Database/Select.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "754"
-            endingLineNumber = "754"
+            startingLineNumber = "795"
+            endingLineNumber = "795"
             landmarkName = "getReportesMotives(idMoneda:year:month:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2378,9 +2294,9 @@
             filePath = "Accounts/Cells/FechaTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "setCell(fecha:data:parent:)"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "setCell(fecha:data:parent:parentType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2666,10 +2582,10 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "425"
-            endingLineNumber = "425"
-            landmarkName = "guardarMov()"
-            landmarkType = "7">
+            startingLineNumber = "428"
+            endingLineNumber = "428"
+            landmarkName = "SeeMovimientoViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2698,10 +2614,10 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "427"
-            endingLineNumber = "427"
-            landmarkName = "guardarMov()"
-            landmarkType = "7">
+            startingLineNumber = "430"
+            endingLineNumber = "430"
+            landmarkName = "SeeMovimientoViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2714,8 +2630,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "457"
-            endingLineNumber = "457"
+            startingLineNumber = "460"
+            endingLineNumber = "460"
             landmarkName = "guardarMov()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2730,8 +2646,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "456"
-            endingLineNumber = "456"
+            startingLineNumber = "459"
+            endingLineNumber = "459"
             landmarkName = "guardarMov()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2746,8 +2662,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "444"
-            endingLineNumber = "444"
+            startingLineNumber = "447"
+            endingLineNumber = "447"
             landmarkName = "guardarMov()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2762,8 +2678,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "443"
-            endingLineNumber = "443"
+            startingLineNumber = "446"
+            endingLineNumber = "446"
             landmarkName = "guardarMov()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2778,8 +2694,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
+            startingLineNumber = "445"
+            endingLineNumber = "445"
             landmarkName = "guardarMov()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2794,8 +2710,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "449"
-            endingLineNumber = "449"
+            startingLineNumber = "452"
+            endingLineNumber = "452"
             landmarkName = "guardarMov()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2810,8 +2726,8 @@
             filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "225"
-            endingLineNumber = "225"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "donePicker(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2826,8 +2742,8 @@
             filePath = "Accounts/Controllers/Movimientos/MovdataViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
             landmarkName = "prepare(for:sender:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2836,6 +2752,150 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D44400C1-6524-4186-935A-090612E42B4E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1818ECC4-4DFF-4C7D-A276-5D76DED66E33"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A3BCD908-1349-4E43-8F63-1C74A0FBADAF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Cells/FechaTableViewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "setCell(fecha:data:parent:parentType:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FEF37FE-6333-4DC8-83AF-D479C9A8F298"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "294"
+            endingLineNumber = "294"
+            landmarkName = "cancelPicker()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8EA31BE0-9D7B-4CFC-A2D3-8D16AB3D9326"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
+            landmarkName = "donePicker(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C40B5353-097A-433C-B7DA-6D65849CF533"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "271"
+            endingLineNumber = "271"
+            landmarkName = "donePicker(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "292A5A86-049E-43EE-A8B2-D48C6ADAC33A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
+            landmarkName = "guardar()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "019206E0-D871-4CD4-A6D4-3D07FBAD9B69"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "365"
+            endingLineNumber = "365"
+            landmarkName = "guardar()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "36B2A2FC-DB27-46B7-9CE6-0B924F27C210"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "89A34C30-F55C-412E-A380-58327A343773"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -2851,15 +2911,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1818ECC4-4DFF-4C7D-A276-5D76DED66E33"
+            uuid = "3D1C22E8-39D9-4998-A335-7884C6BA4E62"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            filePath = "Accounts/Cells/FechaTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
+            landmarkName = "tapFunction1(sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "620E3C84-AFF1-44D0-870A-0621FFC7857E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Cells/FechaTableViewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "setCell(fecha:data:parent:parentType:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "27C8F5DD-486D-4CF8-A5F5-8B68A332B39F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2867,112 +2959,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A3BCD908-1349-4E43-8F63-1C74A0FBADAF"
+            uuid = "FE89B046-1B90-4C6C-9CDA-67F401B42C61"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Accounts/Controllers/SeeMotivoViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "prepare(for:sender:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5951D37E-7C52-4AE4-BC50-F6B3DAD63DCA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Accounts/Cells/FechaTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
-            landmarkName = "setCell(fecha:data:parent:)"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "tapFunction1(sender:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9FEF37FE-6333-4DC8-83AF-D479C9A8F298"
+            uuid = "590480F0-5477-4E04-9049-0C82F7DA2B0C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
+            filePath = "Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
-            landmarkName = "cancelPicker()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8EA31BE0-9D7B-4CFC-A2D3-8D16AB3D9326"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "249"
-            endingLineNumber = "249"
-            landmarkName = "donePicker(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C40B5353-097A-433C-B7DA-6D65849CF533"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
-            landmarkName = "donePicker(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "292A5A86-049E-43EE-A8B2-D48C6ADAC33A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "345"
-            endingLineNumber = "345"
-            landmarkName = "guardar()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "80D453FC-02AF-404B-9FE9-FF8A61DB1353"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "347"
-            endingLineNumber = "347"
-            landmarkName = "guardar()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "019206E0-D871-4CD4-A6D4-3D07FBAD9B69"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Accounts/Controllers/Movimientos/TraspasoViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "346"
-            endingLineNumber = "346"
-            landmarkName = "guardar()"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

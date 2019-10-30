@@ -10,6 +10,14 @@ import UIKit
 
 class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
 
+    @IBAction func addTraspaso(_ sender: UIButton) {
+        retiro = false
+        self.performSegue(withIdentifier: "crearTraspaso", sender: nil)
+    }
+    @IBAction func addRetiro(_ sender: UIButton) {
+        retiro = true
+        self.performSegue(withIdentifier: "crearTraspaso", sender: nil)
+    }
     @IBOutlet weak var contentTotal: UIView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var inactivasSwitch: UISwitch!
@@ -27,6 +35,7 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     var monedas:[[String:Any?]]?
     var selectedMoneda = 0
     let numberFormatter = NumberFormatter()
+    var retiro = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -250,17 +259,20 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        /*
-        if "seeCuentasSegue" == segue.identifier {
+        if "crearTraspaso" == segue.identifier {
+            let vc = segue.destination as! TraspasoViewController
+            vc._id = 0
+            vc.retiro = retiro
+        }
+        else if "seeCuentasSegue" == segue.identifier {
             if let indexPath = tableView.indexPathForSelectedRow{
                 let viewController = segue.destination as! SeeCuentaViewController
-                let cuenta = dataArrayTotales[indexPath.row][Totales.Cuenta] as! String
-                let moneda = dataArrayTotales[indexPath.row][Moneda.Moneda] as! String
-                viewController.title = "\(cuenta) \(moneda)"
+                //let cuenta = dataArrayTotales[indexPath.row][Totales.Cuenta] as! String
+                //let moneda = dataArrayTotales[indexPath.row][Moneda.Moneda] as! String
+                //viewController.title = "\(cuenta) \(moneda)"
                 viewController._id = dataArrayTotales[indexPath.row]["_id"] as! Int64
             }
         }
- */
     }
     
 }
@@ -278,7 +290,6 @@ extension DataViewController: UITableViewDelegate, UITableViewDataSource{
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //self.performSegue(withIdentifier: "seeCuentasSegue", sender: nil)
+        self.performSegue(withIdentifier: "seeCuentasSegue", sender: nil)
     }
-
 }

@@ -293,6 +293,59 @@ func getTotalMoves(id: Int64, month: Int, year: Int) -> [[String:Any?]]{
     }
     return []
 }
+func getTotalesMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?]] {
+    var tmpY = ""
+    var tmpM = ""
+    if year == nil {
+        tmpY = "and strftime('%Y',Fecha) == strftime('%Y', date('now'))"
+        tmpM = "and strftime('%m',Fecha) == strftime('%m', date('now'))"
+    } else if month == nil {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+    } else {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+        tmpM = "and strftime('%m',Fecha) == '\(month!)'"
+    }
+    let query = """
+        SELECT m._id, m.Fecha
+            FROM AccountsMovimiento as m, AccountsTotales as t
+            WHERE t._id = m.IdTotales \(tmpY) \(tmpM) and (IdTotales = ? or Traspaso = ?)
+        Group by m.Fecha ORDER BY Fecha DESC, m._id DESC
+"""
+    do{
+        let stmt = try Database.db.prepare(query, [id, id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch{
+        print("Error select getMovimientosFecha 0", error)
+    }
+    return []
+}
+func getMotivosMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?]] {
+    var tmpY = ""
+    var tmpM = ""
+    if year == nil {
+        tmpY = "and strftime('%Y',Fecha) == strftime('%Y', date('now'))"
+        tmpM = "and strftime('%m',Fecha) == strftime('%m', date('now'))"
+    } else if month == nil {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+    } else {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+        tmpM = "and strftime('%m',Fecha) == '\(month!)'"
+    }
+    let query = """
+        SELECT m._id, m.Fecha
+            FROM AccountsMovimiento as m, AccountsMotivo as mot
+            WHERE mot._id = m.IdMotivo \(tmpY) \(tmpM) and IdMotivo = ?
+        Group by m.Fecha ORDER BY Fecha DESC, m._id DESC
+"""
+    do{
+        let stmt = try Database.db.prepare(query, [id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch{
+        print("Error select getMovimientosFecha 0", error)
+    }
+    return []
+}
+
 func getMovimientosFecha() -> [[String:Any?]] {
     let query = """
                 SELECT _id, Fecha FROM AccountsMovimiento
@@ -346,6 +399,36 @@ func gteMovimientosByDate(date:String) -> [[String:Any?]]{
 """
     do{
         let stmt = try Database.db.prepare(query, [date])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error Select getMovimientosByDate ", error)
+    }
+    return []
+}
+
+func getTotalesMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
+    let query = """
+                SELECT mov.*, mot.Motivo, mon.Moneda, t.Cuenta
+                    FROM AccountsMovimiento as mov, AccountsTotales as t, AccountsMotivo as mot, AccountsMoneda as mon
+                    WHERE mov.IdTotales = t._id and mov.IdMotivo = mot._id and mov.IdMoneda = mon._id and Fecha = ? and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC
+"""
+    do{
+        let stmt = try Database.db.prepare(query, [date, id, id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error Select getMovimientosByDate ", error)
+    }
+    return []
+}
+
+func getMotivosMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
+    let query = """
+                SELECT mov.*, mot.Motivo, mon.Moneda, t.Cuenta
+                    FROM AccountsMovimiento as mov, AccountsTotales as t, AccountsMotivo as mot, AccountsMoneda as mon
+                    WHERE mov.IdTotales = t._id and mov.IdMotivo = mot._id and mov.IdMoneda = mon._id and Fecha = ? and IdMotivo = ? ORDER BY Fecha DESC, _id DESC
+"""
+    do{
+        let stmt = try Database.db.prepare(query, [date, id])
         return Database.stmtToDictionary(stmt: stmt)
     } catch {
         print("Error Select getMovimientosByDate ", error)

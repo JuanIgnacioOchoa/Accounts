@@ -169,7 +169,7 @@ class ViewController: UIViewController {
 extension ViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource{
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        return 0
+        return currentIndex
     }
     
     func presentationCount(for pageViewController: UIPageViewController) -> Int {

@@ -419,7 +419,7 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
 extension MovimientosViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource{
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        return 0
+        return currentIndex
     }
     
     func presentationCount(for pageViewController: UIPageViewController) -> Int {

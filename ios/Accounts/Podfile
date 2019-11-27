@@ -8,6 +8,7 @@ target 'Accounts' do
 	pod 'GoogleSignIn'
 	pod 'GoogleAPIClientForREST/Drive'
 	pod 'SwiftyJSON'
+	pod 'Charts'
   # Pods for Accounts
 
   target 'AccountsTests' do

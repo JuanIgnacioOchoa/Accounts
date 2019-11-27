@@ -48,7 +48,7 @@ class FechaTableViewCell: UITableViewCell{
             var cantLbl = UILabel()
             var motivoLbl = UILabel()
             var cuentaLbl = UILabel()
-            if parentType == 1 || parentType == 3{
+            if parentType == 1 || parentType == 3 || parentType == 4{
                 w = new_view.frame.width/3
                 cantLbl = UILabel(frame: CGRect(x:w*2, y: 0, width: w, height: 20))
                 motivoLbl = UILabel(frame: CGRect(x:w, y: 0, width: w, height: 20))
@@ -103,6 +103,9 @@ class FechaTableViewCell: UITableViewCell{
             vc.selectedId = sender.id
         } else if parentType == 3 {
             let vc = parent as! SeeMotivoViewController
+            vc.selectedId = sender.id
+        } else if parentType == 4 {
+            let vc = parent as! SeeTripsViewController
             vc.selectedId = sender.id
         }
         if sender.traspaso == nil {

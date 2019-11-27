@@ -159,7 +159,7 @@ class Database{
             table.column(prestamosComment)
             table.column(prestamosIdPersona)
             table.column(prestamosCambio)
-            table.column(prestamosIdMovimiento)
+            table.column(prestamosIdMovimiento, defaultValue: nil)
             table.column(prestamosCerrada)
         }
         let createTablePrestamosDet = prestamosDetTable.create{ table in

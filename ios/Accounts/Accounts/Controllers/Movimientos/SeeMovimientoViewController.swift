@@ -34,6 +34,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             txt.delegate = self
             self.view.addSubview(txt)
             showDatePicker(fechaTxt: txt)
+            txt.removeFromSuperview()
             break
         }
     }
@@ -56,9 +57,9 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
     var pickerMoneda = UIPickerView(), pickerMotivo = UIPickerView(), pickerTotales = UIPickerView()
     var dataArrayMove:[[String:Any?]] = [], dataArrayMoneda:[[String:Any?]] = [], dataArrayMotivo:[[String:Any?]] = [], dataArrayTotales:[[String:Any?]] = []
     var cantidad:NSNumber = 0
-    var _id:Int64? = 0, idMoneda:Int64 = 1, idTotales:Int64 = 1, idMotivo:Int64 = 1
+    var _id:Int64? = 0, idMoneda:Int64 = 1, idTotales:Int64 = 1, idMotivo:Int64 = 1, idTrip:Int64 = 0
     var comment:String?
-    var fecha:String = "", motivo:String = "", moneda:String = "", totales:String = ""
+    var motivo:String = "", moneda:String = "", totales:String = ""
     var selectedTotales = 0, selectedMoneda = 0,  selectedMotivo = 0
     var oldSelectedTotales = 0, oldSelectedMoneda = 0, oldSelectedMotivo = 0
     var date:Date = Date()
@@ -67,22 +68,22 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
     let txtTypeNumber = 0, txtTypeAll = 1, txtTypeNone = 2
     let numberFormatter = NumberFormatter()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         numberFormatter.numberStyle = .decimal
         numberFormatter.minimumFractionDigits = 2
         
-        dataArrayMoneda = getMonedas()
+        
         if _id == 0 {
             dataArrayTotales = getTotales()
-            dataArrayMotivo = getMotives()
-            
+            dataArrayMotivo = getMotives(active: true)
+            dataArrayMoneda = getMonedas()
             cantidad = 0.0
             idMoneda = dataArrayMoneda[0]["_id"] as! Int64
             idTotales = dataArrayTotales[0]["_id"] as! Int64
             idMotivo = dataArrayMotivo[0]["_id"] as! Int64
             comment = ""
-            fecha = "21/09/2019"
             moneda = dataArrayMoneda[0][Moneda.Moneda] as! String
             totales = dataArrayTotales[0][Totales.Cuenta] as! String
             motivo = dataArrayMotivo[0][Motivo.Motivo] as! String
@@ -97,14 +98,16 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             idTotales = dataArrayMove[0][Movimiento.IdTotales] as! Int64
             idMotivo = dataArrayMove[0][Movimiento.IdMotivo] as! Int64
             comment = dataArrayMove[0][Movimiento.Comment] as? String
-            fecha = dataArrayMove[0][Movimiento.Fecha] as! String
+            dataArrayMoneda = getMonedas()
+            let fecha = dataArrayMove[0][Movimiento.Fecha] as! String
             let nFecha = dataArrayMove[0]["nFecha"] as! String
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             date = dateFormatter.date(from: nFecha)!
             dataArrayMotivo = getMotives(id: idMotivo)
             dataArrayTotales = getTotales(id: idTotales)
-            let doubleCant:Double = Double(cantidad)
+            dataArrayMoneda = getMonedasWith(id: idMoneda)
+            let doubleCant:Double = Double(truncating: cantidad)
             var c = 0
             for m in dataArrayMotivo {
                 if m["_id"] as! Int64 == idMotivo{
@@ -435,24 +438,24 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             dcambio = 1.0
         } else {
             if cambioTxt.text == nil {
-                cambioTxt.setError("Error")
+                cambioTxt.setError("Error", show: true)
                 return
             }
             dcambio = Double(cantidadTxt.text!)
             if dcambio == nil {
-                cambioTxt.setError("Error")
+                cambioTxt.setError("Error", show: true)
                 return
             }
             let moneda2 = dataArrayTotales[selectedTotales][Totales.IdMoneda] as! Int64
             actualizarTipoCambio(moneda1: idMoneda, moneda2: moneda2, cambio: dcambio!)
         }
         if cantidadTxt.text == nil {
-            cantidadTxt.setError("Error")
+            cantidadTxt.setError("Error", show: true)
             return
         }
         var dCantidad = Double(cantidadTxt.text!)
         if dCantidad == nil {
-            cantidadTxt.setError("Error")
+            cantidadTxt.setError("Error", show: true)
             return
         }
         if gasto {
@@ -463,7 +466,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         print(g)
         if _id == 0 {
             ///Nuevo
-            let x = newMove(cantidad: dCantidad ?? 0.0, idCuenta: idTotales, comment: com, idMotivo: idMotivo, idMoneda: idMoneda, cambio: dcambio!, date: date)
+            let x = newMove(cantidad: dCantidad ?? 0.0, idCuenta: idTotales, comment: com, idMotivo: idMotivo, idMoneda: idMoneda, cambio: dcambio!, date: date, idViaje: idTrip)
             let y = newMoveCuenta(cantidad: dCantidad! * dcambio!, idCuenta: idTotales)
             if x && y{
                 navigationController?.popViewController(animated: true)
@@ -481,7 +484,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
 
 extension UITextField {
     // Add/remove error message
-    func setError(_ string: String? = nil, show: Bool = true) {
+    func setError(_ string: String, show: Bool) {
         let errorImg = UIImageView (frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         errorImg.image = UIImage(named: "errorIcon")
         errorImg.contentMode = UIView.ContentMode.left

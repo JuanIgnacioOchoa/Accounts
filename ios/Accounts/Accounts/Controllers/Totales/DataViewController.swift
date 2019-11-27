@@ -24,7 +24,8 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     @IBOutlet weak var inactivasLbl: UILabel!
     @IBOutlet weak var monedaLbl: UILabel!
     @IBAction func switchPressed(_ sender: UISwitch) {
-        dataArrayTotales = getTotales(inactivos: sender.isOn)
+        inactivos = !inactivos
+        dataArrayTotales = getTotales(inactivos: inactivos)
         tableView.reloadData()
     }
     var blurEffect = UIBlurEffect(style: UIBlurEffect.Style.light)
@@ -35,7 +36,7 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     var monedas:[[String:Any?]]?
     var selectedMoneda = 0
     let numberFormatter = NumberFormatter()
-    var retiro = false
+    var retiro = false, inactivos = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,6 +66,9 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         numberFormatter.numberStyle = .decimal
         numberFormatter.minimumFractionDigits = 2
         
+        let tapSwitch = UITapGestureRecognizer(target: self, action: #selector(self.tapSwitch))
+        inactivasSwitch.addGestureRecognizer(tapSwitch)
+        inactivasSwitch.isUserInteractionEnabled = true
 
     }
     
@@ -82,6 +86,13 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         updateDataTotal()
     }
     
+    @objc
+    func tapSwitch(sender:UITapGestureRecognizer) {
+        inactivos = !inactivos
+        dataArrayTotales = getTotales(inactivos: inactivos)
+        inactivasSwitch.setOn(!inactivos, animated: true)
+    }
+    
     func updateDataTotal(){
         contentTotal.subviews.forEach { $0.removeFromSuperview() }
         let cash = getTotalesCash(idMoneda: idMoneda, inactivos: false);
@@ -89,7 +100,8 @@ class DataViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         let invest = getTotalesInvests(idMoneda: idMoneda, inactivos: false);
         let deudores = getTotalesDeudores(idMoneda: idMoneda);
         let deudas = getTotalesDeudas(idMoneda: idMoneda);
-        let w = contentTotal.frame.width/2
+        let screenSize = UIScreen.main.bounds
+        let w = screenSize.width/2 - 10
         var y:CGFloat = 0
         let labelCash = UILabel(frame: CGRect(x:0, y: y, width: w, height: 20))
         let totalCash = UILabel(frame: CGRect(x:w, y: y, width: w, height: 20))

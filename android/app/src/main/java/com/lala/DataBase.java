@@ -96,7 +96,6 @@ public class DataBase extends SQLiteOpenHelper {
                 "    \"Cerrada\" BOOL not null DEFAULT 0,\n" +
                 "    PRIMARY KEY(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdMoneda\") REFERENCES \"Moneda\"(\"_id\"),\n" +
-                "    FOREIGN KEY(\"IdMovimiento\") REFERENCES \"Movimiento\"(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdTotales\") REFERENCES \"Totales\"(\"_id\"), \n" +
                 "    FOREIGN KEY(\"IdPersona\") REFERENCES \"Personas\"(\"_id\"))");
 

@@ -325,21 +325,22 @@ public class seeCuentas extends AppCompatActivity {
                 final int idTraspaso = c.getInt(c.getColumnIndex("Traspaso"));
                 String moneda = Principal.getMonedaTotales(id);
                 int idMotivo = (c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMotivo)));
-                String motivo = Principal.getMotiveId(idMotivo);
+                final int prestamo = c.getInt(c.getColumnIndex("Prestamo"));
+                String motivo = "Prestamo";
+                if(prestamo <= 0) {
+                    motivo = Principal.getMotiveId(idMotivo);
+                } else if(prestamo == 1){
+                    cantidad = cantidad*-1;
+                }
                 final int localid = c.getInt(c.getColumnIndex("_id"));
                 if(idTraspaso != 0){
-                    /*
-                    if((idMotivo == 1 || idMotivo == 2 ) && idTraspaso == id) {
-                        motivoTV.setTextColor(ContextCompat.getColor(context, R.color.positive_green));
-                        cantidadTV.setTextColor(ContextCompat.getColor(context, R.color.positive_green));
+                    if(idTraspaso == id){
+                        motivoTV.setTextColor(ContextCompat.getColor(context,R.color.positive_green));
+                        cantidadTV.setTextColor(ContextCompat.getColor(context,R.color.positive_green));
                     } else {
                         motivoTV.setTextColor(Color.RED);
                         cantidadTV.setTextColor(Color.RED);
                     }
-
-                     */
-                    motivoTV.setTextColor(ContextCompat.getColor(context,R.color.neutral_yellow));
-                    cantidadTV.setTextColor(ContextCompat.getColor(context,R.color.neutral_yellow));
                 }
                 else if(cantidad < 0){
                     motivoTV.setTextColor(Color.RED);
@@ -376,7 +377,10 @@ public class seeCuentas extends AppCompatActivity {
                                 break;
                             case MotionEvent.ACTION_UP:
                                 Intent i;
-                                if(idTraspaso == 0){
+                                if(prestamo > 0){
+                                    return true;
+                                }
+                                else if(idTraspaso == 0){
                                     i = new Intent(context, Gasto.class);
                                     i.putExtra("id", localid);
                                 } else {

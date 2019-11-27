@@ -186,7 +186,6 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 fecha = dateFormat.format(calendar.getTime());
-                int i = 0;
             }
         });
 

@@ -54,25 +54,67 @@ public class Principal {
 
     // Totales
     public static Cursor getTotalMovesFecha(int id){
-        return db.rawQuery("SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales " +
-                "and m.Fecha BETWEEN date('now', '-1 month') and date('now') " +
-                "and (IdTotales = ? or Traspaso = ?) Group by m.Fecha ORDER BY Fecha DESC, m._id DESC", new String[]{""+id, ""+id});
+        return db.rawQuery("SELECT * FROM (\n" +
+                "SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales \n" +
+                "                and m.Fecha BETWEEN date('now', '-1 month') and date('now') \n" +
+                "                and (IdTotales = ? or Traspaso = ?) Group by m.Fecha\n" +
+                "union\t\t\t\n" +
+                "SELECT p._id, p.Fecha FROM AccountsPrestamos as p, AccountsTotales as t WHERE t._id = p.IdTotales \n" +
+                "                and p.Fecha BETWEEN date('now', '-1 month') and date('now') \n" +
+                "                and (IdTotales = ?) Group by p.Fecha\n" +
+                "union\n" +
+                "SELECT p._id, p.Fecha FROM AccountsPrestamosDetalle as p, AccountsTotales as t WHERE t._id = p.IdTotales \n" +
+                "                and p.Fecha BETWEEN date('now', '-1 month') and date('now') \n" +
+                "                and (IdTotales = ?) Group by p.Fecha\n" +
+                ") Group by Fecha ORDER BY Fecha DESC, _id DESC", new String[]{""+id, ""+id, ""+id, ""+id});
     }
     public static Cursor getTotalMovesFecha(int id, String year){
-        return db.rawQuery("SELECT m._id, m.Fecha FROM AccountsTotales as t, AccountsMovimiento as m WHERE m.IdTotales = t._id and" +
-                " strftime('%Y',Fecha) == ? " +
-                "and (IdTotales = ? or Traspaso = ?) Group By m.Fecha ORDER BY Fecha DESC, m._id DESC", new String[]{year,""+id, ""+id});
+        return db.rawQuery("SELECT * FROM (\n" +
+                "SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales \n" +
+                "                and strftime('%Y',Fecha) == ? \n" +
+                "                and (IdTotales = ? or Traspaso = ?) Group by m.Fecha\n" +
+                "union\t\t\t\n" +
+                "SELECT p._id, p.Fecha FROM AccountsPrestamos as p, AccountsTotales as t WHERE t._id = p.IdTotales \n" +
+                "                and strftime('%Y',Fecha) == ? \n" +
+                "                and (IdTotales = ?) Group by p.Fecha\n" +
+                "union\n" +
+                "SELECT p._id, p.Fecha FROM AccountsPrestamosDetalle as p, AccountsTotales as t WHERE t._id = p.IdTotales \n" +
+                "                and strftime('%Y',Fecha) == ? \n" +
+                "                and (IdTotales = ?) Group by p.Fecha\n" +
+                ") Group by Fecha ORDER BY Fecha DESC, _id DESC", new String[]{year,""+id, ""+id, year,""+id, year,""+id});
     }
 
     public static Cursor getTotalMovesFecha(int id, String month, String year){
-        return db.rawQuery("SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales and " +
-                " strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? " +
-                "and (IdTotales = ? or Traspaso = ?) Group by m.Fecha ORDER BY Fecha DESC, m._id DESC", new String[]{year, month,""+id, ""+id});
+
+        return db.rawQuery("SELECT * FROM (\n" +
+                "SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales \n" +
+                "                and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "                and (IdTotales = ? or Traspaso = ?) Group by m.Fecha\n" +
+                "union\t\t\t\n" +
+                "SELECT p._id, p.Fecha FROM AccountsPrestamos as p, AccountsTotales as t WHERE t._id = p.IdTotales \n" +
+                "                and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "                and (IdTotales = ?) Group by p.Fecha\n" +
+                "union\n" +
+                "SELECT p._id, p.Fecha FROM AccountsPrestamosDetalle as p, AccountsTotales as t WHERE t._id = p.IdTotales \n" +
+                "                and strftime('%Y',Fecha) == ? and strftime('%m',Fecha) == ? \n" +
+                "                and (IdTotales = ?) Group by p.Fecha\n" +
+                ") Group by Fecha ORDER BY Fecha DESC, _id DESC", new String[]{year, month,""+id, ""+id, year, month,""+id, year, month,""+id});
     }
 
     public static Cursor getTotalMovesByFecha(String date, int id){
-        return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE (IdTotales = ? or Traspaso = ?) and Fecha = ? ORDER BY Fecha DESC, _id DESC",
-                new String[]{""+id, ""+id, date});
+        return db.rawQuery("SELECT *, '0' as Prestamo \n" +
+                        "\tFROM AccountsMovimiento \n" +
+                        "\tWHERE (IdTotales = ? or Traspaso = ?) and Fecha = ? \n" +
+                        "union\n" +
+                        "SELECT _id, Cantidad, FEcha, IdTotales, IdPersona, IdMoneda, Cambio, null as Traspaso, comment, null as IdViaje, '1' as Prestamo \n" +
+                        "\tFROM AccountsPrestamos \n" +
+                        "\tWHERE IdTotales = ? and Fecha = ? \n" +
+                        "union\n" +
+                        "SELECT _id, Cantidad, FEcha, IdTotales, null as IdPersona, IdMoneda, Cambio, null as Traspaso, null as IdComment, null as IdViaje, '2' as Prestamo \n" +
+                        "\tFROM AccountsPrestamosDetalle\n" +
+                        "\tWHERE IdTotales = ? and Fecha = ? \n" +
+                        "Order by Fecha DEsc, _id desc\n",
+                new String[]{""+id, ""+id, date, ""+id, date, ""+id, date});
     }
     public static Cursor getTotalCredit(){
         return db.rawQuery("SELECT * FROM AccountsTotales WHERE Activa == 1 and Tipo = 2",null);
@@ -109,21 +151,30 @@ public class Principal {
     }
     public static Cursor getTotalesLineGraph(){
         return db.rawQuery("SELECT t1._id, t1.Moneda, t1.Cuenta, t2.Count, t1.CurrentCantidad, t1.Activa FROM(\n" +
-                "SELECT (tc._id || m.Moneda) as _id, m.Moneda, (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as Count, SUM(t.CurrentCantidad) as CurrentCantidad, 2 as Activa, m._id as IdMoneda\n" +
-                "                FROM AccountsTotales as t, AccountsMoneda as m, AccountsTiposCuentas as tc\n" +
-                "                WHERE t.IdMoneda = m._id and t.Tipo = tc._id and t.Activa = 1\n" +
-                "                GROUP BY tc._id, m._id\n" +
-                "\t\t\t\t) as t1\n" +
-                "LEFT JOIN(\n" +
-                "SELECT max(Fecha) as Fecha, IdMoneda, count(IdMoneda) as Count FROM AccountsMovimiento \n" +
-                "\tWHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMoneda\n" +
-                "\t) as t2 on t1.IdMoneda = t2.IdMoneda\n" +
-                "                union\n" +
-                "\t\t\tSELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , \n" +
-                "\t\t\t\t\t\t\tAccountsTotales.CurrentCantidad, AccountsTotales.Activa FROM AccountsTotales, AccountsMoneda LEFT JOIN \n" +
-                "\t\t\t\t\t\t\tAccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and Fecha BETWEEN date('now', '-1 month') and date('now') \n" +
-                "\t\t\t\t\t\t\tWHERE Activa = 1 and AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id \n" +
-                "\t\t\t\t\t\t\tORDER by activa desc, Count DESC" ,null);
+                "                SELECT (tc._id || m.Moneda) as _id, m.Moneda, (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as Count, SUM(t.CurrentCantidad) as CurrentCantidad, 2 as Activa, m._id as IdMoneda\n" +
+                "                                FROM AccountsTotales as t, AccountsMoneda as m, AccountsTiposCuentas as tc\n" +
+                "                                WHERE t.IdMoneda = m._id and t.Tipo = tc._id and t.Activa = 1\n" +
+                "                                GROUP BY tc._id, m._id\n" +
+                "UNION\n" +
+                "Select (0||m.Moneda) as _id, m.Moneda as Moneda, ('Prestamos '||m.Moneda), 0 as Count, SUM((p.Cantidad - coalesce(t1.Cantidad, 0)) ) as CurrentCantidad, 1 as Activa, IdMoneda \n" +
+                "FRom AccountsPrestamos as p \n" +
+                "left join (\n" +
+                "SELECT SUM(Cantidad * Cambio) as Cantidad, IdPrestamo \n" +
+                "From AccountsPrestamosDetalle \n" +
+                "group by IdPrestamo) as t1 on p._id = t1.IdPrestamo, AccountsMoneda as m\n" +
+                "WHERE m._id = IdMoneda\n" +
+                "group by IdMoneda\n" +
+                "                ) as t1\n" +
+                "                LEFT JOIN(\n" +
+                "                SELECT max(Fecha) as Fecha, IdMoneda, count(IdMoneda) as Count FROM AccountsMovimiento \n" +
+                "                WHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMoneda\n" +
+                "                ) as t2 on t1.IdMoneda = t2.IdMoneda\n" +
+                "                                union\n" +
+                "                SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , \n" +
+                "                AccountsTotales.CurrentCantidad, 0 as Activa FROM AccountsTotales, AccountsMoneda LEFT JOIN \n" +
+                "                AccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and Fecha BETWEEN date('now', '-1 month') and date('now') \n" +
+                "                WHERE Activa = 1 and AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id \n" +
+                "                ORDER by activa desc, Count DESC" ,null);
     }
     public static Cursor getTotalesWithPrestamo(){
         return db.rawQuery("SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count , " +
@@ -288,7 +339,7 @@ public class Principal {
                 "   left join ( " +
                 "       select sum(pd.Cantidad * pd.Cambio) as CantidadMenos, pd.IdMoneda " +
                 "       from AccountsPrestamos as p, AccountsPrestamosDetalle as pd  " +
-                "       where p._id = pd.IdPrestamo and p.IdMovimiento == 0 and pd.IdMoneda = ?\n" +
+                "       where p._id = pd.IdPrestamo and p.Cantidad > 0 and pd.IdMoneda = ?\n" +
                 "   group by p.IdMoneda) as table2 on table1.IdMoneda = table2.IdMoneda)\n" +
                 ")", new String[]{"" + moneda, "" + moneda});
         if(c.moveToNext()){
@@ -305,7 +356,7 @@ public class Principal {
                 "   left join ( " +
                 "       select sum(pd.Cantidad * pd.Cambio) as CantidadMenos, pd.IdMoneda " +
                 "       from AccountsPrestamos as p, AccountsPrestamosDetalle as pd  " +
-                "       where p._id = pd.IdPrestamo and p.IdMovimiento <> 0 and pd.IdMoneda = ?\n" +
+                "       where p._id = pd.IdPrestamo and p.Cantidad < 0 and pd.IdMoneda = ?\n" +
                 "   group by p.IdMoneda) as table2 on table1.IdMoneda = table2.IdMoneda)\n" +
                 ")", new String[]{"" + moneda, "" + moneda});
         if(c.moveToNext()){
@@ -1019,134 +1070,160 @@ public class Principal {
                 "\n",new String[]{year, year, year, year, year});
     }
 
-    public static Cursor getTotalsHistoryByMonth(String y){
+    public static Cursor getTotalsHistoryByMonth(String y, String fecha){
         y = "-" + y + " year";
         return db.rawQuery("SELECT (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as CurrentCantidad, SUM(Cantidad) as Cantidad, (tc._id ||m.Moneda) as _id, y, mo FROM ( \n" +
-                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'A' as Zone\n" +
-                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "                WHERE m.IdTotales = t._id and Traspaso is null and IdTotales > 15 \n" +
-                "                and m.Fecha BETWEEN date('now', 'start of year', ?)  and date('now')  \n" +
-                "                GROUP BY t.Tipo, t.IdMoneda, y, mo\n" +
-                "                UNION \n" +
-                "                select SUM(CASE WHEN m.IdMotivo = 2  \n" +
-                "                then m.Cantidad * -1 \n" +
-                "                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'B' as Zone\n" +
-                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "                WHERE m.Traspaso = t._id and Traspaso > 15 and m.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
-                "                GROUP BY t.Tipo, y, mo, t.IdMoneda\n" +
-                "                UNION \n" +
-                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'C' as Zone\n" +
-                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "                WHERE m.IdTotales = t._id and Traspaso is not null and m.IdTotales > 15 and m.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
-                "                GROUP BY t.Tipo, y, mo, t.IdMoneda\n" +
-                "                UNION  \n" +
-                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'D' as Zone\n" +
-                "            \tfrom AccountsPrestamos as p, AccountsTotales as t \n" +
-                "                WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.IdTotales > 15 and p.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
-                "                GROUP by t.Tipo, y, mo, t.IdMoneda\n" +
-                "                UNION \n" +
-                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'E' as Zone\n" +
-                "                from AccountsPrestamosDetalle as p, AccountsTotales as t\n" +
-                "                WHERE p.IdTotales = t._id and p.IdTotales > 15 and p.Fecha BETWEEN date('now', 'start of year', ?)  and date('now')  \n" +
-                "                GROUP by t.Tipo, y, mo, t.IdMoneda\n" +
-                "                )as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0\n" +
-                "                GROUP BY tc._id, y, mo, s.IdMoneda\n" +
-                "                UNION\n" +
-                "                SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo  FROM ( \n" +
-                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'A' as Zone\n" +
-                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "                WHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN date('now', 'start of year', ?)  and date('now')  \n" +
-                "                GROUP BY t._id, y, mo\n" +
-                "                UNION \n" +
-                "                select SUM(CASE WHEN m.IdMotivo = 2  \n" +
-                "                then m.Cantidad * -1 \n" +
-                "                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'B' as Zone\n" +
-                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "                WHERE m.Traspaso = t._id and m.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
-                "                GROUP BY t._id, y, mo\n" +
-                "                UNION \n" +
-                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'C' as Zone\n" +
-                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "                WHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
-                "                GROUP BY t._id, y, mo\n" +
-                "                UNION  \n" +
-                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'D' as Zone\n" +
-                "                from AccountsPrestamos as p, AccountsTotales as t \n" +
-                "                WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN date('now', 'start of year', ?) and date('now')  \n" +
-                "                GROUP by t._id, y, mo\n" +
-                "                UNION \n" +
-                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'E' as Zone\n" +
-                "                from AccountsPrestamosDetalle as p, AccountsTotales as t \n" +
-                "                WHERE p.IdTotales = t._id and p.Fecha BETWEEN date('now', 'start of year', ?)  and date('now')  \n" +
-                "                GROUP by t._id, y, mo\n" +
-                "                )as s, AccountsTotales t WHERE s._id = t._id  \n" +
-                "                GROUP BY t._id, y, mo\n" +
-                "                order by y desc, mo desc", new String[]{y,y,y,y,y,y,y,y,y,y});
+                "                                                select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'A' as Zone\n" +
+                "                                                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                                                WHERE m.IdTotales = t._id and Traspaso is null and IdTotales > 15 \n" +
+                "                                                and m.Fecha BETWEEN date(?, 'start of year', ?)  and date(?)  \n" +
+                "                                                GROUP BY t.Tipo, t.IdMoneda, y, mo\n" +
+                "                                                UNION \n" +
+                "                                                select SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "                                                then m.Cantidad * -1 \n" +
+                "                                                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'B' as Zone\n" +
+                "                                                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                                                WHERE m.Traspaso = t._id and Traspaso > 15 and m.Fecha BETWEEN date(?, 'start of year', ?) and date(?)  \n" +
+                "                                                GROUP BY t.Tipo, y, mo, t.IdMoneda\n" +
+                "                                                UNION \n" +
+                "                                                select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'C' as Zone\n" +
+                "                                                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                                                WHERE m.IdTotales = t._id and Traspaso is not null and m.IdTotales > 15 and m.Fecha BETWEEN date(?, 'start of year', ?) and date(?)  \n" +
+                "                                                GROUP BY t.Tipo, y, mo, t.IdMoneda\n" +
+                "                                                UNION  \n" +
+                "                                                select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'D' as Zone\n" +
+                "                                                from AccountsPrestamos as p, AccountsTotales as t \n" +
+                "                                                WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.IdTotales > 15 and p.Fecha BETWEEN date(?, 'start of year', ?) and date(?)  \n" +
+                "                                                GROUP by t.Tipo, y, mo, t.IdMoneda\n" +
+                "                                                UNION \n" +
+                "                                                select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, 'E' as Zone\n" +
+                "                                                from AccountsPrestamosDetalle as p, AccountsTotales as t\n" +
+                "                                                WHERE p.IdTotales = t._id and p.IdTotales > 15 and p.Fecha BETWEEN date(?, 'start of year', ?)  and date(?)  \n" +
+                "                                                GROUP by t.Tipo, y, mo, t.IdMoneda\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\tUNION\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\tSELECT SUM(Cantidad) as Cantidad, 5 as _id, y, mo, IdMoneda, 'F' as Zone FROM(\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tSELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, 'F' as Zone \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\tFROM AccountsPrestamos as p\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\twhere p.Fecha BETWEEN date(?, 'start of year', ?)  and date(?) \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tgroup by y, mo, p.IdMoneda\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tunion\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tSELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, 'H' as Zone \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\tFROM AccountsPrestamosDetalle as p\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\twhere p.Fecha BETWEEN date(?, 'start of year', ?)  and date(?) \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tgroup by y, mo, p.IdMoneda\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t) GROUP BY y, mo, IdMoneda\n" +
+                "                                                )as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0\n" +
+                "                                                GROUP BY tc._id, y, mo, s.IdMoneda\n" +
+                "                                                UNION\n" +
+                "                                                SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo  FROM ( \n" +
+                "                                                select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'A' as Zone\n" +
+                "                                                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                                                WHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN date(?, 'start of year', ?)  and date(?)  \n" +
+                "                                                GROUP BY t._id, y, mo\n" +
+                "                                                UNION \n" +
+                "                                                select SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "                                                then m.Cantidad * -1 \n" +
+                "                                                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'B' as Zone\n" +
+                "                                                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                                                WHERE m.Traspaso = t._id and m.Fecha BETWEEN date(?, 'start of year', ?) and date(?)  \n" +
+                "                                                GROUP BY t._id, y, mo\n" +
+                "                                                UNION \n" +
+                "                                                select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'C' as Zone\n" +
+                "                                                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                                                WHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN date(?, 'start of year', ?) and date(?)  \n" +
+                "                                                GROUP BY t._id, y, mo\n" +
+                "                                                UNION  \n" +
+                "                                                select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'D' as Zone\n" +
+                "                                                from AccountsPrestamos as p, AccountsTotales as t \n" +
+                "                                                WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN date(?, 'start of year', ?) and date(?)  \n" +
+                "                                                GROUP by t._id, y, mo\n" +
+                "                                                UNION \n" +
+                "                                                select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, 'E' as Zone\n" +
+                "                                                from AccountsPrestamosDetalle as p, AccountsTotales as t \n" +
+                "                                                WHERE p.IdTotales = t._id and p.Fecha BETWEEN date(?, 'start of year', ?)  and date(?)  \n" +
+                "                                                GROUP by t._id, y, mo\n" +
+                "                                                )as s, AccountsTotales t WHERE s._id = t._id  \n" +
+                "                                                GROUP BY t._id, y, mo\n" +
+                "                                                order by y desc, mo desc", new String[]{fecha, y, fecha, fecha ,y, fecha, fecha ,y, fecha, fecha,y, fecha, fecha,y,fecha,
+                fecha, y, fecha, fecha,y, fecha, fecha,y, fecha, fecha,y, fecha, fecha,y, fecha});
     }
 
-    public static Cursor getTotalsHistoryByDay(String m){
+    public static Cursor getTotalsHistoryByDay(String m, String fecha){
         m = "-" + m + " month";
         return db.rawQuery("SELECT (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as CurrentCantidad, SUM(Cantidad) as Cantidad, (tc._id ||m.Moneda) as _id, y, mo, dd FROM ( \n" +
-                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'A' as Zone \n" +
-                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "\t\tWHERE m.IdTotales = t._id and Traspaso is null and IdTotales > 15 \n" +
-                "\t\t\tand m.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
-                "\tGROUP BY t.Tipo, t.IdMoneda, y, mo, dd\n" +
-                "\tUNION \n" +
-                "\tselect SUM(CASE WHEN m.IdMotivo = 2  \n" +
-                "\t\t\t\tthen m.Cantidad * -1 \n" +
-                "\t\t\t\telse m.Cantidad * m.Cambio * -1 END) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'B' as Zone\n" +
-                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "\t\tWHERE m.Traspaso = t._id and Traspaso > 15 and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
-                "\tGROUP BY t.Tipo, y, mo, t.IdMoneda, dd\n" +
-                "\tUNION \n" +
-                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'C' as Zone\n" +
-                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "\t\tWHERE m.IdTotales = t._id and Traspaso is not null and m.IdTotales > 15 and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
-                "\tGROUP BY t.Tipo, y, mo, t.IdMoneda, dd\n" +
-                "\tUNION  \n" +
-                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'D' as Zone\n" +
-                "\t\tfrom AccountsPrestamos as p, AccountsTotales as t \n" +
-                "\t\tWHERE p.IdTotales = t._id and IdMovimiento = 0 and p.IdTotales > 15 and p.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
-                "\tGROUP by t.Tipo, y, mo, t.IdMoneda, dd\n" +
-                "\tUNION \n" +
-                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'E' as Zone\n" +
-                "\t\tfrom AccountsPrestamosDetalle as p, AccountsTotales as t\n" +
-                "\t\tWHERE p.IdTotales = t._id and p.IdTotales > 15 and p.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
-                "\tGROUP by t.Tipo, y, mo, t.IdMoneda, dd\n" +
-                ")as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0\n" +
-                "GROUP BY tc._id, y, mo, s.IdMoneda, dd\n" +
-                "UNION\n" +
-                "SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo, dd FROM ( \n" +
-                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'A' as Zone\n" +
-                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "\t\tWHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
-                "\tGROUP BY t._id, y, mo, dd\n" +
-                "\tUNION \n" +
-                "\tselect SUM(CASE WHEN m.IdMotivo = 2  \n" +
-                "\t\t\t\tthen m.Cantidad * -1 \n" +
-                "\t\t\t\telse m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'B' as Zone\n" +
-                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "\t\tWHERE m.Traspaso = t._id and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
-                "\tGROUP BY t._id, y, mo, dd\n" +
-                "\tUNION \n" +
-                "\tselect (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'C' as Zone\n" +
-                "\t\tfrom AccountsTotales as t, AccountsMovimiento as m  \n" +
-                "\t\tWHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
-                "\tGROUP BY t._id, y, mo, dd\n" +
-                "\tUNION  \n" +
-                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'D' as Zone\n" +
-                "\t\tfrom AccountsPrestamos as p, AccountsTotales as t \n" +
-                "\t\tWHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN date('now', 'start of month', ?) and date('now')  \n" +
-                "\tGROUP by t._id, y, mo, dd\n" +
-                "\tUNION \n" +
-                "\tselect (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'E' as Zone\n" +
-                "\t\tfrom AccountsPrestamosDetalle as p, AccountsTotales as t \n" +
-                "\t\tWHERE p.IdTotales = t._id and p.Fecha BETWEEN date('now', 'start of month', ?)  and date('now')  \n" +
-                "\tGROUP by t._id, y, mo, dd\n" +
-                ")as s, AccountsTotales t WHERE s._id = t._id  \n" +
-                "GROUP BY t._id, y, mo, dd\n" +
-                "order by y desc, mo desc, dd desc", new String[]{m,m,m,m,m,m,m,m,m,m});
+                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'A' as Zone \n" +
+                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                WHERE m.IdTotales = t._id and Traspaso is null and IdTotales > 15 \n" +
+                "                and m.Fecha BETWEEN date(?, 'start of month', ?)  and date(?)  \n" +
+                "                GROUP BY t.Tipo, t.IdMoneda, y, mo, dd\n" +
+                "                UNION \n" +
+                "                select SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "                then m.Cantidad * -1 \n" +
+                "                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'B' as Zone\n" +
+                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                WHERE m.Traspaso = t._id and Traspaso > 15 and m.Fecha BETWEEN date(?, 'start of month', ?) and date(?)  \n" +
+                "                GROUP BY t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "                UNION \n" +
+                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'C' as Zone\n" +
+                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                WHERE m.IdTotales = t._id and Traspaso is not null and m.IdTotales > 15 and m.Fecha BETWEEN date(?, 'start of month', ?) and date(?)  \n" +
+                "                GROUP BY t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "                UNION  \n" +
+                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'D' as Zone\n" +
+                "                from AccountsPrestamos as p, AccountsTotales as t \n" +
+                "                WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.IdTotales > 15 and p.Fecha BETWEEN date(?, 'start of month', ?) and date(?)  \n" +
+                "                GROUP by t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "                UNION \n" +
+                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'E' as Zone\n" +
+                "                from AccountsPrestamosDetalle as p, AccountsTotales as t\n" +
+                "                WHERE p.IdTotales = t._id and p.IdTotales > 15 and p.Fecha BETWEEN date(?, 'start of month', ?)  and date(?)  \n" +
+                "                GROUP by t.Tipo, y, mo, t.IdMoneda, dd\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\tUNION\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\tSELECT SUM(Cantidad) as Cantidad, 5 as _id, y, mo, IdMoneda, dd, 'F' as Zone FROM(\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tSELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'F' as Zone \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\tFROM AccountsPrestamos as p\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\twhere p.Fecha BETWEEN date(?, 'start of month', ?)  and date(?) \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tgroup by y, mo, p.IdMoneda, dd\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tunion\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tSELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'H' as Zone \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\tFROM AccountsPrestamosDetalle as p\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t\twhere p.Fecha BETWEEN date(?, 'start of month', ?)  and date(?) \n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t\tgroup by y, mo, p.IdMoneda, dd\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t) GROUP BY y, mo, IdMoneda, dd\n" +
+                "                )as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0\n" +
+                "                GROUP BY tc._id, y, mo, s.IdMoneda, dd\n" +
+                "                UNION\n" +
+                "                SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo, dd FROM ( \n" +
+                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'A' as Zone\n" +
+                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                WHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN date(?, 'start of month', ?)  and date(?)  \n" +
+                "                GROUP BY t._id, y, mo, dd\n" +
+                "                UNION \n" +
+                "                select SUM(CASE WHEN m.IdMotivo = 2  \n" +
+                "                then m.Cantidad * -1 \n" +
+                "                else m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'B' as Zone\n" +
+                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                WHERE m.Traspaso = t._id and m.Fecha BETWEEN date(?, 'start of month', ?) and date(?)  \n" +
+                "                GROUP BY t._id, y, mo, dd\n" +
+                "                UNION \n" +
+                "                select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'C' as Zone\n" +
+                "                from AccountsTotales as t, AccountsMovimiento as m  \n" +
+                "                WHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN date(?, 'start of month', ?) and date(?)  \n" +
+                "                GROUP BY t._id, y, mo, dd\n" +
+                "                UNION  \n" +
+                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'D' as Zone\n" +
+                "                from AccountsPrestamos as p, AccountsTotales as t \n" +
+                "                WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN date(?, 'start of month', ?) and date(?)  \n" +
+                "                GROUP by t._id, y, mo, dd\n" +
+                "                UNION \n" +
+                "                select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'E' as Zone\n" +
+                "                from AccountsPrestamosDetalle as p, AccountsTotales as t \n" +
+                "                WHERE p.IdTotales = t._id and p.Fecha BETWEEN date(?, 'start of month', ?)  and date(?)  \n" +
+                "                GROUP by t._id, y, mo, dd\n" +
+                "                )as s, AccountsTotales t WHERE s._id = t._id  \n" +
+                "                GROUP BY t._id, y, mo, dd\n" +
+                "                order by y desc, mo desc, dd desc", new String[]{fecha, m, fecha, fecha ,m, fecha, fecha ,m, fecha, fecha,m, fecha, fecha,m,fecha,
+                fecha, m, fecha, fecha,m, fecha, fecha,m, fecha, fecha,m, fecha, fecha,m, fecha});
     }
     //Motivos
     public static void insertMotive(String mot){
@@ -1806,7 +1883,7 @@ public class Principal {
                 "\tselect _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from " + DBMan.DBPrestamoDetalle.TABLE_NAME +" group by IdPrestamo\n" +
                 "\t) as pd on p._id = pd.IdPrestamo, AccountsPersonas, AccountsMoneda, AccountsTotales\n" +
                 "\tWhere AccountsPersonas._id = p.IdPersona and AccountsMoneda._id = p.IdMoneda and AccountsTotales._id = p.IdTotales \n" +
-                ") WHERE IdMovimiento = 0" + s + "order by Fecha desc", null);
+                ") WHERE Cantidad >= 0" + s + "order by Fecha desc", null);
     }
     public static Cursor getPrestamosMinus(boolean isCeros){
         String s = " ";
@@ -1821,7 +1898,7 @@ public class Principal {
                 "\tselect _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from AccountsPrestamosDetalle group by IdPrestamo\n" +
                 "\t) as pd on p._id = pd.IdPrestamo, AccountsPersonas, AccountsMoneda, AccountsTotales\n" +
                 "\tWhere AccountsPersonas._id = p.IdPersona and AccountsMoneda._id = p.IdMoneda and AccountsTotales._id = p.IdTotales \n" +
-                ") WHERE IdMovimiento <> 0" + s + "order by Fecha desc", null);
+                ") WHERE Cantidad <= 0" + s + "order by Fecha desc", null);
     }
     public static Cursor getPrestamosByPeople(boolean checked){
         String s = " ";
@@ -2099,7 +2176,7 @@ public class Principal {
                     Color.parseColor("#4363d8"), Color.parseColor("#f58231"), Color.parseColor("#911eb4"), Color.parseColor("#42d4f4"),
                     Color.parseColor("#f032e6"), Color.parseColor("#bfef45"), Color.parseColor("#fabebe"), Color.parseColor("#469990"),
                     Color.parseColor("#e6beff"), Color.parseColor("#9A6324"), Color.parseColor("#fffac8"), Color.parseColor("#800000"),
-                    Color.parseColor("#aaffc3"), Color.parseColor("#808000"), Color.parseColor("#ffd8b1"), Color.parseColor("#000075")));
+                    Color.parseColor("#aaffc3"), Color.parseColor("#ffd8b1"), Color.parseColor("#000075")));
 }
 /*
 SELECT Moneda1.Moneda, Moneda2.Moneda, CambioMoneda.Tipo_de_cambio

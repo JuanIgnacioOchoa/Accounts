@@ -325,12 +325,12 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             dcambio = 1.0
         } else {
             if cambioTxt.text == nil {
-                cambioTxt.setError("Error")
+                cambioTxt.setError("Error", show: true)
                 return
             }
             dcambio = Double(cambioTxt.text!)
             if dcambio == nil {
-                cambioTxt.setError("Error")
+                cambioTxt.setError("Error", show: true)
                 return
             }
             let monedaFrom = dataArrayTotales[selectedTotalesFrom][Totales.IdMoneda] as! Int64
@@ -342,12 +342,12 @@ class TraspasoViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             }
         }
         if cantidadTxt.text == nil {
-            cantidadTxt.setError("Error")
+            cantidadTxt.setError("Error", show: true)
             return
         }
         var dCantidad = Double(cantidadTxt.text!)
         if dCantidad == nil {
-            cantidadTxt.setError("Error")
+            cantidadTxt.setError("Error", show: true)
             return
         }
         var com:String? = commentTxt.text

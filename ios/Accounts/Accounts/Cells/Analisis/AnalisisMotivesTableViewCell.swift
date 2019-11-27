@@ -32,5 +32,6 @@ class AnalisisMotivesTableViewCell: UITableViewCell {
         incomeLbl.text = numberFormatter.string(from: incomeN)
         outcomeLbl.text = numberFormatter.string(from: outcomeN)
         motiveLbl.text = m
+        motiveLbl.textAlignment = NSTextAlignment(.left)
     }
 }

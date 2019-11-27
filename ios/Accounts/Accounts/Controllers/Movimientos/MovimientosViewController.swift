@@ -84,6 +84,18 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
             years.append("\(year)")
             dateN = Calendar.current.date(byAdding: .year, value: -1, to: dateN)!
         }
+        if monthYears.count <= 0 {
+            dateFormatter.dateFormat = "MM"
+            let month = Int(dateFormatter.string(from: now))! - 1
+            dateFormatter.dateFormat = "YYYY"
+            let year = Int(dateFormatter.string(from: now))!
+            monthYears.append(months[month] + " \(year)")
+        }
+        if years.count <= 0 {
+            dateFormatter.dateFormat = "YYYY"
+            let year = Int(dateFormatter.string(from: now))!
+            years.append("\(year)")
+        }
         if monedas.count > 0 {
             currency.text = monedas[selectedMoneda][Moneda.Moneda] as? String
         }
@@ -325,7 +337,23 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
         guard let movData = viewControllers.first as? MovdataViewController else { return }
         guard let analisis = viewControllers[1] as? AnalisisViewController else { return }
         
-        movData.moneda = monedas[selectedMoneda]["_id"] as! Int64
+        if monedas.count <= selectedMoneda {
+            oldSelectedMoneda = selectedMoneda
+            oldSelectedType = selectedType
+            oldSelectedLapse = selectedLapse
+            self.view.endEditing(true)
+            return
+        }
+        guard let moneda = monedas[selectedMoneda]["_id"] as? Int64 else {
+            oldSelectedMoneda = selectedMoneda
+            oldSelectedType = selectedType
+            oldSelectedLapse = selectedLapse
+            self.view.endEditing(true)
+            return
+        }
+        
+        movData.moneda = moneda
+        
         switch selectedType {
         case 0:
             print("Weekly: ", monthYears[selectedLapse])

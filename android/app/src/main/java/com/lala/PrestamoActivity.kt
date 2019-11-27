@@ -30,6 +30,7 @@ class PrestamoActivity : AppCompatActivity() {
     private lateinit var cbCeros:CheckBox
     private lateinit var spMoneda: Spinner
     private val cursorMoneda = Principal.getMoneda()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prestamo)
@@ -62,29 +63,57 @@ class PrestamoActivity : AppCompatActivity() {
         tabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.colorPrimaryDark))
 
         fab.setOnClickListener {
-            val colors = arrayOf<CharSequence>("Prestar")
+            when (mViewPager.getCurrentItem()){
+                1 -> {
+                    val colors = arrayOf<CharSequence>("Prestar")
 
-            // Initialize a new instance of
-            val builder = AlertDialog.Builder(this@PrestamoActivity)
+                    // Initialize a new instance of
+                    val builder = AlertDialog.Builder(this@PrestamoActivity)
 
-            // Set the alert dialog title
-            builder.setTitle(getString(R.string.choose_option))
+                    // Set the alert dialog title
+                    builder.setTitle(getString(R.string.choose_option))
 
-            builder.setItems(colors) { dialog, which ->
-                when (which) {
-                    0 -> {
-                        val i = Intent(applicationContext, NewPrestamoActivity::class.java)
-                        i.putExtra("Prestado", true)
-                        startActivity(i)
+                    builder.setItems(colors) { dialog, which ->
+                        when (which) {
+                            0 -> {
+                                val i = Intent(applicationContext, NewPrestamoActivity::class.java)
+                                i.putExtra("Prestado", true)
+                                startActivity(i)
+                            }
+                        }
+                        // the user clicked on colors[which]
                     }
+                    // Finally, make the alert dialog using builder
+                    val dialog: AlertDialog = builder.create()
+                    // Display the alert dialog on app interface
+                    val alertDialog = builder.show()
                 }
-                // the user clicked on colors[which]
+                2 -> {
+                    val colors = arrayOf<CharSequence>("Me presta")
+
+                    // Initialize a new instance of
+                    val builder = AlertDialog.Builder(this@PrestamoActivity)
+
+                    // Set the alert dialog title
+                    builder.setTitle(getString(R.string.choose_option))
+
+                    builder.setItems(colors) { dialog, which ->
+                        when (which) {
+                            0 -> {
+                                val i = Intent(applicationContext, NewPrestamoActivity::class.java)
+                                i.putExtra("Prestado", false)
+                                startActivity(i)
+                            }
+                        }
+                        // the user clicked on colors[which]
+                    }
+                    // Finally, make the alert dialog using builder
+                    val dialog: AlertDialog = builder.create()
+                    // Display the alert dialog on app interface
+                    val alertDialog = builder.show()
+                }
             }
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
-            // Display the alert dialog on app interface
-            val alertDialog = builder.show()
-            alertDialog.setCanceledOnTouchOutside(false)
+
         }
         cbCeros.setOnCheckedChangeListener { buttonView, isChecked ->
             fragmentPrestamosPlus.actualizar(!cbCeros.isChecked)

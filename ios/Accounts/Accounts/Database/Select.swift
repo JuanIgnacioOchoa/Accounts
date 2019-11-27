@@ -8,7 +8,7 @@
 
 import Foundation
 
-//-------------------------------Totales----------------------------
+//MARK:Totales
 
 func getTotal(id: Int64) -> Dictionary<String, Any?> {
     let query =
@@ -207,7 +207,7 @@ SELECT * FROM (
         return 0.0
 }
 
-//---------------------------------Movimiento--------------------
+//MARK: Movimiento
 
 func getMoveData(id:Int64) -> [[String:Any?]] {
     let query = "SELECT _id, Cantidad, (case strftime('%m', Fecha) when '01' then 'Jan'" +
@@ -306,13 +306,16 @@ func getTotalesMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?
         tmpM = "and strftime('%m',Fecha) == '\(month!)'"
     }
     let query = """
-        SELECT m._id, m.Fecha
-            FROM AccountsMovimiento as m, AccountsTotales as t
-            WHERE t._id = m.IdTotales \(tmpY) \(tmpM) and (IdTotales = ? or Traspaso = ?)
-        Group by m.Fecha ORDER BY Fecha DESC, m._id DESC
-"""
+        SELECT * FROM (
+        SELECT m._id, m.Fecha FROM AccountsMovimiento as m, AccountsTotales as t WHERE t._id = m.IdTotales \(tmpY) \(tmpM) and (IdTotales = ? or Traspaso = ?) Group by m.Fecha
+        union
+        SELECT p._id, p.Fecha FROM AccountsPrestamos as p, AccountsTotales as t WHERE t._id = p.IdTotales \(tmpY) \(tmpM) and (IdTotales = ?) Group by p.Fecha
+        union
+        SELECT p._id, p.Fecha FROM AccountsPrestamosDetalle as p, AccountsTotales as t WHERE t._id = p.IdTotales \(tmpY) \(tmpM) and (IdTotales = ?) Group by p.Fecha
+        ) Group by Fecha ORDER BY Fecha DESC, _id DESC
+    """
     do{
-        let stmt = try Database.db.prepare(query, [id, id])
+        let stmt = try Database.db.prepare(query, [id, id, id, id])
         return Database.stmtToDictionary(stmt: stmt)
     } catch{
         print("Error select getMovimientosFecha 0", error)
@@ -345,7 +348,20 @@ func getMotivosMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?
     }
     return []
 }
-
+func getTripsMovimientosFecha(id:Int64) -> [[String:Any?]] {
+    let query = """
+                SELECT _id, Fecha FROM AccountsMovimiento
+                    WHERE IdViaje = ?
+                GROUP BY Fecha ORDER BY Fecha DESC, _id DESC
+"""
+    do{
+        let stmt = try Database.db.prepare(query, [id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch{
+        print("Error select getTripsMovimientosFecha 0", error)
+    }
+    return []
+}
 func getMovimientosFecha() -> [[String:Any?]] {
     let query = """
                 SELECT _id, Fecha FROM AccountsMovimiento
@@ -435,13 +451,27 @@ func getMotivosMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
     }
     return []
 }
+func getTripsMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
+    let query = """
+                SELECT mov.*, mot.Motivo, mon.Moneda, t.Cuenta
+                    FROM AccountsMovimiento as mov, AccountsTotales as t, AccountsMotivo as mot, AccountsMoneda as mon
+                    WHERE mov.IdTotales = t._id and mov.IdMotivo = mot._id and mov.IdMoneda = mon._id and Fecha = ? and IdViaje = ? ORDER BY Fecha DESC, _id DESC
+"""
+    do{
+        let stmt = try Database.db.prepare(query, [date, id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error Select getTripsMovimientosByDate ", error)
+    }
+    return []
+}
 ///------------------------------------END MOVIMIENTOS----------------------------------------
 
-//Monedas
+//-------------------------Monedas
 
 func getMonedas() -> [[String:Any?]]{
     let query = """
-            SELECT mon._id, mon.Moneda, Cuenta FROM (
+            SELECT mon._id, mon.Moneda, Cuenta, Active FROM (
                 SELECT * FROM AccountsMoneda WHERE _id > 0
             ) as mon
             left join(
@@ -459,7 +489,29 @@ func getMonedas() -> [[String:Any?]]{
     return []
 }
 
-//Motivos
+func getMonedasWith(id:Int64) -> [[String:Any?]]{
+    let query = """
+            SELECT mon._id, mon.Moneda, Cuenta, Active FROM (
+                SELECT * FROM AccountsMoneda WHERE (_id > 0 and Active = 1) or _id = ?
+            ) as mon
+            left join(
+                SELECT max(Fecha) as Fecha, IdMoneda, count(IdMoneda) as Cuenta FROM AccountsMovimiento
+                    WHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMoneda
+            ) as mov on mon._id = mov.IdMoneda
+            GROUP BY mon._id, mon.Moneda Order By Cuenta desc, Fecha desc
+"""
+    do {
+        let stmt = try Database.db.prepare(query, [id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+//----------------------------End Monedas
+
+//MARK: Motivos
 func getMotives(id:Int64) -> [[String:Any?]] {
     let query = """
                 SELECT mot._id, mot.Motivo, Cuenta, Fecha FROM (
@@ -481,16 +533,20 @@ func getMotives(id:Int64) -> [[String:Any?]] {
     return []
 }
 
-func getMotives() -> [[String:Any?]] {
+func getMotives(active:Bool) -> [[String:Any?]] {
+    var act = ""
+    if active {
+        act = "and Active = 1"
+    }
     let query = """
-                SELECT mot._id, mot.Motivo, Cuenta, Fecha FROM (
-                    SELECT * FROM AccountsMotivo WHERE _id > 15 and Active = 1
+                SELECT mot._id, mot.Motivo, Cuenta, Fecha, Active FROM (
+                    SELECT * FROM AccountsMotivo WHERE _id > 15 \(act)
                 ) as mot
                 left join(
                     SELECT max(Fecha) as Fecha, IdMotivo, count(IdMotivo) as Cuenta FROM AccountsMovimiento
                         WHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMotivo
                 ) as mov on mot._id = mov.IdMotivo
-                GROUP BY mot._id, mot.Motivo Order By Cuenta desc, Fecha desc
+                GROUP BY mot._id, mot.Motivo Order By Active desc, Cuenta desc, Fecha desc
 """
     
     do {
@@ -501,8 +557,172 @@ func getMotives() -> [[String:Any?]] {
     }
     return []
 }
+//----------------------------End Motivos
 
-//Reportes
+//--------------------------------Prestamos
+
+func getPrestamosByPeople(zero:Bool) -> [[String:Any?]] {
+    var s = ""
+    if zero {
+        s = " and Cantidad <> 0 "
+    }
+    
+    let query = """
+    SELECT AccountsPersonas._id, AccountsPersonas.Nombre, AccountsMoneda.Moneda, SUM(Cantidad * b) as Cantidad, Fecha FROM(
+       SELECT *, (1) as b FROM(
+       (
+           select (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(
+               (select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from AccountsPrestamos where IdMovimiento = 0 group by IdPersona, IdMoneda) as table1
+               left join (
+    select sum(pd.Cantidad * pd.Cambio) as CantidadMenos, p.IdPersona, p.IdMoneda
+    from AccountsPrestamos as p, AccountsPrestamosDetalle as pd
+    where p._id = pd.IdPrestamo and p.IdMovimiento = 0
+    group by p.IdPersona, p.IdMoneda) as table2 on table1.IdPersona = table2.IdPersona and table1.IdMoneda = table2.IdMoneda)
+    ) as table1
+    )
+    union all
+    SELECT *, (1)/*(-1)*/ as b FROM(
+    (
+    select (Cantidad - coalesce(CantidadMenos, 0)) as Cantidad, table1.IdPersona, table1.IdMoneda, table1.Fecha  From(
+    (select sum(Cantidad) as Cantidad, IdPersona, IdMoneda, Fecha from AccountsPrestamos where IdMovimiento <> 0 group by IdPersona, IdMoneda) as table1
+    left join (
+    select sum(pd.Cantidad * pd.Cambio) as CantidadMenos, p.IdPersona, p.IdMoneda
+    from AccountsPrestamos as p, AccountsPrestamosDetalle as pd
+    where p._id = pd.IdPrestamo and p.IdMovimiento <> 0
+    group by p.IdPersona, p.IdMoneda) as table2 on table1.IdPersona = table2.IdPersona and table1.IdMoneda = table2.IdMoneda)
+    ) as table2
+    )
+    ), AccountsPersonas, AccountsMoneda
+    where IdPersona = AccountsPersonas._id and IdMoneda = AccountsMoneda._id \(s) group by IdPersona, IdMoneda order by Fecha desc
+    """
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+func getPrestamosPlus(zero: Bool) -> [[String:Any?]] {
+    var s = ""
+    if zero {
+        s = " and Cantidad <> 0 "
+    }
+    
+    let query = """
+        select * from (
+            select p._id, p.Fecha, AccountsTotales.Cuenta, AccountsMoneda.Moneda, Comment, AccountsPersonas.Nombre, p.Cambio, p.IdMovimiento, p.Cerrada,
+            (p.Cantidad - coalesce(pd.Cantidad, 0)) as Cantidad from AccountsPrestamos as p
+            left join(
+            select _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from  AccountsPrestamosDetalle group by IdPrestamo
+            ) as pd on p._id = pd.IdPrestamo, AccountsPersonas, AccountsMoneda, AccountsTotales
+            Where AccountsPersonas._id = p.IdPersona and AccountsMoneda._id = p.IdMoneda and AccountsTotales._id = p.IdTotales
+            ) WHERE Cantidad >= 0 \(s) order by Fecha desc
+    """
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+func getPrestamosMinus(zero: Bool) -> [[String:Any?]] {
+    var s = ""
+    if zero {
+        s = " and Cantidad <> 0 "
+    }
+    
+    let query = """
+            select * from (
+            select p._id, p.Fecha, AccountsTotales.Cuenta, AccountsMoneda.Moneda, Comment, AccountsPersonas.Nombre,
+            p.Cambio, p.IdMovimiento, p.Cerrada,
+            (p.Cantidad - coalesce(pd.Cantidad, 0)) as Cantidad from AccountsPrestamos as p
+            left join(
+            select _id, (SUM(Cantidad * Cambio)) as Cantidad, IdPrestamo from AccountsPrestamosDetalle group by IdPrestamo
+            ) as pd on p._id = pd.IdPrestamo, AccountsPersonas, AccountsMoneda, AccountsTotales
+            Where AccountsPersonas._id = p.IdPersona and AccountsMoneda._id = p.IdMoneda and AccountsTotales._id = p.IdTotales
+            ) WHERE Cantidad <= 0 \(s) order by Fecha desc
+    """
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+func getPrestamos(id:Int64) -> [[String:Any?]] {
+    let query = """
+        SELECT * From AccountsPrestamos WHERE _id = ?
+    """
+    do {
+        let stmt = try Database.db.prepare(query, [id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+func getPrestamoDetalle(id:Int64) -> [[String:Any?]] {
+    let query = """
+        SELECT det.*, t.Cuenta, m.Moneda
+            FROM AccountsPrestamosDetalle as det, AccountsTotales as t, AccountsMoneda as m
+                WHERE t._id = det.IdTotales and m._id = det.IdMoneda and IdPrestamo = ?
+    """
+    do {
+        let stmt = try Database.db.prepare(query, [id])
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+func getTotalPaid(id:Int64) -> Double {
+    let query = """
+                SELECT SUM(Cantidad * Cambio) as Cantidad
+                    FROM \(PrestamosDet.Table) WHERE \(PrestamosDet.IdPrestamo) = ?
+                """
+    do {
+       let stmt = try Database.db.prepare(query, [id])
+       let gasto = stmt.next()![0] as? Double
+       return gasto ?? 0
+       //return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+       print("Error select getGastoTotalByMonedaFromCurrentMonth: ", error)
+    }
+    return 0
+}
+
+//--------------------------------End Prestamos
+
+//--------------------------------Personas
+func getPersonas() -> [[String:Any?]] {
+    let query = """
+        SELECT AccountsPersonas._id as _id, AccountsPersonas.Nombre as Nombre, COUNT(AccountsPersonas.Nombre) as Count
+        FROM AccountsPersonas LEFT JOIN
+        AccountsPrestamos on AccountsPrestamos.IdPersona= AccountsPersonas._id and date('now','-1 month') <= date('now')
+        WHERE Active == 1 GROUP BY AccountsPersonas._id union
+         select -1 as _id,  'Otro' as Nombre, -1 as Count
+         order by Count desc
+    """
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error select: ", error)
+    }
+    return []
+}
+
+//----------------------------End Personas
+
+//----------------------------Reportes
 
 func getGastoTotalByMoneda(moneda:Int64, year:String?, month:String?) -> Double{
     var tmpY = ""
@@ -855,6 +1075,118 @@ func getReportesMotives(idMoneda:Int64, year:String?, month:String?) -> [[String
     }
 }
 
+func getReportesGastoMotives(idMoneda:Int64, year:String?, month:String?) -> [[String:Any?]]{
+    var tmpY = ""
+    var tmpM = ""
+    if year == nil {
+        tmpY = "and strftime('%Y',Fecha) == strftime('%Y', date('now'))"
+        tmpM = "and strftime('%m',Fecha) == strftime('%m', date('now'))"
+    } else if month == nil {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+    } else {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+        tmpM = "and strftime('%m',Fecha) == '\(month!)'"
+    }
+    let query = """
+    SELECT
+        AccountsMotivo._id as _id, SUM(Gasto) as Gasto,  AccountsMotivo.Motivo as Motivo
+        FROM(
+            SELECT
+                sum(Cantidad ) as Gasto, IdMotivo
+                FROM AccountsMovimiento
+                WHERE  IdMoneda = ? \(tmpY) \(tmpM) and Cantidad < 0
+            GROUP BY IdMotivo
+            union
+            SELECT
+                SUM( CASE WHEN (
+                    SELECT
+                        AccountsTotales.idMoneda
+                        FROM AccountsTotales, AccountsMovimiento
+                        WHERE AccountsTotales._id = IdTotales and Cambio > 0) = ?
+                    then Cantidad * Cambio end) as Gasto,
+                    IdMotivo
+                FROM AccountsMovimiento
+                WHERE Cantidad < 0 \(tmpY) \(tmpM) and Cambio <> 1
+            GROUP BY IdMotivo
+            union
+            SELECT
+                SUM (CASE WHEN idMotivo = 3 and (
+                    SELECT
+                        AccountsTotales.idMoneda
+                        FROM AccountsTotales, AccountsMovimiento
+                        WHERE AccountsTotales._id = IdTotales) = ? THEN
+                        Cantidad * Cambio * -1 end) as Gasto,
+                    IdMotivo
+                    FROM AccountsMovimiento
+                    WHERE Fecha is not null \(tmpY) \(tmpM)
+        GROUP BY IdMotivo) as table1, AccountsMotivo
+        WHERE AccountsMotivo._id = table1.IdMotivo and Gasto is not null
+    GROUP BY IdMotivo ORDER BY Gasto
+"""
+    do {
+        let stmt = try Database.db.prepare(query, [idMoneda, idMoneda, idMoneda])
+        
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error getSumByMotivesMonthly: ", error)
+        return []
+    }
+}
+
+func getReportesIngresoMotives(idMoneda:Int64, year:String?, month:String?) -> [[String:Any?]]{
+    var tmpY = ""
+    var tmpM = ""
+    if year == nil {
+        tmpY = "and strftime('%Y',Fecha) == strftime('%Y', date('now'))"
+        tmpM = "and strftime('%m',Fecha) == strftime('%m', date('now'))"
+    } else if month == nil {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+    } else {
+        tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
+        tmpM = "and strftime('%m',Fecha) == '\(month!)'"
+    }
+    let query = """
+    SELECT
+            AccountsMotivo._id as _id, Ingreso , AccountsMotivo.Motivo as Motivo
+            FROM(
+                SELECT
+                    SUM(Ingreso) as Ingreso, IdMotivo
+                    FROM (
+                        SELECT
+                            sum(Cantidad ) as Ingreso, IdMotivo as IdMotivo
+                            FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda = ? \(tmpY) \(tmpM)
+                        Group BY IdMotivo
+                        union
+                        SELECT
+                            SUM( CASE WHEN (
+                                SELECT
+                                AccountsTotales.idMoneda
+                                    FROM AccountsTotales, AccountsMovimiento
+                                    WHERE AccountsTotales._id = IdTotales and Cambio > 0) <> AccountsMovimiento.IdMoneda
+                                then Cantidad * -1 end) as Ingreso, IdMotivo as IdMotivo2
+                                    FROM AccountsMovimiento
+                                    WHERE Cantidad < 0 \(tmpY) \(tmpM) and IdMoneda = ? and Cambio IS NOT NULL
+                                Group BY IdMotivo
+                        union
+                        SELECT
+                            SUM(Cantidad) as Ingreso, IdMotivo as IdMotivo2
+                                From AccountsTotales, AccountsMovimiento
+                                WHERE IdMotivo = 3 and Traspaso = AccountsTotales._id and AccountsTotales.IdMoneda = ? \(tmpY) \(tmpM) Group BY IdMotivo ) as table3, AccountsMotivo
+            WHERE table3.IdMotivo = AccountsMotivo._id GROUP BY IdMotivo
+        ) as table1,  AccountsMotivo WHERE table1.IdMotivo = AccountsMotivo._id and (Ingreso IS NOT NULL)
+    GROUP BY Motivo ORDER BY Ingreso desc
+
+"""
+    do {
+        let stmt = try Database.db.prepare(query, [idMoneda, idMoneda, idMoneda])
+        
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error getSumByMotivesMonthly: ", error)
+        return []
+    }
+}
+
 
 func getReportesTotales(year:String?, month:String?) -> [[String:Any?]]{
     var tmpY = ""
@@ -927,6 +1259,142 @@ func getReportesTotales(year:String?, month:String?) -> [[String:Any?]]{
     }
 }
 
+func getTotalsHistory(daily: Bool, diference:Int, now:String) -> [[String:Any?]] {
+    var groupBy = "GROUP BY t.Tipo, y, mo, t.IdMoneda, dd"
+    var groupBy2 = "GROUP BY t.Tipo, y, mo, dd"
+    var group3 = "GROUP BY y, mo, dd"
+    var orderBy = "order by y desc, mo desc, dd desc"
+    var date = "date('\(now)', 'start of month', '\(diference) month') and date('\(now)')"
+    if !daily {
+        groupBy = "GROUP BY t.Tipo, y, mo, t.IdMoneda"
+        groupBy2 = "GROUP BY t.Tipo, y, mo"
+        group3 = "GROUP BY y, mo"
+        date = "date('\(now)', 'start of year', '\(diference) year') and date('\(now)')"
+        orderBy = "order by y desc, mo desc"
+    }
+    
+    let query = """
+            SELECT (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as CurrentCantidad, SUM(Cantidad) as Cantidad, (tc._id ||m.Moneda) as _id, y, mo, dd FROM (
+            select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'A' as Zone
+            from AccountsTotales as t, AccountsMovimiento as m
+            WHERE m.IdTotales = t._id and Traspaso is null and IdTotales > 15
+            and m.Fecha BETWEEN \(date)
+            \(groupBy)
+            UNION
+            select SUM(CASE WHEN m.IdMotivo = 2
+            then m.Cantidad * -1
+            else m.Cantidad * m.Cambio * -1 END) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'B' as Zone
+            from AccountsTotales as t, AccountsMovimiento as m
+            WHERE m.Traspaso = t._id and Traspaso > 15 and m.Fecha BETWEEN \(date)
+            \(groupBy)
+            UNION
+            select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'C' as Zone
+            from AccountsTotales as t, AccountsMovimiento as m
+            WHERE m.IdTotales = t._id and Traspaso is not null and m.IdTotales > 15 and m.Fecha BETWEEN \(date)
+            \(groupBy)
+            UNION
+            select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'D' as Zone
+            from AccountsPrestamos as p, AccountsTotales as t
+            WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.IdTotales > 15 and p.Fecha BETWEEN \(date)
+            \(groupBy)
+            UNION
+            select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t.Tipo as _id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, t.IdMoneda, (strftime('%d',Fecha)) as dd, 'E' as Zone
+            from AccountsPrestamosDetalle as p, AccountsTotales as t
+            WHERE p.IdTotales = t._id and p.IdTotales > 15 and p.Fecha BETWEEN \(date)
+            \(groupBy)
+            union
+            SELECT SUM(Cantidad) as Cantidad, 5 as _id, y, mo, IdMoneda, dd, 'F' as Zone FROM(
+                SELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'F' as Zone
+                    FROM AccountsPrestamos as p
+                    where Fecha is not null \(date)
+                \(group3)
+                union
+                SELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'H' as Zone
+                    FROM AccountsPrestamosDetalle as p
+                    where Fecha is not null \(date)
+                \(group3)
+            ) \(group3)
+            )as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0
+            GROUP BY tc._id, y, mo, s.IdMoneda, dd
+            UNION
+            SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo, dd FROM (
+            select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'A' as Zone
+            from AccountsTotales as t, AccountsMovimiento as m
+            WHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN \(date)
+            \(groupBy2)
+            UNION
+            select SUM(CASE WHEN m.IdMotivo = 2
+            then m.Cantidad * -1
+            else m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'B' as Zone
+            from AccountsTotales as t, AccountsMovimiento as m
+            WHERE m.Traspaso = t._id and m.Fecha BETWEEN \(date)
+            \(groupBy2)
+            UNION
+            select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'C' as Zone
+            from AccountsTotales as t, AccountsMovimiento as m
+            WHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN \(date)
+            \(groupBy2)
+            UNION
+            select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'D' as Zone
+            from AccountsPrestamos as p, AccountsTotales as t
+            WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN \(date)
+            \(groupBy2)
+            UNION
+            select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'E' as Zone
+            from AccountsPrestamosDetalle as p, AccountsTotales as t
+            WHERE p.IdTotales = t._id and p.Fecha BETWEEN \(date)
+            \(groupBy2)
+            )as s, AccountsTotales t WHERE s._id = t._id
+            \(groupBy2)
+            \(orderBy)
+"""
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error getTotalsHistory: ", error)
+        return []
+    }
+    
+    return []
+}
+
+func getTotalesLineGraph() -> [[String:Any?]]{
+    let query = """
+        SELECT t1._id, t1.Moneda, t1.Cuenta, t2.Count, t1.CurrentCantidad, t1.Activa FROM(
+        SELECT (tc._id || m.Moneda) as _id, m.Moneda, (tc.Tipo || ' ' || m.Moneda) as Cuenta, 0 as Count, SUM(t.CurrentCantidad) as CurrentCantidad, 2 as Activa, m._id as IdMoneda
+                        FROM AccountsTotales as t, AccountsMoneda as m, AccountsTiposCuentas as tc
+                        WHERE t.IdMoneda = m._id and t.Tipo = tc._id and t.Activa = 1
+                        GROUP BY tc._id, m._id
+        UNION
+        Select (0||m.Moneda) as _id, m.Moneda as Moneda, ('Prestamos '||m.Moneda), 0 as Count, SUM((p.Cantidad - coalesce(t1.Cantidad, 0)) ) as CurrentCantidad, 1 as Activa, IdMoneda
+            FRom AccountsPrestamos as p
+        left join (
+            SELECT SUM(Cantidad * Cambio) as Cantidad, IdPrestamo
+                From AccountsPrestamosDetalle
+            group by IdPrestamo) as t1 on p._id = t1.IdPrestamo, AccountsMoneda as m
+            WHERE m._id = IdMoneda
+        group by IdMoneda
+        ) as t1
+        LEFT JOIN(
+        SELECT max(Fecha) as Fecha, IdMoneda, count(IdMoneda) as Count FROM AccountsMovimiento
+        WHERE Fecha BETWEEN date('now', '-1 month') and date('now') GROUP BY IdMoneda
+        ) as t2 on t1.IdMoneda = t2.IdMoneda
+                        union
+        SELECT AccountsTotales._id, AccountsMoneda.Moneda, AccountsTotales.Cuenta, COUNT(AccountsTotales.Cuenta) as Count ,
+        AccountsTotales.CurrentCantidad, 0 as Activa FROM AccountsTotales, AccountsMoneda LEFT JOIN
+        AccountsMovimiento on AccountsMovimiento.IdTotales= AccountsTotales._id and Fecha BETWEEN date('now', '-1 month') and date('now')
+        WHERE Activa = 1 and AccountsTotales.IdMoneda == AccountsMoneda._id and AccountsTotales._id > 20 GROUP BY AccountsTotales._id
+        ORDER by activa desc, Count DESC
+"""
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error getTotalesLineGraph: ", error)
+    }
+    return []
+}
 //-----------------------------End Reposrtes------------------------------------
 //-----------------------------CambioMoneda------------------
 func getCambioMoneda(idMon1:Int64, idMon2:Int64) -> NSNumber {
@@ -942,6 +1410,56 @@ func getCambioMoneda(idMon1:Int64, idMon2:Int64) -> NSNumber {
         return 0.0
     }
 }
+//-------------------------------CambioMonedaEnd-------------------
+//-------------------------------Trips-----------------------------
+
+func getTripsId(id:Int64) -> [[String:Any?]] {
+    let query = """
+        SELECT * FROM AccountsTrips WHERE _id = ?
+"""
+   do {
+        let stmt = try Database.db.prepare(query, [id])
+    return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error getTrips: ", error)
+        return []
+    }
+}
+
+func getTrips() -> [[String:Any?]] {
+    let query = """
+    SELECT t3.* FROM (
+    SELECT t1._id as _id, t1.Nombre, t1.Descripcion, t1.FechaCreacion, t1.FechaCierre, t1.FechaInicio, t1.FechaFin, CASE WHEN t2.Total is null then 0 else t2.Total END Total, t1.IdMoneda, t1.Moneda FROM (
+    SELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, t.IdMoneda, m.Moneda  FROM AccountsTrips as t, AccountsMoneda as m where t.IdMoneda = m._id
+    ) as t1 LEFT JOIN (
+    SELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, sum(m.Cantidad) as Total, t.IdMoneda
+    FROM AccountsTrips as t, AccountsMovimiento as m
+    Where t._id = m.IdViaje
+    GROUP by t._id
+    order by FechaCreacion DESC
+    ) as t2 on t1._id = t2._id order by t1.FechaInicio desc
+    ) as t3
+    LEFT JOIN (
+    SELECT t1._id as _id, t1.Nombre, t1.Descripcion, t1.FechaCreacion, t1.FechaCierre, t1.FechaInicio, t1.FechaFin, CASE WHEN t2.Total is null then 0 else t2.Total END Total, t1.IdMoneda, 1 as Activa FROM (
+    SELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, t.IdMoneda  FROM AccountsTrips as t where date('now') BETWEEN FechaInicio and FechaFin
+    ) as t1 LEFT JOIN (
+    SELECT t._id, t.Nombre, t.Descripcion, t.FechaCreacion, t.FechaCierre, t.FechaInicio, t.FechaFin, sum(m.Cantidad) as Total, t.IdMoneda
+    FROM AccountsTrips as t, AccountsMovimiento as m
+    Where t._id = m.IdViaje and date('now') BETWEEN FechaInicio and FechaFin
+    GROUP by t._id
+    order by FechaCreacion DESC
+    ) as t2 on t1._id = t2._id order by t1.FechaInicio desc
+    ) as t4 on t3._id = t4._id order by t4.Activa desc
+"""
+    do {
+        let stmt = try Database.db.prepare(query)
+        return Database.stmtToDictionary(stmt: stmt)
+    } catch {
+        print("Error getTrips: ", error)
+        return []
+    }
+}
+//--------------------------------Trips End------------------------
 /*
 func getTotalesCuentasByMonth(year:String, month:String) -> [[String:Any?]]{
     let query = """
@@ -1064,7 +1582,24 @@ group by AccountsTotales._id
     }
 }
  */
-// Config
+//MARK: Config
+func getOnlyWifi() -> Bool {
+    let query = """
+    select \(Config.ValueCode) From AccountsConfig where _id = 3
+"""
+    do {
+        let stmt = try Database.db.prepare(query)
+        let n = stmt.next()
+        if n == nil {
+            return true
+        }
+        let val = n![0] as! String
+        return val == "1"
+    } catch {
+        print("Error getOnlyWifi: ", error)
+    }
+    return true
+}
 
 func getFirstDate() -> String?{
     let q = "SELECT Fecha FROM AccountsMovimiento order by Fecha asc limit 1"

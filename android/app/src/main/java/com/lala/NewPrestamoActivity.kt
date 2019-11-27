@@ -74,6 +74,9 @@ class NewPrestamoActivity : AppCompatActivity() {
                     persona = Principal.insertPersona(etPersona.text.toString()).toInt()
                 }
                 val monedaCuenta = Principal.getIdMonedaTotales(cuenta)
+                if (!prestado) {
+                    cant *= -1
+                }
                 if(moneda != monedaCuenta){
                     //Monedas diferentes
                     Toast.makeText(applicationContext, "${getString(R.string.dif_curr)} $moneda $monedaCuenta", Toast.LENGTH_SHORT).show()
@@ -93,6 +96,7 @@ class NewPrestamoActivity : AppCompatActivity() {
                             descr = "#-# " + cant + " x " + tipoDeCambio + " = " + cant * tipoDeCambio
                         } else
                             descr += "  #-# " + cant + " x " + tipoDeCambio + " = " + (cant * tipoDeCambio)
+
                         if(Principal.createPrestamo(cant, cuenta, moneda, persona, descr, tipoDeCambio, 0)) {
                             Principal.actualizarTipoDeCambio(moneda, monedaCuenta, tipoDeCambio)
                             Principal.newMoveCuenta(cant * tipoDeCambio * -1, cuenta)

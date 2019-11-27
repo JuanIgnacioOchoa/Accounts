@@ -56,6 +56,19 @@ class AnalisisTotalesViewController: UIViewController, UIPickerViewDelegate, UIP
             years.append("\(year)")
             dateN = Calendar.current.date(byAdding: .year, value: -1, to: dateN)!
         }
+        if monthYears.count <= 0 {
+            dateFormatter.dateFormat = "MM"
+            let month = Int(dateFormatter.string(from: now))! - 1
+            dateFormatter.dateFormat = "YYYY"
+            let year = Int(dateFormatter.string(from: now))!
+            monthYears.append(months[month] + " \(year)")
+        }
+        if years.count <= 0 {
+            dateFormatter.dateFormat = "YYYY"
+            let year = Int(dateFormatter.string(from: now))!
+            years.append("\(year)")
+        }
+        
         timeType.text = timeTypeData[selectedType]
         if selectedLapse == 0 {
             timeLapse.text = monthYears[selectedLapse]

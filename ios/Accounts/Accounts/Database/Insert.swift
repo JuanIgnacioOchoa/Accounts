@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SQLite
 
 //--------------------------------Totales
 
@@ -27,7 +27,7 @@ func newTotales(cantidad:Double, cuenta:String, idMoneda:Int64) -> Bool{
 //-----------------------------End Totales------------------
 //-----------------------------------Movimientos
 
-func newMove(cantidad:Double, idCuenta:Int64, comment:String? , idMotivo:Int64, idMoneda:Int64, cambio:Double, date: Date) -> Bool{
+func newMove(cantidad:Double, idCuenta:Int64, comment:String? , idMotivo:Int64, idMoneda:Int64, cambio:Double, date: Date, idViaje: Int64) -> Bool{
     //updateLastSync()
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -35,13 +35,12 @@ func newMove(cantidad:Double, idCuenta:Int64, comment:String? , idMotivo:Int64, 
     var query = ""
     if comment == nil{
         query = """
-        INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.IdTotales), \(Movimiento.Comment),
-        \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.Cambio), \(Movimiento.Fecha)) Values (\(cantidad), \(idCuenta), '\("")', \(idMotivo), \(idMoneda), \(cambio), '\(dateFormatter.string(from: date))')
+        INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.IdTotales), \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.Cambio), \(Movimiento.Fecha), \(Movimiento.IdViaje)) Values (\(cantidad), \(idCuenta), \(idMotivo), \(idMoneda), \(cambio), '\(dateFormatter.string(from: date))', \(idViaje)
         """
     } else {
         query = """
         INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.IdTotales), \(Movimiento.Comment),
-        \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.Cambio), \(Movimiento.Fecha)) Values (\(cantidad), \(idCuenta), '\(comment!)', \(idMotivo), \(idMoneda), \(cambio), '\(dateFormatter.string(from: date))')
+        \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.Cambio), \(Movimiento.Fecha), \(Movimiento.IdViaje)) Values (\(cantidad), \(idCuenta), '\(comment!)', \(idMotivo), \(idMoneda), \(cambio), '\(dateFormatter.string(from: date))', \(idViaje))
         """
     }
 
@@ -60,15 +59,21 @@ func newTraspaso(cuentaFrom:Int64, cuentaTo:Int64, cantidad:Double, cambio:Doubl
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd"
     dateFormatter.timeZone = TimeZone.current
-    var sComment = ""
+    var query = ""
+    var array:[Binding?]
     if comment != nil {
-        sComment = comment!
+        query = """
+        INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.Comment), \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.IdTotales), \(Movimiento.Traspaso), \(Movimiento.Fecha), \(Movimiento.Cambio)) Values (?, ?, ?, ?, ?, ?, ?)
+        """
+        array = [cantidad, comment! ,idMot, idMon, cuentaFrom, cuentaTo, dateFormatter.string(from: date), cambio]
+    } else {
+        query = """
+        INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.IdTotales), \(Movimiento.Traspaso), \(Movimiento.Fecha), \(Movimiento.Cambio)) Values (?, ?, ?, ?, ?, ?)
+        """
+        array = [cantidad,idMot, idMon, cuentaFrom, cuentaTo, dateFormatter.string(from: date), cambio]
     }
-    let query = """
-    INSERT INTO \(Movimiento.Table) (\(Movimiento.Cantidad), \(Movimiento.Comment), \(Movimiento.IdMotivo), \(Movimiento.IdMoneda), \(Movimiento.IdTotales), \(Movimiento.Traspaso), \(Movimiento.Fecha), \(Movimiento.Cambio) Values (?, ?, ?, ?, ?, ?, ?)
-    """
     do {
-        try Database.db.run(query, [cantidad, sComment,idMot, idMon, cuentaFrom, cuentaTo, dateFormatter.string(from: date), cambio])
+        try Database.db.run(query, array)
         return true
     } catch {
         print("Error New Move: ", error)
@@ -76,3 +81,65 @@ func newTraspaso(cuentaFrom:Int64, cuentaTo:Int64, cantidad:Double, cambio:Doubl
     return false
 }
 //------------------------------------End Movimientos--------------------------
+//MARK: Prestamos
+func newPrestamo(cantidad:Double, idTotales:Int64, idMoneda:Int64, idPersona:Int64, comment:String?, cambio:Double, idMove:Int64, date:Date) -> Bool {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    dateFormatter.timeZone = TimeZone.current
+    var query = ""
+    var array:[Binding?]
+    if comment != nil {
+        query = """
+        INSERT INTO \(Prestamos.Table) (\(Prestamos.Cantidad), \(Prestamos.IdTotales), \(Prestamos.IdMoneda), \(Prestamos.IdPersona), \(Prestamos.Cambio), \(Prestamos.IdMovimiento), \(Prestamos.Fecha), \(Prestamos.Comment), \(Prestamos.Cerrada)) Values (?, ?, ?,? , ?, ?, ?, ?, ?)
+        """
+        array = [cantidad, idTotales, idMoneda, idPersona, cambio, idMove, dateFormatter.string(from: date), comment!, 0]
+    } else {
+        query = """
+        INSERT INTO \(Prestamos.Table) (\(Prestamos.Cantidad), \(Prestamos.IdTotales), \(Prestamos.IdMoneda), \(Prestamos.IdPersona), \(Prestamos.Cambio), \(Prestamos.IdMovimiento), \(Prestamos.Fecha), \(Prestamos.Cerrada)) Values (?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        array = [cantidad, idTotales, idMoneda, idPersona, cambio, idMove, dateFormatter.string(from: date), 0]
+    }
+    do {
+        try Database.db.run(query, array)
+        return true
+    } catch {
+        print("Error New Prestamo: ", error)
+        print(query, array)
+    }
+    return false
+}
+
+//MARK: Motivo
+func guardarMotivo(motivo:String) -> Bool {
+    let query = """
+                    INSERT INTO AccountsMotivo(Motivo, Active)
+                    SELECT ?, 1
+                    WHERE NOT EXISTS(SELECT 1 FROM AccountsMotivo WHERE Motivo = ?)
+                """
+    print(query)
+    do {
+        try Database.db.run(query, [motivo, motivo])
+        return true
+    } catch {
+        print("Error New Motivo: ", error, [motivo])
+    }
+    return false
+}
+
+//MARK: Moneda
+
+func guardarMoneda(moneda:String) -> Bool {
+    let query = """
+                    INSERT INTO AccountsMoneda(Moneda, Active)
+                    SELECT ?, 1
+                    WHERE NOT EXISTS(SELECT 1 FROM AccountsMoneda WHERE Moneda = ?)
+                """
+    print(query)
+    do {
+        try Database.db.run(query, [moneda, moneda])
+        return true
+    } catch {
+        print("Error New Moneda: ", error, [moneda])
+    }
+    return false
+}

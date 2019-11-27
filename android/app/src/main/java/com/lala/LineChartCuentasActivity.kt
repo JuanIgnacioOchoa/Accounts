@@ -30,6 +30,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.Utils
 import kotlinx.android.synthetic.main.activity_graphs.*
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -47,14 +48,13 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
     private var startYear = "2019"
     private var startDay = 31
     val hashMap = HashMap<Int, String>()
-    //val namesMap = HashMap<Int, String>()
-    //val valuesMap = HashMap<Int, ArrayList<Entry>>()
     val indexMap = HashMap<String, CuentaData>()
     val arrayList = ArrayList<String>()
     private lateinit var listView:ListView
     private lateinit var adapter: RecipeAdapter
     private lateinit var cTotales:Cursor
     private lateinit var labelLayout: LinearLayout
+    private var now:String = ""
     companion object {
         fun newInstance(): LineChartCuentasActivity{
             return LineChartCuentasActivity().getInstance() as LineChartCuentasActivity
@@ -89,6 +89,10 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        now = dateFormat.format(calendar.time)
         instance.minimumFractionDigits = 2
         lineChart = view.findViewById(R.id.chart)
         listView = view.findViewById(R.id.lvGrapsGasto)
@@ -162,7 +166,7 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 tmpYear++
                 mdf++
             }
-            c = Principal.getTotalsHistoryByMonth("$mdf")
+            c = Principal.getTotalsHistoryByMonth("$mdf", now)
             if(!c.moveToFirst()){
                 return
             }
@@ -213,7 +217,7 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 mdf++
             }
             //mdf++
-            c = Principal.getTotalsHistoryByDay("$mdf")
+            c = Principal.getTotalsHistoryByDay("$mdf", now)
 
 
 

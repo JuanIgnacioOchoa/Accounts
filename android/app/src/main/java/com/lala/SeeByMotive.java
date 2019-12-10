@@ -130,7 +130,7 @@ public class SeeByMotive extends AppCompatActivity {
                 String moneda = Principal.getIdMoneda(idMoneda);
                 String motivo = Principal.getMotiveId(c.getInt(c.getColumnIndex(DBMan.DBMovimientos.IdMotivo)));
                 final int idTraspaso = c.getInt(c.getColumnIndex("Traspaso"));
-                final int id = c.getInt(c.getColumnIndex("_id"));
+                final int localId = c.getInt(c.getColumnIndex("_id"));
                 if(idTraspaso != 0){
                     motivo += " " + Principal.getCuentaTotales(idTraspaso);
                     moneda = "";
@@ -169,10 +169,10 @@ public class SeeByMotive extends AppCompatActivity {
                                 Intent i;
                                 if(idTraspaso == 0){
                                     i = new Intent(context, Gasto.class);
-                                    i.putExtra("id", id);
+                                    i.putExtra("id", localId);
                                 } else {
                                     i = new Intent(context, Traspaso.class);
-                                    i.putExtra("_id", id);
+                                    i.putExtra("_id", localId);
                                 }
                                 startActivity(i);
                                 break;

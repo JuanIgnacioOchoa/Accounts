@@ -96,13 +96,16 @@ class Database{
             let dbase = try Connection(fileUrl.path)
             database = dbase
             Database.db = database
-            createTables()
+            if createTables() {
+                initData()
+            }
+            
         } catch {
             print("Error ", error)
         }
         
     }
-    func createTables(){
+    func createTables() -> Bool{
         let createTableTotales = self.totalesTable.create{ table in
             table.column(id, primaryKey: true)
             table.column(totalesCuenta, unique: true)
@@ -199,11 +202,119 @@ class Database{
             try database.run(createTableTiposCuentas)
             try database.run(createTableTotales)
             try database.run(createTableTrips)
+            return true
         } catch {
             print("error create ", error)
         }
+        return false
     }
     
+    func initData(){
+        let q1 = """
+                    insert into \(Totales.Table)
+                        (_id, \(Totales.Cuenta), \(Totales.CantidadInicial), \(Totales.CurrentCantidad), \(Totales.IdMoneda), \(Totales.Activa), \(Totales.Tipo))
+                    values
+                    (1, 'Prestamos', 0, 0, 1, 0, 1)
+                """
+        let q2 = """
+            insert into \(Totales.Table)
+                (_id, \(Totales.Cuenta), \(Totales.CantidadInicial), \(Totales.CurrentCantidad), \(Totales.IdMoneda), \(Totales.Activa), \(Totales.Tipo))
+            values
+            (20, 'xxxxx', 0, 0, 1, 0, 1)
+        """
+        let q3 = """
+            insert into \(Motivo.Table)
+                (_id, \(Motivo.Motivo), \(Motivo.Active))
+            values
+            (1, 'Traspaso', 0)
+        """
+        let q4 =  """
+                   insert into \(Motivo.Table)
+                       (_id, \(Motivo.Motivo), \(Motivo.Active))
+                   values
+                   (2, 'Retiro', 0)
+               """
+        
+        let q5 = """
+            insert into \(Motivo.Table)
+                (_id, \(Motivo.Motivo), \(Motivo.Active))
+            values
+            (3, 'RetiroMonedaDiferente', 0)
+        """
+        
+        let q6 = """
+            insert into \(Config.Table)
+                (_id, \(Config.KeyCode), \(Config.ValueCode))
+            values
+                (\(Config.LastUpdated), 'LastUpdated', CURRENT_TIMESTAMP)
+        """
+        let q7 = """
+            insert into \(Config.Table)
+                (_id, \(Config.KeyCode), \(Config.ValueCode))
+            values
+                (\(Config.LastSync), 'LastSync', CURRENT_TIMESTAMP)
+        """
+        let q8 = """
+            insert into \(Config.Table)
+                (_id, \(Config.KeyCode), \(Config.ValueCode))
+            values
+                (\(Config.Wifi), 'Use Wifi Only', 1)
+        """
+        let q9 = """
+            INSERT into \(TiposCuentas.Table)
+                (_id, \(TiposCuentas.Tipo))
+            values ( 1 , 'Efectivo')
+        """
+        let q10 = """
+            INSERT into \(TiposCuentas.Table)
+                (_id, \(TiposCuentas.Tipo))
+            values ( 2 , 'Tarjeta de Credito')
+        """
+        let q11 = """
+            INSERT into \(TiposCuentas.Table)
+                (_id, \(TiposCuentas.Tipo))
+            values ( 3 , 'Tarjeta de Debito')
+        """
+        let q12 = """
+            INSERT into \(TiposCuentas.Table)
+                (_id, \(TiposCuentas.Tipo))
+            values ( 4 , 'Cuentas de Inversion')
+        """
+        let q13 = """
+            INSERT into \(TiposCuentas.Table)
+                (_id, \(TiposCuentas.Tipo))
+            values ( 5 , 'Prestamos')
+        """
+        
+        let q14 = """
+            insert into \(Motivo.Table)
+                (_id, \(Motivo.Motivo), \(Motivo.Active))
+            values
+            (15, 'xxxxx', 0)
+        """
+        
+        do {
+            try database.run(q1)
+            try database.run(q2)
+            try database.run(q3)
+            try database.run(q4)
+            try database.run(q5)
+            try database.run(q6)
+            try database.run(q7)
+            try database.run(q8)
+            try database.run(q9)
+            try database.run(q10)
+            try database.run(q11)
+            try database.run(q12)
+            try database.run(q13)
+            try database.run(q14)
+        } catch {
+            print("Error q: ", error)
+        }
+        
+        
+        
+    }
     static func deleteTable(table: String){
         do {
             let stmt = try db.prepare("DELETE from \(table)")

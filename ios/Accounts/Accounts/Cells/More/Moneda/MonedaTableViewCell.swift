@@ -19,7 +19,8 @@ class MonedaTableViewCell: UITableViewCell {
     func setCell(data:[String:Any?], info:LocaleInfo?) {
         if info == nil {
             let c = data[Moneda.Moneda] as! String
-            name.text = c
+            code.text = c
+            name.text = ""
         } else {
             code.text = info!.currencyCode
             name.text = info!.currencyName

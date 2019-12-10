@@ -27,11 +27,6 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
     var now: String = ""
     let numberFormatter = NumberFormatter()
     
-    let dollars1 = [10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0]
-    let dollars2 = [20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0]
-    let dollars3 = [30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0]
-    let months = ["Jan" , "Feb", "Mar", "Apr", "May", "June", "July"]
-    
     var indexMap:[String:CuentaData] = [:]
     var totales:[[String:Any?]] = []
     
@@ -76,7 +71,9 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
                     }
                     if indexMap[idt] == nil {
                         indexMap[idt] = CuentaData(name: cuenta, id: idt, selected: (x<=0), cantidadActual: cantidad, cantidad: cantidad, color: Utils.colors[x%Utils.colors.count])
-                        arrayList.append(idt)
+                        //if idt[0] != "0"{
+                            arrayList.append(idt)
+                        //}
                         x += 1
                     }
                 }
@@ -127,9 +124,9 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
                     id = idTemp as! String
                 } else if idTemp as? Int64 != nil {
                     id = "\(idTemp as! Int64)"
-                    if indexMap[id] == nil {
-                        continue
-                    }
+                }
+                if indexMap[id] == nil {
+                    continue
                 }
                 if id.count > 3 {
                     totalId = String(id.suffix(3))
@@ -138,7 +135,7 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
                     }
                     indexMap[totalId]!.cantidad = cantidad + indexMap[totalId]!.cantidad
                 }
-                
+                indexMap[id]!.cantidad = cantidad + indexMap[id]!.cantidad
                 if Int(lm) != Int(m) && year == y {
                     for (_, value) in indexMap.enumerated() {
                         if value.key == id || totalId == value.key {
@@ -169,7 +166,9 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
             if dataArray.count <= 0 {
                 return
             }
-            var ld = dataArray[0]["dd"] as! String//c.getString(c.getColumnIndex("dd"))
+            let a = Date()
+            let calendar = Calendar.current
+            var ld = "\((calendar.component(.day, from: a))+1)"
 
 
             var firstDay = 32
@@ -200,6 +199,7 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
             for i in 0..<dataArray.count{
                 let idTemp = dataArray[i]["_id"]
                 let cantidad = dataArray[i]["Cantidad"] as! Double
+                
                 let y = dataArray[i]["y"] as! String
                 let mo = dataArray[i]["mo"] as! String
                 let d = dataArray[i]["dd"] as! String
@@ -223,32 +223,9 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
                     }
                     indexMap[totalId]!.cantidad = cantidad + indexMap[totalId]!.cantidad
                 }
-                indexMap[id]!.cantidad += cantidad + indexMap[id]!.cantidad
+                
+                indexMap[id]!.cantidad = cantidad + indexMap[id]!.cantidad
                 if Int(y) == Int(year!) && Int(mo) == Int(month!) {
-                    /*
-                    if(firstDay > d.toInt())
-                        firstDay = d.toInt()
-                    if(lastDay < d.toInt()){
-                        lastDay = d.toInt()
-                    }
-                    if(indexMap[id]!!.first > d.toInt()){
-                        indexMap[id]!!.first = d.toInt()
-                    }
-                     
-                     if(!indexMap[id]!!.end){
-                         indexMap[id]!!.end = true
-                         if(mdf != 0){
-                             //indexMap[id]!!.entries.add(Entry(lastDay.toFloat()+1, indexMap[id]!!.cantidad.toFloat() - cantdidad.toFloat()))
-                         } else {
-                             if(d.toInt() == startDay){
-                             //    indexMap[id]!!.entries.add(Entry(lastDay.toFloat() + 1, indexMap[id]!!.cantidadActual.toFloat()))
-                             } else {
-                             //    indexMap[id]!!.entries.add(Entry(lastDay.toFloat() + 1, indexMap[id]!!.cantidad.toFloat() - cantdidad.toFloat()))
-                             }
-                         }
-
-                     }
-                    */
                     if Int(ld) != Int(d) {
                         for (_, value) in indexMap.enumerated() {
                             if value.key == id || totalId == value.key {
@@ -257,6 +234,7 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
                                 value.value.entries.append(Pair(Double(Int(d)!), Double(value.value.cantidad)))
                             }
                         }
+                        ld = d
                     }
                 }
                 
@@ -273,10 +251,12 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
             if(value.value.selected) {
                 var vals : [ChartDataEntry] = [ChartDataEntry]()
                 value.value.entries.reverse()
+                let entries = PairToEntryList(pairs: value.value.entries)
                 print(value.value.name + " --- " + value.value.id)
-                for i in 0..<value.value.entries.count {
-                    print("x: \(value.value.entries[i].0)")
-                    vals.append(ChartDataEntry(x:value.value.entries[i].0, y: value.value.entries[i].1))
+                print(value.value.entries)
+                for i in 0..<entries.count {
+                    print("x: \(entries[i])")
+                    vals.append(entries[i])
                 }
                 value.value.entries.reverse()
                 let set: LineChartDataSet = LineChartDataSet(entries: vals, label: value.value.name)
@@ -295,6 +275,29 @@ class HistoryGraphViewController: UIViewController,  UITableViewDelegate, UITabl
         let lineChartData = LineChartData(dataSets: dataSets)
         self.lineChartView.data = lineChartData
         tableView.reloadData()
+    }
+    
+    func PairToEntryList(pairs:[Pair]) -> [ChartDataEntry] {
+        var entries:[ChartDataEntry] = []
+        for i in 0..<pairs.count {
+            let current = pairs[i]
+            var last:Pair? = nil
+            var next:Pair? = nil
+            if i + 1 < pairs.count{
+                next = pairs[i+1]
+            }
+            if i - 1 >= 0 {
+                last = pairs[i-1]
+            }
+            if ((next != nil && last != nil) && (next!.1 != current.1 || last!.1 != current.1)){
+                entries.append(ChartDataEntry(x:current.0, y: Double(Int(current.1))))
+            } else if i + 1 >= pairs.count {
+                entries.append(ChartDataEntry(x:current.0, y: Double(Int(current.1))))
+            } else if i == 0{
+                entries.append(ChartDataEntry(x:current.0, y: Double(Int(current.1))))
+            }
+        }
+        return entries
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

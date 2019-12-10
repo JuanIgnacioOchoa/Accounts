@@ -14,14 +14,14 @@ class SeeMotivoViewController: UIViewController, UITableViewDelegate, UITableVie
     
     var fechaDataSource:[[String:Any?]] = []
     var month:String? = nil, year:String? = nil
-    var _id:Int64 = 0
+    var _id:Int64 = 0, idMoneda:Int64 = 0
     var selectedId: Int64 = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        fechaDataSource = getMotivosMovFecha(id: _id, year: year, month: month)
+        fechaDataSource = getMotivosMovFecha(id: _id, year: year, month: month, moneda: idMoneda)
     }
      func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
          return fechaDataSource.count
@@ -33,7 +33,7 @@ class SeeMotivoViewController: UIViewController, UITableViewDelegate, UITableVie
          let cell = tableView.dequeueReusableCell(withIdentifier: "FechaTableCell") as! FechaTableViewCell
          //if(index == 0){
          let fecha = fechaDataSource[row][Movimiento.Fecha] as! String
-         let data = getMotivosMovimientosByDate(id: _id, date: fecha)
+         let data = getMotivosMovimientosByDate(id: _id, date: fecha, moneda: idMoneda)
          tableView.rowHeight = CGFloat(40 + (25 * data.count))
          cell.setCell(fecha: fecha, data:data, parent: self, parentType: 3)
          

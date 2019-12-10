@@ -20,7 +20,7 @@ class MovdataViewController: UIViewController, UITableViewDelegate, UITableViewD
     var fechaDataSource: [[String:Any?]] = []
     var month:String? = nil
     var year:String? = nil
-    var moneda:Int64 = 0
+    //var moneda:Int64 = 0
     var selectedId: Int64 = 0
     
     override func viewDidLoad() {
@@ -29,6 +29,7 @@ class MovdataViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.dataSource = self
         fechaDataSource = getMovimientosFecha()
         tableView.allowsSelection = false
+        updateArrays()
     }
 
     func updateArrays(){

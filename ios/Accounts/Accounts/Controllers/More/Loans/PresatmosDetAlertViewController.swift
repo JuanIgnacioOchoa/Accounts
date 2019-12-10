@@ -30,7 +30,7 @@ class PresatmosDetAlertViewController: UIAlertController, UIPickerViewDelegate, 
     var selectedTotales = 0
     var oldSelectedTotales = 0
     var idTotales:Int64 = 0, idMoneda:Int64 = 0, idMonedaCuenta:Int64 = 0
-    var oldCantidad = 0.0
+    var oldCantidad:NSNumber = 0.0
     var totalPaid = 0.0
     
     override func viewDidLoad() {
@@ -258,7 +258,34 @@ class PresatmosDetAlertViewController: UIAlertController, UIPickerViewDelegate, 
     
     func setValues(){
         if data == nil {
-            
+            dataArrayTotalesDet = getTotales(id: idTotales)
+            var c = 0
+            print(idTotales)
+            for t in dataArrayTotalesDet {
+                if t["_id"] as! Int64 == idTotales {
+                    selectedTotales = c
+                    oldSelectedTotales = c
+                }
+                c = c + 1
+            }
+            //totalPaid = getTotalPaid(id: data![PrestamosDet.IdPrestamo] as! Int64)
+            var cantidad:Double = Double(truncating: oldCantidad) - totalPaid
+            if cantidad <= 0 {
+                cantidad = cantidad * -1
+                segmentedWhoPays.selectedSegmentIndex = 0
+                gasto = true
+            } else {
+                segmentedWhoPays.selectedSegmentIndex = 1
+            }
+            idMoneda = dataArrayTotalesDet[selectedTotales][Totales.IdMoneda] as! Int64
+            cantTextField.text = "\(cantidad)"
+            cuentaLbl.text = dataArrayTotalesDet[selectedTotales][Totales.Cuenta] as! String
+            monedaLbl.text = dataArrayTotalesDet[selectedTotales][Moneda.Moneda] as! String
+            segmentedFecha.selectedSegmentIndex = 0
+            let cambio:NSNumber = 1.0
+            cambioTextField.text = numberFormatter.string(from: cambio)
+            cambioH = idMoneda == monedaPrestamo
+            cambioTextField.isHidden = cambioH
         } else {
             let cuenta = data![Totales.Cuenta] as! String
             idTotales = data![PrestamosDet.IdTotales] as! Int64
@@ -268,7 +295,7 @@ class PresatmosDetAlertViewController: UIAlertController, UIPickerViewDelegate, 
             var cambio = data![PrestamosDet.Cambio] as! NSNumber
             //print(fecha)
             idMoneda = data![Totales.IdMoneda] as! Int64
-            oldCantidad = cantidad
+            //oldCantidad = cantidad
             dataArrayTotalesDet = getTotales(id: idTotales)
             cuentaLbl.text = cuenta
             monedaLbl.text = moneda

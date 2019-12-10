@@ -9,7 +9,7 @@
 import UIKit
 import Charts
 
-class IngresoGraphViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class IngresoGraphViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ChartViewDelegate {
     
     @IBOutlet weak var pieChart: PieChartView!
     @IBOutlet weak var tableView: UITableView!
@@ -28,7 +28,7 @@ class IngresoGraphViewController: UIViewController, UITableViewDelegate, UITable
         tableView.rowHeight = 25.0
         tableView.delegate = self
         tableView.dataSource = self
-        
+        pieChart.delegate = self
         let date:Date = Date()
         let calendar = Calendar.current
         self.year = "\(calendar.component(.year, from: date))"
@@ -96,5 +96,38 @@ class IngresoGraphViewController: UIViewController, UITableViewDelegate, UITable
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row:Double = Double(indexPath.row)
+        if pieChart.highlighted.count <= 0 {
+            pieChart.highlightValue(Highlight(x: row, y: 0.0, dataSetIndex: 0))
+        } else {
+            let highLightX = pieChart.highlighted[0].x
+            if row == highLightX {
+                self.performSegue(withIdentifier: "verMotivos", sender: nil)
+            } else {
+                pieChart.highlightValue(Highlight(x: row, y: 0.0, dataSetIndex: 0))
+            }
+        }
+    }
 
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        print(highlight)
+        let row:Int = Int(highlight.x)
+        let indexPath = IndexPath(row: row, section: 0)
+        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if "verMotivos" == segue.identifier {
+             if let indexPath = tableView.indexPathForSelectedRow{
+                 let viewController = segue.destination as! SeeMotivoViewController
+                 viewController.title = "Ver Cuentas"
+                 viewController._id = dataArray[indexPath.row]["_id"] as! Int64
+                 viewController.month = month
+                 viewController.year = year
+                 viewController.idMoneda = moneda
+             }
+        }
+    }
 }

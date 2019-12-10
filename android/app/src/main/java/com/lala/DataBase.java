@@ -13,7 +13,7 @@ import java.io.File;
 public class DataBase extends SQLiteOpenHelper {
     private static SQLiteDatabase db;
     private static final String DB_NAME = "Account.sqlite"; // nombre de la base de datos sqlite, no es necesario que tenga extencion
-    private static final int DB_SCHEME_VERSION = 3; //es el numero de nuestra version de nuestar base de dator, es decir cada que modificamos
+    private static final int DB_SCHEME_VERSION = 4; //es el numero de nuestra version de nuestar base de dator, es decir cada que modificamos
     // la tabla este numero cambia
     private final String TOTALES = "Totales";
     public DataBase(Context context, File AppDir) {
@@ -155,7 +155,7 @@ public class DataBase extends SQLiteOpenHelper {
 
         db.execSQL("INSERT into "+ DBMan.DBConfig.TABLE_NAME +
                 " (_id, " + DBMan.DBConfig.Key + ", " + DBMan.DBConfig.Value + ") "
-                + "values ("+ DBMan.DBConfig.LastUpdated + ", '2000-08-26 19:51:14', CURRENT_TIMESTAMP)");
+                + "values ("+ DBMan.DBConfig.LastUpdated + ", 'LastUpdated', CURRENT_TIMESTAMP)");
 
         db.execSQL("INSERT into "+ DBMan.DBConfig.TABLE_NAME +
                 " (_id, " + DBMan.DBConfig.Key + ", " + DBMan.DBConfig.Value + ") "
@@ -167,11 +167,11 @@ public class DataBase extends SQLiteOpenHelper {
 
         db.execSQL("INSERT into "+ DBMan.DBTiposCuentas.TABLE_NAME +
                 " (_id, " + DBMan.DBTiposCuentas.Tipo + ") "
-                + "values ( 1 , 'Cartera')");
+                + "values ( 1 , 'Efectivo')");
 
         db.execSQL("INSERT into "+ DBMan.DBTiposCuentas.TABLE_NAME +
                 " (_id, " + DBMan.DBTiposCuentas.Tipo + ") "
-                + "values ( 2 , 'Tarjeta Credito')");
+                + "values ( 2 , 'Tarjeta de Credito')");
 
 
 
@@ -179,12 +179,15 @@ public class DataBase extends SQLiteOpenHelper {
 
 
         // version 2
-        db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Tarjeta de Credito' where _id = 2");
-        db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Efectivo' where _id = 1");
+        //db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Tarjeta de Credito' where _id = 2");
+        //db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Efectivo' where _id = 1");
         db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (3, 'Tarjeta de Debito')");
         db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (4, 'Cuentas de Inversion')");
         db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (5, 'Prestamos')");
-
+        db.execSQL("insert into AccountsMotivos" +
+                "                (_id, Motivo, Motivo)" +
+                "            values\n" +
+                "            (15, 'xxxxx', 0)");
     }
 
 
@@ -199,6 +202,12 @@ public class DataBase extends SQLiteOpenHelper {
         }
         if(oldVersion <= 2){
             db.execSQL("UPDATE AccountsMovimiento set Cambio = 1.0 WHERE Cambio is null");
+        }
+        if(oldVersion <= 3){
+            db.execSQL("insert into AccountsMotivo" +
+                    "                (_id, Motivo, Motivo)" +
+                    "            values\n" +
+                    "            (15, 'xxxxx', 0)");
         }
     }
 

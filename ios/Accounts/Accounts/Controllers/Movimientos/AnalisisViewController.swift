@@ -38,6 +38,9 @@ class AnalisisViewController: UIViewController, UITableViewDelegate, UITableView
         income = getIngresoTotalByMoneda(moneda: moneda, year: year, month: month)
         dataArray = getReportesMotives(idMoneda: moneda, year: year, month: month)
         let ganancia = income + outcome;
+        if outcomeLbl == nil {
+            return
+        }
         outcomeLbl.text = numberFormatter.string(from: NSNumber(value: outcome))
         incomeLbl.text = numberFormatter.string(from: NSNumber(value: income))
         savingsLbl.text = numberFormatter.string(from: NSNumber(value: ganancia))
@@ -80,6 +83,7 @@ class AnalisisViewController: UIViewController, UITableViewDelegate, UITableView
                 viewController._id = dataArray[indexPath.row]["_id"] as! Int64
                 viewController.month = month
                 viewController.year = year
+                viewController.idMoneda = moneda
             }
        }
    }

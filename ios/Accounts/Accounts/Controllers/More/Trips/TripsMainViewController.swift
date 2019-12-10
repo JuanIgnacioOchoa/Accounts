@@ -10,6 +10,9 @@ import UIKit
 
 class TripsMainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBAction func addNewTrip(_ sender: UIButton) {
+        self.performSegue(withIdentifier: "createTrip", sender: nil)
+    }
     @IBOutlet weak var tableView: UITableView!
     
     var dataArray:[[String:Any?]] = []
@@ -40,11 +43,17 @@ class TripsMainViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //
         if "SeeTrip" == segue.identifier {
             if let indexPath = tableView.indexPathForSelectedRow{
                 let vc = segue.destination as! SeeTripsViewController
                 vc._id = dataArray[indexPath.row]["_id"] as! Int64
             }
+        } else if "createTrip" == segue.identifier {
+            
+            let vc = segue.destination as! SeeTripsViewController
+            vc._id = 0
+            
         }
     }
 }

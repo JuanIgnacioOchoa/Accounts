@@ -272,7 +272,7 @@ public class seeMove extends AppCompatActivity implements AdapterView.OnItemSele
         etOtro.setVisibility(View.GONE);
 
 
-        if(Principal.getMonedaId(idCuenta)== idMoneda){
+        if(Principal.getMonedaId(idCuenta) == idMoneda){
             Toast.makeText(this,""+Principal.getMonedaId(idCuenta) + " = " + idMoneda, Toast.LENGTH_LONG).show();
             etCambio.setVisibility(View.INVISIBLE);
             tvCambio.setVisibility(View.INVISIBLE);

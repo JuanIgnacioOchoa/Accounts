@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		30DB126396BDC6B2CA2C2180 /* Pods_AccountsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF72E1FF5698AE940DC2218D /* Pods_AccountsUITests.framework */; };
+		5819A7072390458200AFB423 /* TotalesAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5819A7062390458200AFB423 /* TotalesAlertViewController.swift */; };
+		5819A7092390881B00AFB423 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5819A7082390881B00AFB423 /* HomeViewController.swift */; };
 		58286C9723344CC800E03899 /* CreateCuentasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9623344CC800E03899 /* CreateCuentasViewController.swift */; };
 		58286C9923352DEB00E03899 /* SeeCuentaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */; };
 		58286C9D2335329800E03899 /* SeeMovimientoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */; };
@@ -80,6 +82,7 @@
 		58BC7E72237F10C50036530C /* MonedaTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BC7E71237F10C50036530C /* MonedaTableViewCell.swift */; };
 		58C23192238DB2AF00E44262 /* MotivosTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C23191238DB2AF00E44262 /* MotivosTableViewCell.swift */; };
 		58C4A83E236269CE00164A90 /* AnalisisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C4A83D236269CE00164A90 /* AnalisisViewController.swift */; };
+		58C6A67F2398200A00B32442 /* HomeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C6A67E2398200A00B32442 /* HomeTableViewCell.swift */; };
 		58D525AD237201E100DBC7E1 /* SeeTripsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D525AC237201E100DBC7E1 /* SeeTripsViewController.swift */; };
 		58D525B4237204CC00DBC7E1 /* ConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D525B3237204CC00DBC7E1 /* ConfigViewController.swift */; };
 		58D525B6237204DA00DBC7E1 /* MotivesMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D525B5237204DA00DBC7E1 /* MotivesMainViewController.swift */; };
@@ -128,6 +131,8 @@
 		06C1280D1B53D6FBE829247C /* Pods_Accounts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Accounts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E5A9628FED2EC61B3529CB /* Pods-AccountsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AccountsTests.release.xcconfig"; path = "Target Support Files/Pods-AccountsTests/Pods-AccountsTests.release.xcconfig"; sourceTree = "<group>"; };
 		52BF528997A52CD480D4C088 /* Pods-AccountsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AccountsUITests.release.xcconfig"; path = "Target Support Files/Pods-AccountsUITests/Pods-AccountsUITests.release.xcconfig"; sourceTree = "<group>"; };
+		5819A7062390458200AFB423 /* TotalesAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalesAlertViewController.swift; sourceTree = "<group>"; };
+		5819A7082390881B00AFB423 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		58286C9623344CC800E03899 /* CreateCuentasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCuentasViewController.swift; sourceTree = "<group>"; };
 		58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeCuentaViewController.swift; sourceTree = "<group>"; };
 		58286C9C2335329800E03899 /* SeeMovimientoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMovimientoViewController.swift; sourceTree = "<group>"; };
@@ -209,6 +214,7 @@
 		58BC7E71237F10C50036530C /* MonedaTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonedaTableViewCell.swift; sourceTree = "<group>"; };
 		58C23191238DB2AF00E44262 /* MotivosTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivosTableViewCell.swift; sourceTree = "<group>"; };
 		58C4A83D236269CE00164A90 /* AnalisisViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalisisViewController.swift; sourceTree = "<group>"; };
+		58C6A67E2398200A00B32442 /* HomeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTableViewCell.swift; sourceTree = "<group>"; };
 		58D525AC237201E100DBC7E1 /* SeeTripsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeTripsViewController.swift; sourceTree = "<group>"; };
 		58D525B3237204CC00DBC7E1 /* ConfigViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigViewController.swift; sourceTree = "<group>"; };
 		58D525B5237204DA00DBC7E1 /* MotivesMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivesMainViewController.swift; sourceTree = "<group>"; };
@@ -273,6 +279,7 @@
 				58286C9823352DEA00E03899 /* SeeCuentaViewController.swift */,
 				589FD15B2329548500BF3531 /* ViewController.swift */,
 				583241952367D3EF004788DB /* AnalisisTotalesViewController.swift */,
+				5819A7062390458200AFB423 /* TotalesAlertViewController.swift */,
 			);
 			path = Totales;
 			sourceTree = "<group>";
@@ -409,6 +416,7 @@
 				584275642360BDBE00F689AC /* Movimientos */,
 				58286C9623344CC800E03899 /* CreateCuentasViewController.swift */,
 				584EFB6A236A17620018F035 /* SeeMotivoViewController.swift */,
+				5819A7082390881B00AFB423 /* HomeViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -423,6 +431,7 @@
 				58286CA62335442B00E03899 /* SeeMovByCuentasTableViewCell.swift */,
 				58B8A540233E6A5500C03A6B /* ReportesTableViewCell.swift */,
 				584275662360BFEF00F689AC /* FechaTableViewCell.swift */,
+				58C6A67E2398200A00B32442 /* HomeTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -935,11 +944,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5819A7092390881B00AFB423 /* HomeViewController.swift in Sources */,
 				589FD193232AB13800BF3531 /* Database.swift in Sources */,
 				583241962367D3EF004788DB /* AnalisisTotalesViewController.swift in Sources */,
 				58BC7E6B237E62230036530C /* Label.swift in Sources */,
 				58BC7E4A237E62230036530C /* Locale+Extensions.swift in Sources */,
 				58DFDDFB236A55FF00310445 /* MainGraphsViewController.swift in Sources */,
+				58C6A67F2398200A00B32442 /* HomeTableViewCell.swift in Sources */,
 				58286CA72335442B00E03899 /* SeeMovByCuentasTableViewCell.swift in Sources */,
 				585BCF4A237BAB5800BBA8F5 /* PrestamosDetTableViewCell.swift in Sources */,
 				58BC7E42237E62230036530C /* UITextView+Extensions.swift in Sources */,
@@ -955,6 +966,7 @@
 				58E025F523317F6D003A5767 /* Insert.swift in Sources */,
 				58AD7A2E2370CE2D00FB130F /* MoreViewController.swift in Sources */,
 				58D525C02372052A00DBC7E1 /* PrestamosMinusViewController.swift in Sources */,
+				5819A7072390458200AFB423 /* TotalesAlertViewController.swift in Sources */,
 				58DFDDFF236A596200310445 /* GastoGraphViewController.swift in Sources */,
 				58C23192238DB2AF00E44262 /* MotivosTableViewCell.swift in Sources */,
 				589FD18E2329AAF700BF3531 /* MainCuentasTableViewCell.swift in Sources */,

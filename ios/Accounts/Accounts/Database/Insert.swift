@@ -9,15 +9,15 @@
 import Foundation
 import SQLite
 
-//--------------------------------Totales
+//MARK: Totales
 
-func newTotales(cantidad:Double, cuenta:String, idMoneda:Int64) -> Bool{
+func newTotales(cantidad:Double, cuenta:String, idMoneda:Int64, tipoCuenta:Int64) -> Bool{
     let query = """
-    INSERT INTO \(Totales.Table) (\(Totales.Cuenta), \(Totales.CantidadInicial), \(Totales.CurrentCantidad), \(Totales.IdMoneda))
-    VALUES (?, ?, ?, ?)
+    INSERT INTO \(Totales.Table) (\(Totales.Cuenta), \(Totales.CantidadInicial), \(Totales.CurrentCantidad), \(Totales.IdMoneda), \(Totales.Activa), \(Totales.Tipo))
+    VALUES (?, ?, ?, ?, 1, ?)
 """
     do{
-        try Database.db.run(query, [cuenta, cantidad, cantidad, idMoneda])
+        try Database.db.run(query, [cuenta, cantidad, cantidad, idMoneda, tipoCuenta])
         return true
     } catch {
         print("Error new Totales: ", error)
@@ -25,7 +25,7 @@ func newTotales(cantidad:Double, cuenta:String, idMoneda:Int64) -> Bool{
     return false
 }
 //-----------------------------End Totales------------------
-//-----------------------------------Movimientos
+//MARK:Movimientos
 
 func newMove(cantidad:Double, idCuenta:Int64, comment:String? , idMotivo:Int64, idMoneda:Int64, cambio:Double, date: Date, idViaje: Int64) -> Bool{
     //updateLastSync()
@@ -109,6 +109,25 @@ func newPrestamo(cantidad:Double, idTotales:Int64, idMoneda:Int64, idPersona:Int
     return false
 }
 
+func insertPrestamoDetalle(cantidad:Double, idTotales:Int64, idMoneda:Int64, idPrestamo:Int64, cambio:Double, date:Date) -> Bool {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    dateFormatter.timeZone = TimeZone.current
+    var array:[Binding?]
+    let query = """
+    INSERT INTO \(PrestamosDet.Table) (\(PrestamosDet.Cantidad), \(PrestamosDet.IdTotales), \(PrestamosDet.IdMoneda), \(PrestamosDet.IdPrestamo),  \(PrestamosDet.Cambio), \(PrestamosDet.Fecha)) Values (?, ?, ?, ?, ?, ?)
+    """
+    array = [ cantidad, idTotales, idMoneda, idPrestamo, cambio, dateFormatter.string(from: date) ]
+
+    do {
+        try Database.db.run(query, array)
+        return true
+    } catch {
+        print("Error New insertPrestamoDetalle: ", error)
+        print(query, array)
+    }
+    return false
+}
 //MARK: Motivo
 func guardarMotivo(motivo:String) -> Bool {
     let query = """
@@ -137,6 +156,38 @@ func guardarMoneda(moneda:String) -> Bool {
     print(query)
     do {
         try Database.db.run(query, [moneda, moneda])
+        return true
+    } catch {
+        print("Error New Moneda: ", error, [moneda])
+    }
+    return false
+}
+
+
+//MARK: Trips
+
+func createTrip(nombre:String, fechaInic:Date?, fechaFin:Date?, moneda:Int64, descripcion:String) -> Bool{
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    dateFormatter.timeZone = TimeZone.current
+    var tmpInicCol = ""
+    var tmpFinCol = ""
+    var tmpInicVal = ""
+    var tmpFinVal = ""
+    if fechaFin != nil {
+        tmpFinCol = ", \(Trips.FechaFin)"
+        tmpFinVal = ", \(dateFormatter.string(from: fechaFin!))"
+    }
+    if fechaInic != nil {
+        tmpInicCol = ", \(Trips.FechaInicio)"
+        tmpInicVal = ", \(dateFormatter.string(from: fechaInic!))"
+    }
+    let query = """
+                    INSERT INTO \(Trips.Table)(\(Trips.Nombre) \(tmpInicCol) \(tmpFinCol), \(Trips.IdMoneda), \(Trips.Descripcion))
+                    VALUES(\(nombre) \(tmpInicVal) \(tmpFinVal), \(moneda), \(descripcion) )
+                   """
+    do {
+        try Database.db.run(query)
         return true
     } catch {
         print("Error New Moneda: ", error, [moneda])

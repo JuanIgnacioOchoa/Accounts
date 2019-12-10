@@ -91,7 +91,7 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
         super.onViewCreated(view, savedInstanceState)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        calendar.add(Calendar.DAY_OF_MONTH, +1)
         now = dateFormat.format(calendar.time)
         instance.minimumFractionDigits = 2
         lineChart = view.findViewById(R.id.chart)
@@ -136,7 +136,9 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 val cuenta = cTotales.getString(cTotales.getColumnIndex(DBMan.DBTotales.Cuenta))
                 indexMap[id] = CuentaData(cuenta, id, false, ArrayList(), cantdidad, cantdidad,
                         Principal.colors[x % Principal.colors.size], false, 0, 32, cantdidad)
-                arrayList.add(id)
+                //if(id[0] != '5') {
+                    arrayList.add(id)
+                //}
                 x++
             }
         }
@@ -179,6 +181,11 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                     value.entries.add(Pair(startMonth.toFloat()+0.1f, value.cantidadActual.toFloat()))
                 }
             }
+            c.moveToPrevious()
+            while(c.moveToNext()){
+                Log.d("Accoun", c.getString(c.getColumnIndex("_id"))+c.getDouble(c.getColumnIndex("Cantidad")))
+            }
+            c.moveToFirst()
             c.moveToPrevious()
             while(c .moveToNext()){
                 val id = c.getString(c.getColumnIndex("_id"))
@@ -223,7 +230,10 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
 
             if(!c.moveToFirst())
                 return
-            var ld = c.getString(c.getColumnIndex("dd"))
+            //val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val calendar = Calendar.getInstance()
+            //calendar.add(Calendar.DAY_OF_MONTH)
+            var ld = "${(calendar.get(Calendar.DAY_OF_MONTH) + 1)}"//(calendar.get(Calendar.DAY_OF_MONTH) + 1)
 
 
             var firstDay = 32
@@ -235,7 +245,7 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 value.end = false
                 value.last = lastDay
                 value.first = firstDay
-            }
+            }/*
             var tmpStart = startDay
             while (tmpStart.toFloat() > ld.toFloat()){
                 for((key, value) in indexMap){
@@ -244,6 +254,12 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                     }
                 }
                 tmpStart--
+            }
+            */
+            for((key, value) in indexMap){
+                if(year == startYear && month == startMonth){
+                    value.entries.add(Pair(30.0f, value.cantidadActual.toFloat()))
+                }
             }
             c.moveToPrevious()
 
@@ -254,11 +270,19 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 val mo = c.getString(c.getColumnIndex("mo"))
                 val d = c.getString(c.getColumnIndex("dd"))
                 if(indexMap[id] == null){
+                    val totalId = id.takeLast(3)
+                    if(totalId.toIntOrNull() == null){
+                        //if (id[0] != '5') {
+                        //indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                        //}
+                    }
                     continue
                 }
                 val totalId = id.takeLast(3)
                 if(totalId.toIntOrNull() == null){
-                    indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                    //if (id[0] != '5') {
+                        indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                    //}
                 }
                 indexMap[id]!!.cantidad = cantdidad + indexMap[id]!!.cantidad
                 if(y.toInt() == year.toInt() && mo.toInt() == month.toInt()){
@@ -293,7 +317,6 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                             } else {
                                 value.entries.add(Pair(d.toFloat(), value.cantidad.toFloat()))
                             }
-
                         }
                         ld = d
                     }

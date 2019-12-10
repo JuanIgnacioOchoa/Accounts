@@ -22,6 +22,7 @@ class MonedaMainViewController: UIViewController, UITableViewDelegate, UITableVi
             let success = guardarMoneda(moneda: (info?.currencyCode)!)
             if success {
                 self.dataMonedas = getMonedas()
+                self.initLocaleInfo()
                 self.tableView.reloadData()
             }
         })

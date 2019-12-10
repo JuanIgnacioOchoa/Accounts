@@ -17,6 +17,9 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     @IBAction func saveBtn(_ sender: UIButton) {
         guardar()
     }
+    @IBOutlet var saveBtnNotAction: UIButton!
+   
+    @IBOutlet var addBtnNoAction: UIButton!
     @IBOutlet weak var NombrTxt: UITextField!
     @IBOutlet weak var MonedaLbl: UILabel!
     @IBOutlet weak var FechaIniTxt: UILabel!
@@ -31,7 +34,7 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     var _id:Int64 = 0, idMoneda:Int64 = 0
     var selectedMoneda = 0
     var oldSelectedMoneda = 0
-    var dateInic:Date = Date(), dateFin = Date()
+    var dateInic:Date? = Date(), dateFin:Date? = Date()
     let txtTypeNumber = 0, txtTypeAll = 1, txtTypeNone = 2
     let numberFormatter = NumberFormatter()
     var comment:String?
@@ -51,18 +54,50 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         if _id == 0 {
             dataArrayMoneda = getMonedas()
+            if dataArrayMoneda.count == 0 {
+                let alert = UIAlertController(title: "No existe Moneda", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Agregar Moneda", style: .default, handler: {(a: UIAlertAction!) in
+                    self.performSegue(withIdentifier: "agregarMoneda", sender: nil)
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {(a: UIAlertAction!) in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                //if !activeAlert{
+                //    activeAlert = true
+                    present(alert, animated: true, completion: nil)
+                //}
+                return
+            }
             idMoneda = dataArrayMoneda[0]["_id"] as! Int64
             comment = nil
             selectedMoneda = 0
             oldSelectedMoneda = selectedMoneda
             nombre = ""
             tableView.isHidden = true
+            addBtnNoAction.isHidden = true
+            addBtnNoAction.isUserInteractionEnabled = false
         } else {
             dataArrayTrip = getTripsId(id: _id)
             nombre = dataArrayTrip[0][Trips.Nombre] as! String
             idMoneda = dataArrayTrip[0][Trips.IdMoneda] as! Int64
             comment = dataArrayTrip[0][Trips.Descripcion] as? String
             dataArrayMoneda = getMonedasWith(id: idMoneda)
+            if dataArrayMoneda.count == 0 {
+                let alert = UIAlertController(title: "No existe Moneda", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Agregar Moneda", style: .default, handler: {(a: UIAlertAction!) in
+                    self.performSegue(withIdentifier: "agregarMoneda", sender: nil)
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {(a: UIAlertAction!) in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                //if !activeAlert{
+                //    activeAlert = true
+                    present(alert, animated: true, completion: nil)
+                //}
+                return
+            }
             let fechaIni = dataArrayTrip[0][Trips.FechaInicio] as! String
             let fechaFin = dataArrayTrip[0][Trips.FechaFin] as! String
             let dateFormatter = DateFormatter()
@@ -78,8 +113,8 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 c = c + 1
             }
             dateFormatter.dateFormat = "dd-MMM-yyyy"
-            FechaIniTxt.text = dateFormatter.string(from: dateInic)
-            FechaFinTxt.text = dateFormatter.string(from: dateFin)
+            FechaIniTxt.text = dateFormatter.string(from: dateInic!)
+            FechaFinTxt.text = dateFormatter.string(from: dateFin!)
             fechaDataSource = getTripsMovimientosFecha(id: _id)
             tableView.isHidden = false
             tableView.allowsSelection = false
@@ -137,7 +172,7 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     func showDatePickerIni(fechaTxt:UITextField){
         //Formate Date
         datePickerInic.datePickerMode = .date
-        datePickerInic.date = dateInic
+        datePickerInic.date = dateInic!
         //ToolBar
         let toolbar = UIToolbar();
         toolbar.sizeToFit()
@@ -155,7 +190,7 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     func showDatePickerFin(fechaTxt:UITextField){
         //Formate Date
         datePickerFin.datePickerMode = .date
-        datePickerFin.date = dateFin
+        datePickerFin.date = dateFin!
         //ToolBar
         let toolbar = UIToolbar();
         toolbar.sizeToFit()
@@ -269,6 +304,9 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             viewController.title = "Ver Movimiento"
             viewController._id = selectedId
             viewController.idTrip = _id
+       } else if "agregarMoneda" == segue.identifier {
+            let viewController = segue.destination as! MonedaMainViewController
+            viewController.title = "Moneda"
        }
    }
     
@@ -280,8 +318,12 @@ class SeeTripsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         nombre = NombrTxt.text!
         comment = DecrTxt.text
         idMoneda = dataArrayMoneda[selectedMoneda]["_id"] as! Int64
-        if !actualizarTrip(id: _id, name: nombre, desc: comment, fechaInic: dateInic, fechaFin: dateFin, idMoneda: idMoneda) {
-            self.navigationController?.popViewController(animated: true)
+        if _id == 0 {
+            createTrip(nombre: nombre, fechaInic: dateInic, fechaFin: dateFin, moneda: idMoneda, descripcion: description)
+        } else {
+            if actualizarTrip(id: _id, name: nombre, desc: comment, fechaInic: dateInic!, fechaFin: dateFin!, idMoneda: idMoneda) {
+                self.navigationController?.popViewController(animated: true)
+            }
         }
     }
 }

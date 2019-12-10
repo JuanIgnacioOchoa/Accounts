@@ -9,7 +9,7 @@
 import UIKit
 import Charts
 
-class GastoGraphViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class GastoGraphViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ChartViewDelegate {
 
     
 
@@ -29,7 +29,7 @@ class GastoGraphViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.rowHeight = 25.0
         tableView.delegate = self
         tableView.dataSource = self
-        
+        pieChartView.delegate = self
         let date:Date = Date()
         let calendar = Calendar.current
         self.year = "\(calendar.component(.year, from: date))"
@@ -92,6 +92,38 @@ class GastoGraphViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.setCell(motivo: m, cantidad: g, porcentaje: (g/total), colorc: Utils.colors[indexPath.row%Utils.colors.count])
         
         return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row:Double = Double(indexPath.row)
+        if pieChartView.highlighted.count <= 0 {
+            pieChartView.highlightValue(Highlight(x: row, y: 0.0, dataSetIndex: 0))
+        } else {
+            let highLightX = pieChartView.highlighted[0].x
+            if row == highLightX {
+                self.performSegue(withIdentifier: "verMotivos", sender: nil)
+            } else {
+                pieChartView.highlightValue(Highlight(x: row, y: 0.0, dataSetIndex: 0))
+            }
+        }
+    }
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        let row:Int = Int(highlight.x)
+        let indexPath = IndexPath(row: row, section: 0)
+        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if "verMotivos" == segue.identifier {
+             if let indexPath = tableView.indexPathForSelectedRow{
+                 let viewController = segue.destination as! SeeMotivoViewController
+                 viewController.title = "Ver Cuentas"
+                 viewController._id = dataArray[indexPath.row]["_id"] as! Int64
+                 viewController.month = month
+                 viewController.year = year
+                 viewController.idMoneda = moneda
+             }
+        }
     }
 }
 @objc(BarChartFormatter2)

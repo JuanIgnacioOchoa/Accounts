@@ -41,6 +41,8 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        currency.isUserInteractionEnabled = false
+        currency.textColor = UIColor.gray
         pageTitle1.text = "Movimientos"
         pageTitle2.text = "Analisis"
         pageTitle1.textColor = UIColor.blue
@@ -109,6 +111,15 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
         }
         // Do any additional setup after loading the view.
         configurePageViewController()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard let movData = viewControllers.first as? MovdataViewController else { return }
+        guard let analisis = viewControllers[1] as? AnalisisViewController else { return }
+        
+        movData.updateArrays()
+        analisis.updateArrays()
     }
     
     @objc
@@ -182,17 +193,7 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
     }
 */
     func configurePickerView(){
-        let screenSize:CGRect = UIScreen.main.bounds
-        var pickerRect = pickerMoneda.frame
-        pickerRect.origin.x = 5// some desired value
-        pickerRect.origin.y = screenSize.size.height - 400// some desired value
-        pickerMoneda.frame = pickerRect
-        pickerMoneda.frame.size.height = 150
-        pickerMoneda.frame.size.width = screenSize.width - 20
-        pickerMoneda.backgroundColor = UIColor.yellow
-        pickerMoneda.setValue(UIColor.black, forKey: "textColor")
-        pickerMoneda.autoresizingMask = .flexibleWidth
-        pickerMoneda.contentMode = .center
+        Utils.preparePickerView(picker: pickerMoneda)
         pickerMoneda.delegate = self
         pickerMoneda.dataSource = self
         
@@ -206,16 +207,7 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
         currency.inputAccessoryView = toolbar
         currency.inputView = pickerMoneda
         
-        pickerRect = pickerTimeType.frame
-        pickerRect.origin.x = 5// some desired value
-        pickerRect.origin.y = screenSize.size.height - 400// some desired value
-        pickerTimeType.frame = pickerRect
-        pickerTimeType.frame.size.height = 150
-        pickerTimeType.frame.size.width = screenSize.width - 20
-        pickerTimeType.backgroundColor = UIColor.yellow
-        pickerTimeType.setValue(UIColor.black, forKey: "textColor")
-        pickerTimeType.autoresizingMask = .flexibleWidth
-        pickerTimeType.contentMode = .center
+        Utils.preparePickerView(picker: pickerTimeType)
         pickerTimeType.delegate = self
         pickerTimeType.dataSource = self
         
@@ -229,16 +221,7 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
         timeType.inputAccessoryView = toolbar
         timeType.inputView = pickerTimeType
         
-        pickerRect = pickerTimeLapse.frame
-        pickerRect.origin.x = 5// some desired value
-        pickerRect.origin.y = screenSize.size.height - 400// some desired value
-        pickerTimeLapse.frame = pickerRect
-        pickerTimeLapse.frame.size.height = 150
-        pickerTimeLapse.frame.size.width = screenSize.width - 20
-        pickerTimeLapse.backgroundColor = UIColor.yellow
-        pickerTimeLapse.setValue(UIColor.black, forKey: "textColor")
-        pickerTimeLapse.autoresizingMask = .flexibleWidth
-        pickerTimeLapse.contentMode = .center
+        Utils.preparePickerView(picker: pickerTimeLapse)
         pickerTimeLapse.delegate = self
         pickerTimeLapse.dataSource = self
         
@@ -352,7 +335,7 @@ class MovimientosViewController: UIViewController, UIPickerViewDelegate, UIPicke
             return
         }
         
-        movData.moneda = moneda
+        analisis.moneda = moneda
         
         switch selectedType {
         case 0:
@@ -480,10 +463,14 @@ extension MovimientosViewController: UIPageViewControllerDelegate, UIPageViewCon
             if self.currentIndex == 0 {
                 pageTitle2.textColor = UIColor.blue
                 pageTitle1.textColor = UIColor.black
+                currency.isUserInteractionEnabled = true
+                currency.textColor = UIColor.black
                 currentIndex = 1
             } else if self.currentIndex == 1 {
                 pageTitle1.textColor = UIColor.blue
                 pageTitle2.textColor = UIColor.black
+                currency.isUserInteractionEnabled = false
+                currency.textColor = UIColor.gray
                 currentIndex = 0
             }
         }

@@ -14,7 +14,9 @@ class MotivesMainViewController: UIViewController, UITableViewDelegate, UITableV
         if newMotive.text == nil {
             return
         }
-        let _ = guardarMotivo(motivo: newMotive.text!)
+        if newMotive.text != nil && !newMotive.text!.isEmpty {//newMotive.text!.isEmpty {//newMotive.text != nil{// && newMotive.text!.isEmpty{
+            let _ = guardarMotivo(motivo: newMotive.text!)
+        }
         newMotive.text = nil
         for c in edit{
             let a = dataMotivos[c.key][Motivo.Active] as! Int64

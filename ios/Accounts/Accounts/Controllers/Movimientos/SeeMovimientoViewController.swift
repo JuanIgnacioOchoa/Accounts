@@ -18,6 +18,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         } else {
             cantidadTxt.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
         }
+        actualizarResulCant()
     }
     @IBAction func segmentedValueFecha(_ sender: UISegmentedControl) {
         let sel = sender.selectedSegmentIndex
@@ -34,7 +35,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             txt.delegate = self
             self.view.addSubview(txt)
             showDatePicker(fechaTxt: txt)
-            txt.removeFromSuperview()
+            //txt.removeFromSuperview()
             break
         }
     }
@@ -51,13 +52,14 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
     @IBOutlet weak var commentTxt: UITextView!
     @IBOutlet weak var segmentedFecha: UISegmentedControl!
     @IBOutlet weak var segmentedGasto: UISegmentedControl!
+    @IBOutlet var resultLbl: UILabel!
     
     let monedaTag = 1, totalesTag = 2, motivoTag = 3
     let datePicker = UIDatePicker()
     var pickerMoneda = UIPickerView(), pickerMotivo = UIPickerView(), pickerTotales = UIPickerView()
     var dataArrayMove:[[String:Any?]] = [], dataArrayMoneda:[[String:Any?]] = [], dataArrayMotivo:[[String:Any?]] = [], dataArrayTotales:[[String:Any?]] = []
-    var cantidad:NSNumber = 0
-    var _id:Int64? = 0, idMoneda:Int64 = 1, idTotales:Int64 = 1, idMotivo:Int64 = 1, idTrip:Int64 = 0
+    var cantidad:NSNumber = 0.0
+    var _id:Int64? = 0, idMoneda:Int64 = 0, idTotales:Int64 = 0, idMotivo:Int64 = 0, idTrip:Int64 = 0, orgTotales:Int64 = 0, orgMoneda:Int64 = 0
     var comment:String?
     var motivo:String = "", moneda:String = "", totales:String = ""
     var selectedTotales = 0, selectedMoneda = 0,  selectedMotivo = 0
@@ -67,28 +69,114 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
     var cambioH = false, gasto:Bool = true, fechaEdit = false
     let txtTypeNumber = 0, txtTypeAll = 1, txtTypeNone = 2
     let numberFormatter = NumberFormatter()
-    
+    var pickersActive = false, activeAlert = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         numberFormatter.numberStyle = .decimal
         numberFormatter.minimumFractionDigits = 2
         
+        hideKeyboardWhenTappedAround()
         
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        activeAlert = false
         if _id == 0 {
-            dataArrayTotales = getTotales()
-            dataArrayMotivo = getMotives(active: true)
-            dataArrayMoneda = getMonedas()
-            cantidad = 0.0
-            idMoneda = dataArrayMoneda[0]["_id"] as! Int64
-            idTotales = dataArrayTotales[0]["_id"] as! Int64
-            idMotivo = dataArrayMotivo[0]["_id"] as! Int64
-            comment = ""
-            moneda = dataArrayMoneda[0][Moneda.Moneda] as! String
-            totales = dataArrayTotales[0][Totales.Cuenta] as! String
-            motivo = dataArrayMotivo[0][Motivo.Motivo] as! String
+
             self.gasto = true
             cantidadTxt.textColor = UIColor.red
+            
+            dataArrayMotivo = getMotives(active: true)
+            dataArrayTotales = getTotales(id: idTotales)
+            dataArrayMoneda = getMonedasWith(id: idMoneda)
+            if dataArrayMotivo.count == 0{
+                let alert = UIAlertController(title: "No existe motivo", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Agregar Motivo", style: .default, handler: {(a: UIAlertAction!) in
+                    self.performSegue(withIdentifier: "crearMotivo", sender: nil)
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {(a: UIAlertAction!) in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                //if !activeAlert{
+                //    activeAlert = true
+                    present(alert, animated: true, completion: nil)
+                //}
+            } else if dataArrayMoneda.count == 0 {
+                let alert = UIAlertController(title: "No existe Moneda", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Agregar Moneda", style: .default, handler: {(a: UIAlertAction!) in
+                    self.performSegue(withIdentifier: "agregarMoneda", sender: nil)
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {(a: UIAlertAction!) in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                //if !activeAlert{
+                //    activeAlert = true
+                    present(alert, animated: true, completion: nil)
+                //}
+            } else if dataArrayTotales.count == 0{
+                let alert = UIAlertController(title: "No existe Cuenta", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Agregar Cuenta", style: .default, handler: {(a: UIAlertAction!) in
+                    self.performSegue(withIdentifier: "agregarCuenta", sender: nil)
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: {(a: UIAlertAction!) in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                present(alert, animated: true, completion: nil)
+            } else {
+                idMotivo = dataArrayMotivo[0]["_id"] as! Int64
+                motivo = dataArrayMotivo[0][Motivo.Motivo] as! String
+                idMoneda = dataArrayMoneda[0]["_id"] as! Int64
+                moneda = dataArrayMoneda[0][Moneda.Moneda] as! String
+                idTotales = dataArrayTotales[0]["_id"] as! Int64
+                totales = dataArrayTotales[0][Totales.Cuenta] as! String
+            }
+            dataArrayMotivo = getMotives(active: true)
+            
+            if idMoneda != 0 {
+                dataArrayTotales = getTotales(id: idTotales)
+                dataArrayMotivo = getMotives(active: true)
+                dataArrayMoneda = getMonedasWith(id: idMoneda)
+                comment = ""
+                moneda = dataArrayMoneda[0][Moneda.Moneda] as! String
+                totales = dataArrayTotales[0][Totales.Cuenta] as! String
+                var c = 0
+                for m in dataArrayMoneda {
+                    if m["_id"] as! Int64 == idMoneda{
+                        moneda = m[Moneda.Moneda] as! String
+                        selectedMoneda = c
+                        oldSelectedMoneda = selectedMoneda
+                    }
+                    c = c + 1
+                }
+                c = 0
+                for t in dataArrayTotales {
+                    if t["_id"] as! Int64 == idTotales{
+                        totales = t[Totales.Cuenta] as! String
+                        selectedTotales = c
+                        oldSelectedTotales = c
+                    }
+                    c = c + 1
+                }
+            }
+            if cantidad != 0.0 {
+                cantidadTxt.text = "\(cantidad)"
+                if Int(truncating: cantidad) < 0 {
+                    self.gasto = true
+                    self.segmentedGasto.selectedSegmentIndex = 0
+                    self.cantidadTxt.textColor = UIColor.red
+                    cantidad = NSNumber(value: Int(cantidad) * -1)
+                } else {
+                    self.gasto = false
+                    self.segmentedGasto.selectedSegmentIndex = 1
+                    self.cantidadTxt.textColor = Utils.green
+                }
+            }
         } else {
             dataArrayMove = getMoveData(id: _id!)
             
@@ -98,16 +186,16 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             idTotales = dataArrayMove[0][Movimiento.IdTotales] as! Int64
             idMotivo = dataArrayMove[0][Movimiento.IdMotivo] as! Int64
             comment = dataArrayMove[0][Movimiento.Comment] as? String
-            dataArrayMoneda = getMonedas()
+            dataArrayMotivo = getMotives(id: idMotivo)
+            dataArrayTotales = getTotales(id: idTotales)
+            dataArrayMoneda = getMonedasWith(id: idMoneda)
+            
             let fecha = dataArrayMove[0][Movimiento.Fecha] as! String
             let nFecha = dataArrayMove[0]["nFecha"] as! String
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             date = dateFormatter.date(from: nFecha)!
-            dataArrayMotivo = getMotives(id: idMotivo)
-            dataArrayTotales = getTotales(id: idTotales)
-            dataArrayMoneda = getMonedasWith(id: idMoneda)
-            let doubleCant:Double = Double(truncating: cantidad)
+            
             var c = 0
             for m in dataArrayMotivo {
                 if m["_id"] as! Int64 == idMotivo{
@@ -139,23 +227,29 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
                 self.gasto = true
                 self.segmentedGasto.selectedSegmentIndex = 0
                 self.cantidadTxt.textColor = UIColor.red
-                cantidad = NSNumber(value: Int(cantidad) * -1)
+                cantidad = NSNumber(value: Double(truncating: cantidad) * -1)
             } else {
                 self.gasto = false
                 self.segmentedGasto.selectedSegmentIndex = 1
-                self.cantidadTxt.textColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+                self.cantidadTxt.textColor = Utils.green
             }
-            cantidadTxt.text = numberFormatter.string(from: NSNumber(value: doubleCant))
+            cantidadTxt.text = "\(cantidad)"
             segmentedFecha.selectedSegmentIndex = 2
             dateFormatter.dateFormat = "dd-MMM-yyyy"
             //fechaTxt.text = formatter.string(from: datePicker.date)
             segmentedFecha.setTitle(dateFormatter.string(from: date), forSegmentAt: 2)
         }
         
+        orgTotales = idTotales
+        orgMoneda = idMoneda
         preparePickerView()
         
-        let monedaCuenta = dataArrayTotales[selectedTotales][Totales.IdMoneda] as? Int64
-        let monedaMov = dataArrayMoneda[selectedMoneda]["_id"] as? Int64
+        var monedaCuenta:Int64 = 0
+        var monedaMov:Int64 = 0
+        if dataArrayTotales.count > 0 {
+            monedaCuenta = (dataArrayTotales[selectedTotales][Totales.IdMoneda] as? Int64)!
+            monedaMov = (dataArrayMoneda[selectedMoneda]["_id"] as? Int64)!
+        }
         cambioH = monedaCuenta == monedaMov
         cambioLbl.isHidden = cambioH
         cambioTxt.isHidden = cambioH
@@ -179,12 +273,21 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         cantidadTxt.tag = txtTypeNumber
         cambioTxt.tag = txtTypeNumber
         //fechaTxt.delegate = self
-        cambioTxt.text = numberFormatter.string(from: cambio)
+        cambioTxt.text = "\(cambio)"
         monedaTxt.text = moneda
         cuentaTxt.text = totales
         motivoTxt.text = motivo
         //fechaTxt.text = fecha
         
+        
+        let toolbar = UIToolbar();
+        toolbar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: nil, action: #selector(endEditing))
+
+        toolbar.setItems([doneButton], animated: false)
+
+        cantidadTxt.inputAccessoryView = toolbar
+        cambioTxt.inputAccessoryView = toolbar
     }
     
     func showDatePicker(fechaTxt:UITextField){
@@ -203,6 +306,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         fechaTxt.inputAccessoryView = toolbar
         fechaTxt.inputView = datePicker
         fechaTxt.becomeFirstResponder()
+        pickersActive = true
     }
 
     @objc func donedatePicker(){
@@ -212,15 +316,19 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         segmentedFecha.setTitle(formatter.string(from: datePicker.date), forSegmentAt: 2)
         date = datePicker.date
         fechaEdit = true
+        pickersActive = false
         self.view.endEditing(true)
     }
     
-
-
     @objc func cancelDatePicker(){
         if !fechaEdit {
             segmentedFecha.selectedSegmentIndex = 0
         }
+        pickersActive = false
+        self.view.endEditing(true)
+    }
+    
+    @objc func endEditing(){
         self.view.endEditing(true)
     }
     
@@ -235,21 +343,25 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         cambioH = monedaCuenta == monedaMov
         if !cambioH && _id == 0 {
             cambio = getCambioMoneda(idMon1: monedaCuenta!, idMon2: monedaMov!)
-            cambioTxt.text = numberFormatter.string(from: cambio)
+            cambioTxt.text = "\(cambio)"
         } else if _id! > 0 as Int64 {
             let monOriginal = dataArrayMove[0][Movimiento.IdMoneda] as? Int64
             let totOriginal = dataArrayMove[0][Movimiento.IdTotales] as? Int64
             if !cambioH && monOriginal != nil && totOriginal != nil && (monOriginal != idMoneda || totOriginal != idTotales){
                 cambio = getCambioMoneda(idMon1: monedaCuenta!, idMon2: monedaMov!)
-                cambioTxt.text = numberFormatter.string(from: cambio)
+                cambioTxt.text = "\(cambio)"
             }
         }
         cambioH = monedaCuenta == monedaMov
+        if cambioH {
+            cambioTxt.text = "1.0"
+        }
         cambioLbl.isHidden = cambioH
         cambioTxt.isHidden = cambioH
         oldSelectedTotales = selectedTotales
         oldSelectedMoneda = selectedMoneda
         oldSelectedMotivo = selectedMotivo
+        pickersActive = false
         self.view.endEditing(true)
     }
     
@@ -266,8 +378,13 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         if !cambioH && _id == 0 {
             cambio = getCambioMoneda(idMon1: monedaCuenta!, idMon2: monedaMov!)
         }
+        if cambioH {
+            cambioTxt.text = "1.0"
+        }
         cambioLbl.isHidden = cambioH
         cambioTxt.isHidden = cambioH
+        pickersActive = false
+        actualizarResulCant()
         self.view.endEditing(true)
     }
     
@@ -364,6 +481,50 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         //showDatePicker()
     }
     
+    func actualizarResulCant(){
+        var cantidadActual = dataArrayTotales[selectedTotales][Totales.CurrentCantidad] as! Double
+        let tmpIdTotales = dataArrayTotales[selectedTotales]["_id"] as! Int64
+        let tmpIdMoneda = dataArrayMoneda[selectedMoneda]["_id"] as! Int64
+        if (_id > 0) {
+            if tmpIdTotales == orgTotales {
+                cantidadActual -= (dataArrayMove[0][Movimiento.Cantidad] as! Double) * (dataArrayMove[0][Movimiento.Cambio] as! Double)
+            }
+        }
+        if orgMoneda == tmpIdMoneda && !cambioH {
+            resultLbl.text = ""
+            return
+        }
+        var newCantidad:Double = 0.0
+        var cambio:Double? = 1.0
+        
+        if cantidadTxt.text == nil {
+            //cantidadTxt.setError("Error", show: true)
+            return
+        }
+        let dCantidad = Double(cantidadTxt.text!)
+        if dCantidad != nil {
+            newCantidad = dCantidad!
+        }
+        cambio = Double(cambioTxt.text!)
+        if cambio == nil {
+            cambio = 1.0
+        }
+        newCantidad = newCantidad * cambio!
+        var totalCantidad:Double = cantidadActual + newCantidad
+        if gasto {
+            totalCantidad = cantidadActual - newCantidad
+        }
+        resultLbl.text = numberFormatter.string(from: NSNumber(value: totalCantidad))
+        if totalCantidad > 0 {
+            resultLbl.textColor = Utils.green
+        } else if totalCantidad < 0 {
+            resultLbl.textColor = UIColor.red
+        } else {
+            resultLbl.textColor = UIColor.black
+        }
+    }
+
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -393,10 +554,12 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         if pickerView.tag == monedaTag {
             selectedMoneda = row
             monedaTxt.text = dataArrayMoneda[row][Moneda.Moneda] as? String
+            actualizarResulCant()
             //return dataArrayMoneda.count
         } else if pickerView.tag == totalesTag {
             selectedTotales = row
             cuentaTxt.text = dataArrayTotales[row][Totales.Cuenta] as? String
+            actualizarResulCant()
             //return dataArrayTotales.count
         } else if pickerView.tag == motivoTag {
             selectedMotivo = row
@@ -404,7 +567,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             //return  dataArrayMotivo.count
         }
         
-
+        pickersActive = true
         //selectedMoneda = row
         
         //blurEffectView!.removeFromSuperview()
@@ -416,6 +579,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         if textField.tag == txtTypeNone {
+            pickersActive = false
             return false
         } else if textField.tag == txtTypeNumber {
             guard CharacterSet(charactersIn: "0123456789.").isSuperset(of: CharacterSet(charactersIn: string)) else {
@@ -427,6 +591,11 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         return true
     }
 
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField.tag == txtTypeNumber {
+            actualizarResulCant()
+        }
+    }
 /*
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         return false
@@ -463,7 +632,7 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
         }
         let com:String? = commentTxt.text
         let g = "cantidad: \(dCantidad ?? 0.0), idTotales: \(idTotales), comment: \(com)), idMotivo: \(idMotivo), idMoneda: \(idMoneda), cambio: \(dcambio), fecha: \(date), id: \(_id)"
-        print(g)
+        //print(g)
         if _id == 0 {
             ///Nuevo
             let x = newMove(cantidad: dCantidad ?? 0.0, idCuenta: idTotales, comment: com, idMotivo: idMotivo, idMoneda: idMoneda, cambio: dcambio!, date: date, idViaje: idTrip)
@@ -478,6 +647,33 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
             if x && y{
                 navigationController?.popViewController(animated: true)
             }
+        }
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       
+        if "crearMotivo" == segue.identifier {
+            let viewController = segue.destination as! MotivesMainViewController
+            viewController.title = "Motivos"
+        } else if "agregarMoneda" == segue.identifier {
+            let viewController = segue.destination as! MonedaMainViewController
+            viewController.title = "Monedas"
+        } else if "agregarCuenta" == segue.identifier {
+            let viewController = segue.destination as! CreateCuentasViewController
+            viewController.title = "Crear Cuenta"
+        }
+    }
+}
+
+extension SeeMovimientoViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tapGesture = UITapGestureRecognizer(target: self,
+                         action: #selector(hideKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc func hideKeyboard() {
+        if !pickersActive {
+            view.endEditing(true)
         }
     }
 }
@@ -506,4 +702,6 @@ extension UITextField {
         self.text = ""
         self.placeholder = string
     }
+    
+    
 }

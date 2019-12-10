@@ -229,13 +229,13 @@ extension PrestamosMainViewController: UIPageViewControllerDelegate, UIPageViewC
     }
     
     func Prestado(alert: UIAlertAction!) {
-        prestado = true
+        prestado = false
         selected = 0
         self.performSegue(withIdentifier: "verPrestamo", sender: nil)
     }
     
     func Prestar(alert: UIAlertAction!) {
-        prestado = false
+        prestado = true
         selected = 0
         self.performSegue(withIdentifier: "verPrestamo", sender: nil)
     }

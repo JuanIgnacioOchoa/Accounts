@@ -10,6 +10,9 @@ import UIKit
 
 class PrestamosDetViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
 
+    @IBAction func agregarPago(_ sender: UIButton) {
+        showDetPrestamo(data: nil)
+    }
     @IBAction func saveBtn(_ sender: UIButton) {
         guardar()
     }
@@ -58,7 +61,7 @@ class PrestamosDetViewController: UIViewController, UIPickerViewDelegate, UIPick
     let datePicker = UIDatePicker()
     var pickerMoneda = UIPickerView(), pickerTotales = UIPickerView(), pickerPersonas = UIPickerView()
     let txtMoneda = UITextField(), txtCuenta = UITextField(), txtFecha = UITextField(), txtPersona = UITextField()
-    var _id:Int64 = 0, idMoneda:Int64 = 1, idTotales:Int64 = 1, idPersona:Int64 = 1
+    var _id:Int64 = 0, idMoneda:Int64 = 0, idTotales:Int64 = 0, idPersona:Int64 = 0
     var date:Date = Date()
     var dataArrayPrestamo:[[String:Any?]] = [], dataArrayMoneda:[[String:Any?]] = [], dataArrayTotales:[[String:Any?]] = [], dataArrayPersona:[[String:Any?]] = [], dataArrayDetalle:[[String:Any?]] = []
     let txtTypeNumber = 0, txtTypeAll = 1, txtTypeNone = 2
@@ -74,6 +77,7 @@ class PrestamosDetViewController: UIViewController, UIPickerViewDelegate, UIPick
         super.viewDidLoad()
         numberFormatter.numberStyle = .decimal
         numberFormatter.minimumFractionDigits = 2
+        
         tableView.delegate = self
         tableView.dataSource = self
         dataArrayDetalle = getPrestamoDetalle(id: _id)
@@ -83,7 +87,7 @@ class PrestamosDetViewController: UIViewController, UIPickerViewDelegate, UIPick
         self.view.addSubview(txtPersona)
         if _id == 0 {
             dataArrayTotales = getTotales()
-            //dataArrayMoneda = getMonedas()
+            dataArrayMoneda = getMonedas()
             dataArrayPersona = getPersonas()
             tableView.isHidden = true
         } else {
@@ -171,6 +175,9 @@ class PrestamosDetViewController: UIViewController, UIPickerViewDelegate, UIPick
         MonedaLbl.text = dataArrayMoneda[selectedMoneda][Moneda.Moneda] as? String
         CuentaLbl.text = dataArrayTotales[selectedTotales][Totales.Cuenta] as? String
         PresonaLbl.text = dataArrayPersona[selectedPersona][Personas.Nombre] as? String
+        idMoneda = dataArrayMoneda[selectedMoneda]["_id"] as! Int64
+        idTotales = dataArrayTotales[selectedTotales]["_id"] as! Int64
+        idPersona = dataArrayPersona[selectedPersona]["_id"] as! Int64
     }
 
     func preparePickerView(){
@@ -447,7 +454,7 @@ class PrestamosDetViewController: UIViewController, UIPickerViewDelegate, UIPick
                 dCantidad = dCantidad! * -1
             }
             let x = newPrestamo(cantidad: dCantidad!, idTotales: idTotales, idMoneda: idMoneda, idPersona: idPersona, comment: com, cambio: dcambio!, idMove: 0, date: date)
-            let y = newMoveCuenta(cantidad: dCantidad! * dcambio!, idCuenta: idTotales)
+            let y = newMoveCuenta(cantidad: dCantidad! * dcambio! * -1, idCuenta: idTotales)
             if x && y{
                 navigationController?.popViewController(animated: true)
             }
@@ -471,26 +478,28 @@ extension PrestamosDetViewController: UITableViewDelegate, UITableViewDataSource
         
         alert.addAction(UIAlertAction(title: "Guardar", style: .default, handler: {(a: UIAlertAction!) in
             print("Foo")
+            if alert.cantTextField.text == nil {
+                alert.cantTextField.setError("Error", show: true)
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            var dCantidad = Double(alert.cantTextField.text!.replacingOccurrences(of: ",", with: ""))
+            if dCantidad == nil {
+                alert.cantTextField.setError("Error", show: true)
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            if alert.cambioTextField.text == nil {
+                alert.cambioTextField.setError("Error", show: true)
+                return
+            }
+            let dCambio = Double(alert.cambioTextField.text!.replacingOccurrences(of: ",", with: ""))
+            if dCambio == nil {
+                alert.cambioTextField.setError("Error", show: true)
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
             if data != nil {
-                if alert.cantTextField.text == nil {
-                    alert.cantTextField.setError("Error", show: true)
-                    return
-                }
-                var dCantidad = Double(alert.cantTextField.text!.replacingOccurrences(of: ",", with: ""))
-                if dCantidad == nil {
-                    alert.cantTextField.setError("Error", show: true)
-                    return
-                }
-                if alert.cambioTextField.text == nil {
-                    alert.cambioTextField.setError("Error", show: true)
-                    return
-                }
-                let dCambio = Double(alert.cambioTextField.text!.replacingOccurrences(of: ",", with: ""))
-                if dCambio == nil {
-                    alert.cambioTextField.setError("Error", show: true)
-                    self.present(alert, animated: true, completion: nil)
-                    return
-                }
                 let id = data!["_id"] as! Int64
                 let oldIdTotales = data![PrestamosDet.IdTotales] as! Int64
                 let oldCant = data![PrestamosDet.Cantidad] as! Double
@@ -508,6 +517,13 @@ extension PrestamosDetViewController: UITableViewDelegate, UITableViewDataSource
                     let _ = updateTotalesFromPrestamo(cantidad: (oldCant * -1), idCuenta: oldIdTotales)
                     let _ = updateTotalesFromPrestamo(cantidad: dCantidad!, idCuenta: alert.idTotales)
                 }
+            } else {
+                //var cant = etCantidad.text.toString().toDouble()
+                if(alert.gasto) { dCantidad = dCantidad! * -1 }
+                
+                
+                let _ = insertPrestamoDetalle(cantidad: dCantidad!, idTotales: alert.idTotales, idMoneda: alert.idMoneda, idPrestamo: self._id, cambio: dCambio!, date: alert.date)
+                let _ = updateTotalesFromPrestamo(cant: dCantidad!, idTotales: alert.idTotales)
             }
             self.dataArrayDetalle = getPrestamoDetalle(id: self._id)
             self.tableView.reloadData()
@@ -515,6 +531,9 @@ extension PrestamosDetViewController: UITableViewDelegate, UITableViewDataSource
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.data = data
         alert.monedaPrestamo = idMoneda
+        alert.idTotales = idTotales
+        alert.oldCantidad = cantidad
+        alert.totalPaid = getTotalPaid(id: self._id)
         present(alert, animated: true, completion: nil)
     }
     

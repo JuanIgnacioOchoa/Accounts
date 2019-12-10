@@ -31,4 +31,21 @@ class Utils {
         UIColor.init(red: (0/255), green: (0/255), blue: (117/255), alpha: 1)]
     
     static let green:UIColor = UIColor.init(red: 13/255, green: 72/255, blue: 4/255, alpha: 1.0)
+    
+    static let gradientColors = [UIColor.init(red: 252/255, green: 70/255, blue: 111/255, alpha: 1.0).cgColor,
+                                 UIColor.init(red: 63/255, green: 94/255, blue: 254/255, alpha: 1.0).cgColor]
+    
+    static func preparePickerView(picker :UIPickerView){
+        let screenSize:CGRect = UIScreen.main.bounds
+        var pickerRect = picker.frame
+        pickerRect.origin.x = 5// some desired value
+        pickerRect.origin.y = screenSize.size.height/3 // some desired value
+        picker.frame = pickerRect
+        picker.frame.size.height = screenSize.size.height/3
+        picker.frame.size.width = screenSize.width - 20
+        picker.setValue(UIColor.black, forKey: "textColor")
+        picker.autoresizingMask = .flexibleWidth
+        picker.contentMode = .center
+    }
 }
+

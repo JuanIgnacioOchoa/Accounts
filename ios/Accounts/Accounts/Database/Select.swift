@@ -297,8 +297,8 @@ func getTotalesMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?
     var tmpY = ""
     var tmpM = ""
     if year == nil {
-        tmpY = "and strftime('%Y',Fecha) == strftime('%Y', date('now'))"
-        tmpM = "and strftime('%m',Fecha) == strftime('%m', date('now'))"
+        tmpY = "and Fecha BETWEEN date('now', '-1 month') and date('now')"
+        tmpM = ""
     } else if month == nil {
         tmpY = "and strftime('%Y',Fecha) == '\(year!)'"
     } else {
@@ -322,7 +322,7 @@ func getTotalesMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?
     }
     return []
 }
-func getMotivosMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?]] {
+func getMotivosMovFecha(id: Int64, year:String?, month:String?, moneda: Int64) -> [[String:Any?]] {
     var tmpY = ""
     var tmpM = ""
     if year == nil {
@@ -337,11 +337,11 @@ func getMotivosMovFecha(id: Int64, year:String?, month:String?) -> [[String:Any?
     let query = """
         SELECT m._id, m.Fecha
             FROM AccountsMovimiento as m, AccountsMotivo as mot
-            WHERE mot._id = m.IdMotivo \(tmpY) \(tmpM) and IdMotivo = ?
+            WHERE mot._id = m.IdMotivo \(tmpY) \(tmpM) and IdMotivo = ? and IdMoneda = ?
         Group by m.Fecha ORDER BY Fecha DESC, m._id DESC
 """
     do{
-        let stmt = try Database.db.prepare(query, [id])
+        let stmt = try Database.db.prepare(query, [id, moneda])
         return Database.stmtToDictionary(stmt: stmt)
     } catch{
         print("Error select getMovimientosFecha 0", error)
@@ -424,12 +424,24 @@ func gteMovimientosByDate(date:String) -> [[String:Any?]]{
 
 func getTotalesMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
     let query = """
-                SELECT mov.*, mot.Motivo, mon.Moneda, t.Cuenta
-                    FROM AccountsMovimiento as mov, AccountsTotales as t, AccountsMotivo as mot, AccountsMoneda as mon
-                    WHERE mov.IdTotales = t._id and mov.IdMotivo = mot._id and mov.IdMoneda = mon._id and Fecha = ? and (IdTotales = ? or Traspaso = ?) ORDER BY Fecha DESC, _id DESC
+                SELECT mov.*, mon.Moneda, t.Cuenta FROM(
+                        SELECT mov.*, '0' as Prestamo, mot.Motivo
+                            FROM AccountsMovimiento as mov , AccountsMotivo as mot
+                            WHERE mov.IdMotivo = mot._id and (IdTotales = ? or Traspaso = ?) and Fecha = ?
+                        union
+                        SELECT _id, Cantidad, FEcha, IdTotales, IdPersona, IdMoneda, Cambio, null as Traspaso, comment, null as IdViaje, '1' as Prestamo, 'Prestamo' as Motivo
+                            FROM AccountsPrestamos
+                            WHERE IdTotales = ? and Fecha = ?
+                        union
+                        SELECT _id, Cantidad, FEcha, IdTotales, null as IdPersona, IdMoneda, Cambio, null as Traspaso, null as IdComment, null as IdViaje, '2' as Prestamo, 'Prestamo' as Motivo
+                            FROM AccountsPrestamosDetalle
+                            WHERE IdTotales = ? and Fecha = ?
+                    ) as mov, AccountsMoneda as mon, AccountsTotales as t
+                    WHERE mon._id = mov.IdMoneda and t._id = mov.IdTotales
+                Order by Fecha DEsc, _id desc
 """
     do{
-        let stmt = try Database.db.prepare(query, [date, id, id])
+        let stmt = try Database.db.prepare(query, [id, id, date, id, date, id, date])
         return Database.stmtToDictionary(stmt: stmt)
     } catch {
         print("Error Select getMovimientosByDate ", error)
@@ -437,14 +449,14 @@ func getTotalesMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
     return []
 }
 
-func getMotivosMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
+func getMotivosMovimientosByDate(id: Int64, date:String, moneda: Int64) -> [[String:Any?]]{
     let query = """
                 SELECT mov.*, mot.Motivo, mon.Moneda, t.Cuenta
                     FROM AccountsMovimiento as mov, AccountsTotales as t, AccountsMotivo as mot, AccountsMoneda as mon
-                    WHERE mov.IdTotales = t._id and mov.IdMotivo = mot._id and mov.IdMoneda = mon._id and Fecha = ? and IdMotivo = ? ORDER BY Fecha DESC, _id DESC
+                    WHERE mov.IdTotales = t._id and mov.IdMotivo = mot._id and mov.IdMoneda = mon._id and Fecha = ? and IdMotivo = ? and mov.IdMoneda = ? ORDER BY Fecha DESC, _id DESC
 """
     do{
-        let stmt = try Database.db.prepare(query, [date, id])
+        let stmt = try Database.db.prepare(query, [date, id, moneda])
         return Database.stmtToDictionary(stmt: stmt)
     } catch {
         print("Error Select getMovimientosByDate ", error)
@@ -465,9 +477,8 @@ func getTripsMovimientosByDate(id: Int64, date:String) -> [[String:Any?]]{
     }
     return []
 }
-///------------------------------------END MOVIMIENTOS----------------------------------------
 
-//-------------------------Monedas
+//MARK:Monedas
 
 func getMonedas() -> [[String:Any?]]{
     let query = """
@@ -559,7 +570,22 @@ func getMotives(active:Bool) -> [[String:Any?]] {
 }
 //----------------------------End Motivos
 
-//--------------------------------Prestamos
+//MARK: TIPO CUENTAS
+
+func getTiposCuentas() -> [[String:Any?]] {
+        let query = """
+    SELECT * FROM \(TiposCuentas.Table) WHERE _id <> 5
+    """
+        
+        do {
+            let stmt = try Database.db.prepare(query)
+            return Database.stmtToDictionary(stmt: stmt)
+        } catch {
+            print("Error select: ", error)
+        }
+        return []
+}
+//MARK: Prestamos
 
 func getPrestamosByPeople(zero:Bool) -> [[String:Any?]] {
     var s = ""
@@ -701,7 +727,7 @@ func getTotalPaid(id:Int64) -> Double {
 
 //--------------------------------End Prestamos
 
-//--------------------------------Personas
+//MARK: Personas
 func getPersonas() -> [[String:Any?]] {
     let query = """
         SELECT AccountsPersonas._id as _id, AccountsPersonas.Nombre as Nombre, COUNT(AccountsPersonas.Nombre) as Count
@@ -722,7 +748,7 @@ func getPersonas() -> [[String:Any?]] {
 
 //----------------------------End Personas
 
-//----------------------------Reportes
+//MARK: Reportes
 
 func getGastoTotalByMoneda(moneda:Int64, year:String?, month:String?) -> Double{
     var tmpY = ""
@@ -1262,15 +1288,19 @@ func getReportesTotales(year:String?, month:String?) -> [[String:Any?]]{
 func getTotalsHistory(daily: Bool, diference:Int, now:String) -> [[String:Any?]] {
     var groupBy = "GROUP BY t.Tipo, y, mo, t.IdMoneda, dd"
     var groupBy2 = "GROUP BY t.Tipo, y, mo, dd"
-    var group3 = "GROUP BY y, mo, dd"
+    var groupBy4 = "GROUP BY tc._id, y, mo, s.IdMoneda, dd"
+    var groupBy5 = "Group BY t._id, mo, dd"
+    var group3 = "GROUP BY y, mo, dd, IdMoneda"
     var orderBy = "order by y desc, mo desc, dd desc"
     var date = "date('\(now)', 'start of month', '\(diference) month') and date('\(now)')"
     if !daily {
         groupBy = "GROUP BY t.Tipo, y, mo, t.IdMoneda"
         groupBy2 = "GROUP BY t.Tipo, y, mo"
-        group3 = "GROUP BY y, mo"
+        group3 = "GROUP BY y, mo, IdMoneda"
         date = "date('\(now)', 'start of year', '\(diference) year') and date('\(now)')"
         orderBy = "order by y desc, mo desc"
+        groupBy4 = "GROUP BY tc._id, y, mo, s.IdMoneda"
+        groupBy5 = "Group BY t._id, mo"
     }
     
     let query = """
@@ -1304,50 +1334,51 @@ func getTotalsHistory(daily: Bool, diference:Int, now:String) -> [[String:Any?]]
             \(groupBy)
             union
             SELECT SUM(Cantidad) as Cantidad, 5 as _id, y, mo, IdMoneda, dd, 'F' as Zone FROM(
-                SELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'F' as Zone
+                SELECT (SUM( p.Cantidad * Cambio) * -1) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'F' as Zone
                     FROM AccountsPrestamos as p
-                    where Fecha is not null \(date)
+                    where Fecha is not null and p.Fecha BETWEEN \(date)
                 \(group3)
                 union
                 SELECT SUM( p.Cantidad * Cambio) as Cantidad, 5 as _id, (strftime('%Y', Fecha)) as y, (strftime('%m',Fecha)) as mo, p.IdMoneda, (strftime('%d',Fecha)) as dd, 'H' as Zone
                     FROM AccountsPrestamosDetalle as p
-                    where Fecha is not null \(date)
+                    where Fecha is not null and p.Fecha BETWEEN \(date)
                 \(group3)
             ) \(group3)
             )as s, AccountsTiposCuentas as tc, AccountsMoneda as m WHERE s._id = tc._id and m._id = s.IdMoneda and s.IdMoneda > 0
-            GROUP BY tc._id, y, mo, s.IdMoneda, dd
+            \(groupBy4)
             UNION
             SELECT t.Cuenta, t.CurrentCantidad, SUM(Cantidad) as Cantidad, t._id, y, mo, dd FROM (
             select (coalesce(SUM(m.Cantidad * m.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'A' as Zone
             from AccountsTotales as t, AccountsMovimiento as m
             WHERE m.IdTotales = t._id and Traspaso is null and m.Fecha BETWEEN \(date)
-            \(groupBy2)
+            \(groupBy5)
             UNION
             select SUM(CASE WHEN m.IdMotivo = 2
             then m.Cantidad * -1
             else m.Cantidad * m.Cambio * -1 END) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'B' as Zone
             from AccountsTotales as t, AccountsMovimiento as m
             WHERE m.Traspaso = t._id and m.Fecha BETWEEN \(date)
-            \(groupBy2)
+            \(groupBy5)
             UNION
             select (coalesce(SUM(m.Cantidad * m.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'C' as Zone
             from AccountsTotales as t, AccountsMovimiento as m
             WHERE m.IdTotales = t._id and Traspaso is not null and m.Fecha BETWEEN \(date)
-            \(groupBy2)
+            \(groupBy5)
             UNION
             select (coalesce(SUM(p.Cantidad * p.Cambio), 0)) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'D' as Zone
             from AccountsPrestamos as p, AccountsTotales as t
             WHERE p.IdTotales = t._id and IdMovimiento = 0 and p.Fecha BETWEEN \(date)
-            \(groupBy2)
+            \(groupBy5)
             UNION
             select (coalesce(SUM(p.Cantidad * p.Cambio), 0) * -1) as Cantidad, t._id, (strftime('%Y',Fecha)) as y, (strftime('%m',Fecha)) as mo, (strftime('%d',Fecha)) as dd, 'E' as Zone
             from AccountsPrestamosDetalle as p, AccountsTotales as t
             WHERE p.IdTotales = t._id and p.Fecha BETWEEN \(date)
-            \(groupBy2)
+            \(groupBy5)
             )as s, AccountsTotales t WHERE s._id = t._id
-            \(groupBy2)
+            \(groupBy5)
             \(orderBy)
 """
+    print(query)
     do {
         let stmt = try Database.db.prepare(query)
         return Database.stmtToDictionary(stmt: stmt)
@@ -1367,7 +1398,7 @@ func getTotalesLineGraph() -> [[String:Any?]]{
                         WHERE t.IdMoneda = m._id and t.Tipo = tc._id and t.Activa = 1
                         GROUP BY tc._id, m._id
         UNION
-        Select (0||m.Moneda) as _id, m.Moneda as Moneda, ('Prestamos '||m.Moneda), 0 as Count, SUM((p.Cantidad - coalesce(t1.Cantidad, 0)) ) as CurrentCantidad, 1 as Activa, IdMoneda
+        Select (5||m.Moneda) as _id, m.Moneda as Moneda, ('Prestamos '||m.Moneda), 0 as Count, SUM((p.Cantidad - coalesce(t1.Cantidad, 0)) ) as CurrentCantidad, 1 as Activa, IdMoneda
             FRom AccountsPrestamos as p
         left join (
             SELECT SUM(Cantidad * Cambio) as Cantidad, IdPrestamo
@@ -1411,7 +1442,7 @@ func getCambioMoneda(idMon1:Int64, idMon2:Int64) -> NSNumber {
     }
 }
 //-------------------------------CambioMonedaEnd-------------------
-//-------------------------------Trips-----------------------------
+//MARK:TRIPS
 
 func getTripsId(id:Int64) -> [[String:Any?]] {
     let query = """

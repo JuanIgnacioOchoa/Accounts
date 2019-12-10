@@ -9,7 +9,7 @@
 import Foundation
 import SQLite
 
-// Totales
+//MARK: Totales
 
 func newMoveCuenta(cantidad:Double, idCuenta:Int64) -> Bool{
     //updateLastSync()
@@ -36,7 +36,9 @@ func actualizarCuentaMove(cantidad:Double, idCuenta:Int64, idMove:Int64) -> Bool
                 """
     do{
         try Database.db.run(query1, [idMove, idMove])
-        try Database.db.run(query2, [cantidad, idCuenta])
+        //sleep(10)
+        
+        //try Database.db.run(query2, [cantidad, idCuenta])
         return true
     } catch {
         print("Error actializarCuentaMove: ", error)
@@ -75,8 +77,39 @@ func updateTotalesFromPrestamo(cantidad:Double, idCuenta:Int64) -> Bool {
     return false
 }
 
+func updateTotalesInfo(cant:Double, cuenta:String, id:Int64, activa:Bool, idTipo:Int64) -> Bool {
+    var activaS = 1
+    if !activa{
+        activaS = 0
+    }
+    let query = """
+                    UPDATE \(Totales.Table) set \(Totales.CurrentCantidad) = ?, \(Totales.Cuenta) = ?, \(Totales.Activa) = ?, \(Totales.Tipo) = ? WHERE _id = ?
+                """
+    do{
+        try Database.db.run(query, [cant, cuenta, activaS, idTipo, id])
+        return true
+    } catch {
+        print("Error updateTotalesInfo: ", error)
+    }
+    return false
+}
+
+func updateTotalesFromPrestamo(cant:Double, idTotales:Int64) -> Bool {
+    let query = """
+                    UPDATE \(Totales.Table) set \(Totales.CurrentCantidad) = ? WHERE _id = ?
+                """
+    do{
+        try Database.db.run(query, [cant, idTotales])
+        return true
+    } catch {
+        print("Error updateTotalesInfo: ", error)
+    }
+    return false
+}
+
+
 //--------------------------End Totales
-//--------------------------Movimiento
+//MARK: Movimiento
 
 func actualizarMovimiento(id:Int64, cantidad:Double, idTotales:Int64, comment:String, idMotivo:Int64, idMoneda:Int64, cambio:Double, date:Date) -> Bool{
     let dateFormatter = DateFormatter()
@@ -133,7 +166,6 @@ func actualizarTraspaso(id: Int64, cantidad:Double, idFrom:Int64, idTo: Int64, c
     
     return false
 }
-//------------------End Movimientos
 
 //MARK: Motivos
 
@@ -170,9 +202,9 @@ func actualizarTipoCambio(moneda1:Int64, moneda2:Int64, cambio:Double) {
     }
 }
 
-//-----------------------End CambioMoneda
 
-//----------------------Trips
+//MARK: Trips
+
 func actualizarTrip(id:Int64, name:String, desc:String?, fechaInic:Date, fechaFin:Date, idMoneda:Int64) -> Bool {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -203,9 +235,8 @@ func actualizarTrip(id:Int64, name:String, desc:String?, fechaInic:Date, fechaFi
     
     return false
 }
-//----------------------End Trips
 
-//-----------------------------Prestamos------------------
+//MARK: Prestamos
 
 func updatePrestamo(id:Int64, cantidad:Double, idTotales:Int64, idMoneda:Int64, idPersona:Int64, comment:String?, cambio:Double, date:Date) -> Bool {
     let dateFormatter = DateFormatter()

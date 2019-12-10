@@ -52,7 +52,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     private SimpleCursorAdapter simpleCursorAdapterMoneda, simpleCursorAdapterCuenta, simpleCursorAdapterMotivo, simpleCursorAdapterPersonas;
     private double cant, tipoDeCambio;
     private String coment, title;
-    private int idCuenta, idPersona, idMotivo, idMoneda;
+    private int idCuenta, idPersona, idMotivo, idMoneda, orgTotales = 0, orgMoneda = 0;
     private Context context;
     private NumberFormat instance;
     private int idViaje, idMove;
@@ -241,6 +241,24 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                 actualizarResulCant();
             }
         });
+        etCambio.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Log.d("Accounts", "Before");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //Log.d("Accounts", "On");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Log.d("Accounts", "After");
+                //spSelectedResult = true;
+                actualizarResulCant();
+            }
+        });
 
     }
 
@@ -269,6 +287,23 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         if(idCuenta > 0 && !fast){
             cursorCuenta = Principal.getSingleTotales(idCuenta);
             cursorMoneda = Principal.getSingleMoneda(Principal.getMonedaId(idCuenta));
+            for(int j = 0; j < cursorCuenta.getCount(); j++){
+                Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idCuenta){
+                    spCuenta.setSelection(j);
+                    j = cursorCuenta.getCount()+1;
+                }
+            }
+            idMoneda = Principal.getIdMonedaTotales(idCuenta);
+            for(int j = 0; j < cursorMoneda.getCount(); j++){
+                Cursor value = (Cursor) spMoneda.getItemAtPosition(j);
+                int id = value.getInt(value.getColumnIndex("_id"));
+                if(id == idMoneda){
+                    spMoneda.setSelection(j);
+                    j = cursorMoneda.getCount()+1;
+                }
+            }
             if(cant != 0.0)
                 etCantidad.setText(cant+"");
         } else {
@@ -333,13 +368,13 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             } else {
                 etCambio.setVisibility(View.GONE);
                 tvCambio.setVisibility(View.GONE);
-                etCambio.setText(instance.format(1.0));
+                //etCambio.setText(instance.format(1.0));
                 tipoDeCambio = 1.0;
             }
             idViaje = cursorMov.getInt(cursorMov.getColumnIndex(DBMan.DBMovimientos.IdTrip));
             title = Principal.getTripNameById(idViaje) + " ";
 
-            etCambio.setText((instance.format(tipoDeCambio)));
+
             etComment.setText(coment);
             otroDate.setChecked(true);
             otroDate.setText(nfecha);
@@ -378,6 +413,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
                     j = cursorMoneda.getCount()+1;
                 }
             }
+            etCambio.setText((instance.format(tipoDeCambio)));
             etCantidad.setText((cant + ""));
         }
         if(idMove > 0){
@@ -386,7 +422,8 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
             this.setTitle("Crear Movimiento " + title);
         }
 
-
+        orgMoneda = idMoneda;
+        orgTotales = idCuenta;
 
 
         if(idCuenta > 1 && Principal.getIdMonedaTotales(idCuenta) != idMoneda && idCuenta != 1){
@@ -516,10 +553,16 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
 
             idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"));
             if(Principal.getIdMonedaTotales(idCuenta) != idMoneda){
-                etCambio.setVisibility(View.VISIBLE);
-                tvCambio.setVisibility(View.VISIBLE);
-                double scambio = Principal.getTipodeCambio(idMoneda, Principal.getIdMonedaTotales(idCuenta));
-                etCambio.setText(instance.format(scambio));
+                if (Principal.getIdMonedaTotales(orgTotales) != Principal.getIdMonedaTotales(idCuenta) && idMoneda != orgMoneda) {
+                    etCambio.setVisibility(View.VISIBLE);
+                    tvCambio.setVisibility(View.VISIBLE);
+                    double scambio = Principal.getTipodeCambio(idMoneda, Principal.getIdMonedaTotales(idCuenta));
+                    etCambio.setText(instance.format(scambio));
+                } else {
+                    etCambio.setVisibility(View.VISIBLE);
+                    tvCambio.setVisibility(View.VISIBLE);
+                    etCambio.setText(instance.format(tipoDeCambio));
+                }
             } else {
                 etCambio.setVisibility(View.GONE);
                 tvCambio.setVisibility(View.GONE);
@@ -541,9 +584,12 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
     private void actualizarResulCant(){
         //cursorCuenta.moveToFirst();
         double cantidadActual = cursorCuenta.getDouble(cursorCuenta.getColumnIndex(DBMan.DBTotales.CantidadActual));
+        int tmpIdTotales = cursorCuenta.getInt(cursorCuenta.getColumnIndex("_id"));
         if(idMove > 0){
-            cantidadActual -= cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cantidad)) *
-                    cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cambio));
+            if(tmpIdTotales == orgTotales) {
+                cantidadActual -= cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cantidad)) *
+                        cursorMov.getDouble(cursorMov.getColumnIndex(DBMan.DBMovimientos.Cambio));
+            }
         }
         double newCantidad = 0;
         double cambio = 1.0;
@@ -574,6 +620,7 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
 
         try{
             cant = Double.parseDouble(etCantidad.getText().toString());
+            tipoDeCambio = Double.parseDouble(etCambio.getText().toString());
             if(gasto) cant = cant * -1;
         }catch (Exception e){
             return false;

@@ -353,7 +353,7 @@ class MainGraphsViewController: UIViewController, UIPickerViewDelegate, UIPicker
         guard let history = viewControllers[3] as? HistoryGraphViewController else { return }
         
         
-        //balance.moneda = monedas[selectedMoneda]["_id"] as! Int64
+        balance.moneda = monedas[selectedMoneda]["_id"] as! Int64
         gasto.moneda = monedas[selectedMoneda]["_id"] as! Int64
         ingreso.moneda = monedas[selectedMoneda]["_id"] as! Int64
         //movData.moneda = monedas[selectedMoneda]["_id"] as! Int64
@@ -385,35 +385,36 @@ class MainGraphsViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 month = "0"+month
             }
             print(month)
-            //balance.year = String(year)
+            balance.year = String(year)
             ingreso.year = String(year)
             gasto.year = String(year)
             history.year = String(year)
             //analisis.year = String(year)
-            //balance.month = month
+            balance.month = month
             gasto.month = month
             ingreso.month = month
             history.month = month
             //analisis.month = month
             break
         default:
-            //balance.month = nil
+            balance.month = nil
             gasto.month = nil
             ingreso.month = nil
             history.month = nil
             //analisis.month = nil
-            //balance.year = years[selectedLapse]
+            balance.year = years[selectedLapse]
             gasto.year = years[selectedLapse]
             ingreso.year = years[selectedLapse]
             history.year = years[selectedLapse]
             //analisis.year = years[selectedLapse]
             break
         }
-        //balance.()
+        balance.setChart()
         ingreso.setChart()
         gasto.setChart()
         history.setArrays()
         history.setChart()
+        
         //analisis.updateArrays()
         oldSelectedMoneda = selectedMoneda
         oldSelectedType = selectedType

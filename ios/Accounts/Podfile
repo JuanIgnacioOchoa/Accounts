@@ -9,6 +9,7 @@ target 'Accounts' do
 	pod 'GoogleAPIClientForREST/Drive'
 	pod 'SwiftyJSON'
 	pod 'Charts'
+        pod 'DropDown'
   # Pods for Accounts
 
   target 'AccountsTests' do

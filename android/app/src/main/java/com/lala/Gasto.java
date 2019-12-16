@@ -284,9 +284,16 @@ public class Gasto extends AppCompatActivity implements AdapterView.OnItemSelect
         to = new int[] {android.R.id.text1};
         simpleCursorAdapterMotivo = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMotivo, from, to,0);
         spMotivo.setAdapter(simpleCursorAdapterMotivo);
+
         if(idCuenta > 0 && !fast){
             cursorCuenta = Principal.getSingleTotales(idCuenta);
             cursorMoneda = Principal.getSingleMoneda(Principal.getMonedaId(idCuenta));
+            from = new String[]{DBMan.DBTotales.Cuenta};
+            simpleCursorAdapterCuenta = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorCuenta,from,to,0);
+            spCuenta.setAdapter(simpleCursorAdapterCuenta);
+            from = new String[]{"Moneda"};
+            simpleCursorAdapterMoneda = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,cursorMoneda,from,to,0);
+            spMoneda.setAdapter(simpleCursorAdapterMoneda);
             for(int j = 0; j < cursorCuenta.getCount(); j++){
                 Cursor value = (Cursor) spCuenta.getItemAtPosition(j);
                 int id = value.getInt(value.getColumnIndex("_id"));

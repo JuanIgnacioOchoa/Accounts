@@ -14,37 +14,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/lala/SeeByMotive.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/lala/SeeByMotive.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcodeproj/project.pbxproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Base.lproj/Main.storyboard" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Base.lproj/Main.storyboard" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Cells/More/Moneda/MonedaTableViewCell.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Cells/More/Moneda/MonedaTableViewCell.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/CreateCuentasViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/CreateCuentasViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/BalanceGraphViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/BalanceGraphViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/GastoGraphViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/GastoGraphViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/HistoryGraphViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/HistoryGraphViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/IngresoGraphViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Graphs/IngresoGraphViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Loans/PresatmosDetAlertViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Loans/PresatmosDetAlertViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Loans/PrestamosDetViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Loans/PrestamosDetViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Loans/PrestamosMainViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Loans/PrestamosMainViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Moneda/MonedaMainViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Moneda/MonedaMainViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Motives/MotivesMainViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/More/Motives/MotivesMainViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/AnalisisViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/AnalisisViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/MovdataViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/MovdataViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/MovimientosViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/MovimientosViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/SeeMovimientoViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/TraspasoViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Movimientos/TraspasoViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/SeeMotivoViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/SeeMotivoViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Totales/SeeCuentaViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Controllers/Totales/SeeCuentaViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Database.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Database.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Insert.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Insert.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Select.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Select.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Update.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Database/Update.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Utils/Utils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Accounts/Accounts/Utils/Utils.swift" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -122,11 +92,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
-              <caret line="563" column="65" selection-start-line="563" selection-start-column="65" selection-end-line="563" selection-end-column="65" />
+            <state relative-caret-position="403">
+              <caret line="295" column="59" selection-start-line="295" selection-start-column="59" selection-end-line="295" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -153,19 +123,28 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/CreateTrip.kt">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="335">
-              <caret line="46" column="29" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
+            <state relative-caret-position="207">
+              <caret line="191" selection-start-line="191" selection-end-line="191" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentMoves.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="522">
-              <caret line="1676" column="83" selection-start-line="1676" selection-start-column="83" selection-end-line="1676" selection-end-column="83" />
+            <state relative-caret-position="502">
+              <caret line="196" selection-start-line="196" selection-end-line="196" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="183">
+              <caret line="344" column="48" selection-start-line="344" selection-start-column="44" selection-end-line="344" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -177,10 +156,28 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/prueba.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="222">
+              <caret line="76" selection-start-line="76" selection-end-line="76" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainTotals.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="222">
+              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="206" column="50" selection-start-line="206" selection-start-column="50" selection-end-line="206" selection-end-column="50" />
+            <state relative-caret-position="214">
+              <caret line="186" column="46" selection-start-line="186" selection-start-column="46" selection-end-line="186" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -200,8 +197,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>oldCant</find>
-      <find>gasto =</find>
       <find>totalPaid =</find>
       <find>if</find>
       <find>idMove =</find>
@@ -229,7 +224,9 @@
       <find>prestado</find>
       <find>etCam</find>
       <find>etCambio.setText</find>
+      <find>menu</find>
       <find>orgMoneda</find>
+      <find>spCuenta</find>
     </findStrings>
   </component>
   <component name="GenerateSignedApkSettings">
@@ -292,10 +289,10 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/lala/BalanceGraphActivity.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lala/SeeByMotive.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java" />
       </list>
     </option>
   </component>
@@ -603,9 +600,9 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Run" order="0" sideWeight="0.498779" weight="0.33469388" />
-      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.49627262" weight="0.29489797" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49627262" visible="true" weight="0.29489797" />
       <window_info anchor="bottom" id="TODO" order="2" sideWeight="0.49946752" weight="0.32871288" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.4993895" visible="true" weight="0.3622449" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4993895" weight="0.3622449" />
       <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49946752" weight="0.32970297" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5037274" side_tool="true" weight="0.33069307" />
       <window_info anchor="bottom" id="Version Control" order="6" sideWeight="0.49946752" weight="0.32970297" />
@@ -627,7 +624,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>643</line>
+          <line>650</line>
           <properties />
           <option name="timeStamp" value="18" />
         </line-breakpoint>
@@ -645,13 +642,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>637</line>
+          <line>644</line>
           <properties />
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>653</line>
+          <line>660</line>
           <properties />
           <option name="timeStamp" value="49" />
         </line-breakpoint>
@@ -693,19 +690,19 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>473</line>
+          <line>480</line>
           <properties />
           <option name="timeStamp" value="278" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>333</line>
+          <line>340</line>
           <properties />
           <option name="timeStamp" value="279" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>342</line>
+          <line>349</line>
           <properties />
           <option name="timeStamp" value="280" />
         </line-breakpoint>
@@ -735,43 +732,43 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>554</line>
+          <line>561</line>
           <properties />
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>415</line>
+          <line>422</line>
           <properties />
           <option name="timeStamp" value="323" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>428</line>
+          <line>435</line>
           <properties />
           <option name="timeStamp" value="324" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>537</line>
+          <line>544</line>
           <properties />
           <option name="timeStamp" value="326" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>638</line>
+          <line>645</line>
           <properties />
           <option name="timeStamp" value="327" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>654</line>
+          <line>661</line>
           <properties />
           <option name="timeStamp" value="328" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>655</line>
+          <line>662</line>
           <properties />
           <option name="timeStamp" value="329" />
         </line-breakpoint>
@@ -783,15 +780,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>620</line>
+          <line>627</line>
           <properties />
           <option name="timeStamp" value="331" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
-          <line>621</line>
+          <line>628</line>
           <properties />
           <option name="timeStamp" value="332" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java</url>
+          <line>191</line>
+          <properties />
+          <option name="timeStamp" value="336" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
+          <line>307</line>
+          <properties />
+          <option name="timeStamp" value="337" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/MenuMoreActivity.kt</url>
@@ -955,13 +964,6 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentMoves.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3390">
-          <caret line="261" column="43" selection-start-line="261" selection-start-column="43" selection-end-line="261" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentPrestamoPeople.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -1026,13 +1028,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="24" column="55" selection-start-line="24" selection-start-column="55" selection-end-line="24" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2280">
-          <caret line="223" column="53" selection-start-line="223" selection-start-column="16" selection-end-line="223" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -1135,20 +1130,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/prueba.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="76" selection-start-line="76" selection-end-line="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainTotals.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeCuentas.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3930">
@@ -1170,13 +1151,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="206" column="50" selection-start-line="206" selection-start-column="50" selection-end-line="206" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="205">
@@ -1188,20 +1162,6 @@
       <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="563" column="65" selection-start-line="563" selection-start-column="65" selection-end-line="563" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/SeeTripMainActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="261" selection-start-line="261" selection-end-line="261" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/TripsMainActivity.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -1212,10 +1172,59 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="344" column="48" selection-start-line="344" selection-start-column="44" selection-end-line="344" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/prueba.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="76" selection-start-line="76" selection-end-line="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainTotals.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentMoves.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="196" selection-start-line="196" selection-end-line="196" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="186" column="46" selection-start-line="186" selection-start-column="46" selection-end-line="186" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/SeeTripMainActivity.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="261" selection-start-line="261" selection-end-line="261" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="1676" column="83" selection-start-line="1676" selection-start-column="83" selection-end-line="1676" selection-end-column="83" />
+        <state relative-caret-position="207">
+          <caret line="191" selection-start-line="191" selection-end-line="191" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="403">
+          <caret line="295" column="59" selection-start-line="295" selection-start-column="59" selection-end-line="295" selection-end-column="59" />
         </state>
       </provider>
     </entry>

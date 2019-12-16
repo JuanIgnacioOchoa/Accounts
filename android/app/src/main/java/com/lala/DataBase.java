@@ -184,7 +184,7 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (3, 'Tarjeta de Debito')");
         db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (4, 'Cuentas de Inversion')");
         db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (5, 'Prestamos')");
-        db.execSQL("insert into AccountsMotivos" +
+        db.execSQL("insert into AccountsMotivo" +
                 "                (_id, Motivo, Motivo)" +
                 "            values\n" +
                 "            (15, 'xxxxx', 0)");

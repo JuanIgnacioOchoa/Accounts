@@ -129,12 +129,18 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
                 }))
                 present(alert, animated: true, completion: nil)
             } else {
-                idMotivo = dataArrayMotivo[0]["_id"] as! Int64
-                motivo = dataArrayMotivo[0][Motivo.Motivo] as! String
-                idMoneda = dataArrayMoneda[0]["_id"] as! Int64
-                moneda = dataArrayMoneda[0][Moneda.Moneda] as! String
-                idTotales = dataArrayTotales[0]["_id"] as! Int64
-                totales = dataArrayTotales[0][Totales.Cuenta] as! String
+                if idMotivo == 0 {
+                    idMotivo = dataArrayMotivo[0]["_id"] as! Int64
+                    motivo = dataArrayMotivo[0][Motivo.Motivo] as! String
+                }
+                if idMoneda == 0 {
+                    idMoneda = dataArrayMoneda[0]["_id"] as! Int64
+                    moneda = dataArrayMoneda[0][Moneda.Moneda] as! String
+                }
+                if idTotales == 0 {
+                    idTotales = dataArrayTotales[0]["_id"] as! Int64
+                    totales = dataArrayTotales[0][Totales.Cuenta] as! String
+                }
             }
             dataArrayMotivo = getMotives(active: true)
             
@@ -165,17 +171,17 @@ class SeeMovimientoViewController: UIViewController, UIPickerViewDelegate, UIPic
                 }
             }
             if cantidad != 0.0 {
-                cantidadTxt.text = "\(cantidad)"
                 if Int(truncating: cantidad) < 0 {
                     self.gasto = true
                     self.segmentedGasto.selectedSegmentIndex = 0
                     self.cantidadTxt.textColor = UIColor.red
-                    cantidad = NSNumber(value: Int(cantidad) * -1)
+                    cantidad = NSNumber(value: Int(truncating: cantidad) * -1)
                 } else {
                     self.gasto = false
                     self.segmentedGasto.selectedSegmentIndex = 1
                     self.cantidadTxt.textColor = Utils.green
                 }
+                cantidadTxt.text = "\(cantidad)"
             }
         } else {
             dataArrayMove = getMoveData(id: _id!)

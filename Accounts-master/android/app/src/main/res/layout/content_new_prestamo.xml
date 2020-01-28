@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".NewPrestamoActivity"
+    tools:showIn="@layout/activity_new_prestamo"
+    android:layout_margin="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:id="@+id/linear1">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="numberSigned|numberDecimal"
+            android:hint="@string/ammount_m"
+            android:layout_marginRight="-20dp"
+            android:id="@+id/ETCantidad"/>
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="15dp"
+            android:id="@+id/spMoneda"></Spinner>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:id="@+id/linear2"
+        android:layout_below="@id/linear1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/account_"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:id="@+id/TVCuenta"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_weight="1"
+            android:id="@+id/SPCuenta"></Spinner>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/SPPersona"
+            android:layout_alignEnd="@id/SPPersona"
+            android:layout_alignBottom="@id/SPPersona"
+            android:layout_alignTop="@id/SPPersona"
+            android:id="@+id/etPersona"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:id="@+id/linear3"
+        android:layout_below="@id/linear2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/person_"
+            android:layout_weight="1"
+            android:id="@+id/TVPersona"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp"
+            />
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/SPPersona"></Spinner>
+    </LinearLayout>
+
+
+
+    <EditText
+    android:layout_width="match_parent"
+    android:layout_height="230dp"
+    android:hint="@string/comment_or_desc_hint"
+    android:lines="5"
+    android:gravity="center"
+    android:backgroundTint="#FFFFFF"
+    android:layout_below="@id/linear3"
+    android:layout_marginTop="10dp"
+    android:id="@+id/ETDesc"/>
+
+
+</RelativeLayout>

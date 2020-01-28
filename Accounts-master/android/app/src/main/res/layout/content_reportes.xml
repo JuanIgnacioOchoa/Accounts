@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="4"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.lala.Reportes"
+    android:background="#FFFAFA"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:id="@+id/linearLayout">
+        <Spinner
+            android:id="@+id/spMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/month"
+            android:background="@null"
+            
+            />
+
+        <Spinner
+            android:id="@+id/spYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/spMonth"
+            android:text="@string/year"
+            android:background="@null"
+            />
+
+        <Spinner
+            android:id="@+id/spMoneda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/spYear"
+            android:text="@string/currency"
+            android:background="@null"
+            />
+    </LinearLayout>
+
+
+</RelativeLayout>

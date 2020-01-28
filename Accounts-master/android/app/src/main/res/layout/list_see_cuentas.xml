@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Space
+        android:id="@+id/space6"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_alignParentStart="true" />
+
+    <Space
+        android:id="@+id/space7"
+        android:layout_below="@+id/lv_see_cuentas_fecha"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Motivo"
+        android:id="@+id/lv_see_cuentas_motivo"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/space7"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha"
+        android:id="@+id/lv_see_cuentas_fecha"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/space6"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cantidad"
+        android:id="@+id/lv_sse_cuentas_cant"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/space7"
+        android:layout_alignParentStart="true" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_below="@+id/lv_sse_cuentas_cant"
+        android:layout_alignEnd="@+id/lv_sse_cuentas_cant" />
+</RelativeLayout>

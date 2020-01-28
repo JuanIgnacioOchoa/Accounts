@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.lala.Gasto"
+    tools:showIn="@layout/activity_gasto">
+
+    <Spinner
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/gasto_spFrom"
+        android:layout_below="@+id/see_move_Tipo_de_cambio"
+        android:layout_toEndOf="@+id/space2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/account_"
+        android:id="@+id/textView2"
+        android:gravity="center_vertical"
+        android:textSize="20dp"
+        android:layout_below="@+id/see_move_Tipo_de_cambio"
+        android:layout_alignBottom="@+id/gasto_spFrom"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/gasto_spFrom" />
+
+    <Spinner
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/gasto_spTo"
+        android:layout_alignTop="@+id/textView3"
+        android:layout_alignEnd="@+id/gasto_spFrom"
+        android:layout_toEndOf="@+id/textView3" />
+
+    <EditText
+        android:id="@+id/gasto_etComment"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_below="@+id/segmented2"
+        android:layout_marginTop="18dp"
+        android:backgroundTint="#FFFFFF"
+        android:gravity="center"
+        android:hint="@string/comment_or_desc_hint" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/motive_"
+        android:id="@+id/textView3"
+        android:gravity="center_vertical"
+        android:textSize="20dp"
+        android:layout_below="@+id/gasto_spFrom"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/gasto_spFrom" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_move_otro"
+        android:hint="@string/motive_hint"
+        android:layout_below="@+id/gasto_spTo"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/gasto_spTo" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px"
+        android:layout_above="@+id/gasto_etComment"
+        android:layout_alignStart="@+id/new_move_otro"
+        android:id="@+id/space" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px"
+        android:layout_above="@+id/gasto_spTo"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/space2" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px"
+        android:layout_above="@+id/gasto_spFrom"
+        android:id="@+id/space3" />
+
+    <EditText
+        android:layout_width="230dp"
+        android:layout_height="60dp"
+        android:id="@+id/gasto_etCantidad"
+        android:hint="@string/ammount_m"
+        android:inputType="number|numberDecimal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gasto_spMoneda"
+        android:layout_alignBottom="@+id/gasto_etCantidad"
+        android:layout_toEndOf="@+id/gasto_etCantidad" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/gasto_spTo"
+        android:layout_alignStart="@id/gasto_spTo"
+        android:layout_alignTop="@id/textView2"
+        android:layout_alignBottom="@id/textView2"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:textSize="20dp"
+        android:id="@+id/TVPersona"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/currency_change"
+        android:id="@+id/see_move_tvCambio"
+        android:gravity="center_vertical"
+        android:textSize="15dp"
+        android:layout_alignTop="@+id/see_move_Tipo_de_cambio"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/see_move_Tipo_de_cambio"
+        android:visibility="gone"/>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/see_move_Tipo_de_cambio"
+        android:layout_below="@id/resultCant"
+        android:layout_alignStart="@id/gasto_spMoneda"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gasto_etCantidad"
+        android:id="@+id/resultCant"
+        android:layout_alignStart="@+id/gasto_etCantidad"
+        android:layout_alignEnd="@+id/gasto_etCantidad"
+        android:text="1000.00"/>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/new_move_otro"
+        android:weightSum="3"
+        >
+
+        <RadioButton
+            android:id="@+id/hoyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hoy"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ayerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ayer"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+
+
+        <RadioButton
+            android:id="@+id/otroBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Otro"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/segmented3"
+        android:weightSum="2"
+        >
+
+        <RadioButton
+            android:id="@+id/gastoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gasto"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ingresoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingreso"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+</RelativeLayout>

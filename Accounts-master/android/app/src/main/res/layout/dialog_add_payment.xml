@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linear">
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spCuenta"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/lblMoneda"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_below="@+id/linear"
+        android:id="@+id/linear1">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number|numberDecimal"
+            android:id="@+id/etCantidad"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number|numberDecimal"
+            android:id="@+id/etCambio"/>
+
+    </LinearLayout>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/linear1"
+        android:weightSum="3">
+
+        <RadioButton
+            android:id="@+id/hoyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hoy"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ayerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ayer"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+
+
+        <RadioButton
+            android:id="@+id/otroBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Otro"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/segmented2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        segmentedgroup:sc_border_width="2dp"
+        segmentedgroup:sc_corner_radius="20dp"
+        android:layout_below="@+id/segmented3"
+        android:weightSum="2"
+        >
+
+        <RadioButton
+            android:id="@+id/gastoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pago Yo"
+            style="@style/RadioButton"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/ingresoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paga El"
+            style="@style/RadioButton"
+            android:layout_weight="1"/>
+    </info.hoang8f.android.segmented.SegmentedGroup>
+</RelativeLayout>

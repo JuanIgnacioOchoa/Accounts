@@ -1,18 +1,13 @@
 package com.lala
 
 import android.content.Context
-import android.content.Intent
-import android.database.Cursor
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.*
-import android.widget.AbsListView.*
 import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -25,10 +20,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.github.mikephil.charting.utils.ColorTemplate
-import kotlinx.android.synthetic.main.activity_graphs.*
 import java.text.NumberFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -97,11 +89,13 @@ class BalanceGraphActivity : Fragment(), OnChartValueSelectedListener {
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
         updateAdapter(idMoneda, month, year)
     }
+
     fun updateData(idMoneda: Int, month: String?, year: String){
         this.idMoneda = idMoneda
         this.month = month
         this.year = year
     }
+
     fun updateAdapter(idMoneda: Int, month: String?, year: String) {
         if(pieChart == null){
             return

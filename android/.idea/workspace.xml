@@ -12,85 +12,15 @@
   <component name="ChangeListManager">
     <list default="true" id="17370134-f053-4c47-9834-575d42d6c4b4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/app.aab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/add.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bank_building.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/IDEFindNavigatorScopes.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts.xcworkspace/xcuserdata/juanochoa.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Accounts/Base.lproj/Main.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/.cocoapods.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/CHANGELOG.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/GoogleSignIn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Headers/GIDAuthentication.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Headers/GIDGoogleUser.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Headers/GIDProfileData.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Headers/GIDSignIn.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Headers/GIDSignInButton.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Headers/GoogleSignIn.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Frameworks/GoogleSignIn.framework/Modules/module.modulemap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/Roboto-Bold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ar.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ca.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/cs.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/da.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/de.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/el.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/en.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/en_GB.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/es.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/es_MX.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/fi.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/fr.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/fr_CA.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/google.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/google@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/google@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/he.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/hi.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/hr.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/hu.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/id.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/it.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ja.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ko.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ms.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/nb.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/nl.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/pl.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/pt.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/pt_BR.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/pt_PT.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ro.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/ru.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/sk.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/sv.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/th.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/tr.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/uk.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/vi.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/zh_CN.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/Pods/GoogleSignIn/Resources/GoogleSignIn.bundle/zh_TW.lproj/GoogleSignIn.strings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/drawable copy/1X/arrow_inv_black.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/drawable copy/2x/arrow_inv_black.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Accounts/drawable copy/airplane.png" beforeDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DefaultGradleProjectSettings">
-    <option name="isMigrated" value="true" />
-  </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="R28M31SPNPM" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_29" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -155,94 +85,6 @@
       </state>
     </system>
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-          <provider editor-type-id="android-manifest" />
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1763">
-              <caret line="18" column="49" selection-start-line="18" selection-start-column="49" selection-end-line="18" selection-end-column="49" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2295">
-              <caret line="191" selection-start-line="191" selection-end-line="191" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentMoves.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2415">
-              <caret line="196" selection-start-line="196" selection-end-line="196" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4095">
-              <caret line="344" column="48" selection-start-line="344" selection-start-column="44" selection-end-line="344" selection-end-column="48" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_gasto.xml">
-          <provider editor-type-id="android-designer2" />
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/prueba.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="76" selection-start-line="76" selection-end-line="76" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainTotals.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="28" selection-start-line="28" selection-end-line="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2685">
-              <caret line="186" column="46" selection-start-line="186" selection-start-column="46" selection-end-line="186" selection-end-column="46" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -297,106 +139,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_see_by_motive.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/FragmentReportesMotives.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/dialog_add_payment.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/FragmentTotals.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/prueba.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_menu_more.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/inflate_list_menu.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Settings.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_settings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_trips_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/inflate_line_graph_cuentas.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/seeTraspaso.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_prestamo.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/FragmentPrestamosPlus.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/menu/menu_navigation.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_line_chart_cuentas.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/label_layout.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_graphs.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Graphs.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/IngresoGraph.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_traspaso.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/SeeTripMainActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Reportes.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/MenuMoreActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/frame.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_currency.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/MovesMainActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/ReportesFragment.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_fast_add.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/FastAddFragment.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/NewAccount.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/inflate_list_currencies.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/CurrencyActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_new_prestamo.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/seePrestamoActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Traspaso.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/FragmentPrestamosMinus.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/PrestamoActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/NewPrestamoActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/TripsMainActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/seeCuentas.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/BalanceGraphActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/SeeByMotive.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1680" />
-    <option name="height" value="1050" />
-  </component>
+  <component name="ProjectId" id="1vIxNp3v2rVJO7eUfJZ569lVpLz" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="android" type="b2602c69:ProjectViewProjectNode" />
-              <item name="android" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="android" type="b2602c69:ProjectViewProjectNode" />
-              <item name="android" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="android" type="b2602c69:ProjectViewProjectNode" />
-              <item name="android" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="android" type="b2602c69:ProjectViewProjectNode" />
-              <item name="android" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="AndroidView" />
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Copy_2_of_Pixel_3_API_Q" />
@@ -406,27 +154,23 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="memory.settings.postsync.last.time.stamp" value="1626263480610" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="android.template.packageName">
       <recent name="com.lala" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Android App.app">
+  <component name="RunManager" selected="Android App.android-app">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -458,8 +202,8 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
-      <module name="app" />
+    <configuration name="android-app" type="AndroidRunConfigurationType" factoryName="Android App">
+      <module name="android-app" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
       <option name="DEPLOY_AS_INSTANT" value="false" />
@@ -473,8 +217,6 @@
       <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
       <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
-      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
-      <option name="PREFERRED_AVD" value="" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="DEBUGGER_TYPE" value="Auto" />
@@ -511,10 +253,55 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet">
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="app" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sample Java Methods" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
       <method v="2">
-        <option name="Make" enabled="true" />
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -599,639 +386,210 @@
       <is-autoscroll-to-source value="true" />
     </todo-panel>
   </component>
-  <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
-    <editor active="true" />
-    <layout>
-      <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.25274727" />
-      <window_info id="Structure" order="2" side_tool="true" />
-      <window_info id="Favorites" order="3" side_tool="true" />
-      <window_info id="Build Variants" order="4" side_tool="true" />
-      <window_info id="Image Layers" order="5" />
-      <window_info id="Designer" order="6" />
-      <window_info id="Resources Explorer" order="7" />
-      <window_info id="Capture Tool" order="8" />
-      <window_info anchor="bottom" id="Run" order="0" sideWeight="0.498779" weight="0.33469388" />
-      <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.49627262" weight="0.29489797" />
-      <window_info anchor="bottom" id="TODO" order="2" sideWeight="0.49946752" weight="0.32871288" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4993895" weight="0.3622449" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49946752" weight="0.32970297" />
-      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5037274" side_tool="true" weight="0.33069307" />
-      <window_info anchor="bottom" id="Version Control" order="6" sideWeight="0.49946752" weight="0.32970297" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.49627262" visible="true" weight="0.23061225" />
-      <window_info anchor="bottom" id="Find" order="8" />
-      <window_info anchor="bottom" id="Android Profiler" order="9" />
-      <window_info anchor="bottom" id="Inspection Results" order="10" weight="0.32959184" />
-      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
-      <window_info anchor="right" id="Capture Analysis" order="1" />
-      <window_info anchor="right" id="Gradle" order="2" weight="0.32960597" />
-      <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info anchor="right" id="Palette&#9;" order="4" />
-      <window_info anchor="right" id="Preview" order="5" />
-      <window_info active="true" anchor="right" id="Assistant" order="6" visible="true" weight="0.32960597" />
-    </layout>
-  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>650</line>
-          <properties />
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java</url>
           <line>416</line>
-          <properties />
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>175</line>
-          <properties />
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>644</line>
-          <properties />
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>660</line>
-          <properties />
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentReportesMotives.java</url>
           <line>155</line>
-          <properties />
           <option name="timeStamp" value="176" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/seeTraspaso.java</url>
           <line>161</line>
-          <properties />
           <option name="timeStamp" value="185" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java</url>
           <line>247</line>
-          <properties />
           <option name="timeStamp" value="199" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Traspaso.java</url>
           <line>415</line>
-          <properties />
           <option name="timeStamp" value="232" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Traspaso.java</url>
           <line>407</line>
-          <properties />
           <option name="timeStamp" value="234" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java</url>
           <line>252</line>
-          <properties />
           <option name="timeStamp" value="260" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>480</line>
-          <properties />
           <option name="timeStamp" value="278" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>340</line>
-          <properties />
           <option name="timeStamp" value="279" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>349</line>
-          <properties />
           <option name="timeStamp" value="280" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java</url>
           <line>1074</line>
-          <properties />
           <option name="timeStamp" value="299" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/SeeByMotive.java</url>
           <line>169</line>
-          <properties />
           <option name="timeStamp" value="304" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java</url>
           <line>274</line>
-          <properties />
           <option name="timeStamp" value="320" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java</url>
           <line>336</line>
-          <properties />
           <option name="timeStamp" value="321" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>561</line>
-          <properties />
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>422</line>
-          <properties />
           <option name="timeStamp" value="323" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>435</line>
-          <properties />
           <option name="timeStamp" value="324" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>544</line>
-          <properties />
           <option name="timeStamp" value="326" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>645</line>
-          <properties />
           <option name="timeStamp" value="327" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>661</line>
-          <properties />
           <option name="timeStamp" value="328" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>662</line>
-          <properties />
           <option name="timeStamp" value="329" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>109</line>
-          <properties />
           <option name="timeStamp" value="330" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>627</line>
-          <properties />
           <option name="timeStamp" value="331" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>628</line>
-          <properties />
           <option name="timeStamp" value="332" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java</url>
           <line>191</line>
-          <properties />
           <option name="timeStamp" value="336" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java</url>
           <line>307</line>
-          <properties />
           <option name="timeStamp" value="337" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/MenuMoreActivity.kt</url>
           <line>85</line>
-          <properties />
           <option name="timeStamp" value="235" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/CurrencyActivity.kt</url>
           <line>102</line>
-          <properties />
           <option name="timeStamp" value="241" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/seePrestamoActivity.kt</url>
           <line>256</line>
-          <properties />
           <option name="timeStamp" value="258" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/seePrestamoActivity.kt</url>
           <line>267</line>
-          <properties />
           <option name="timeStamp" value="259" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/seePrestamoActivity.kt</url>
           <line>262</line>
-          <properties />
           <option name="timeStamp" value="261" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/NewPrestamoActivity.kt</url>
           <line>38</line>
-          <properties />
           <option name="timeStamp" value="282" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt</url>
           <line>199</line>
-          <properties />
           <option name="timeStamp" value="307" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt</url>
           <line>271</line>
-          <properties />
           <option name="timeStamp" value="311" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt</url>
           <line>170</line>
-          <properties />
           <option name="timeStamp" value="315" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt</url>
           <line>238</line>
-          <properties />
           <option name="timeStamp" value="319" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_currency.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="24" column="13" lean-forward="true" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/ReportesFragment.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="117" column="43" selection-start-line="117" selection-start-column="43" selection-end-line="117" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/NewAccount.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="113" column="15" selection-start-line="113" selection-start-column="15" selection-end-line="113" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/inflate_list_currencies.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="398">
-          <caret line="64" column="45" selection-start-line="64" selection-start-column="45" selection-end-line="64" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_prestamo.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="47" column="36" selection-start-line="47" selection-start-column="36" selection-end-line="47" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_new_prestamo.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_gasto.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="96" column="32" selection-start-line="96" selection-start-column="27" selection-end-line="96" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_new_prestamo.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="46" selection-start-line="22" selection-start-column="46" selection-end-line="22" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentReportesMotives.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2205">
-          <caret line="174" column="59" selection-start-line="174" selection-start-column="59" selection-end-line="174" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentReportesCuentas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3390">
-          <caret line="252" column="38" selection-start-line="252" selection-start-column="38" selection-end-line="252" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MovesMainActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1005">
-          <caret line="83" column="21" selection-start-line="83" selection-start-column="12" selection-end-line="83" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentPrestamoPeople.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="18" column="53" selection-start-line="18" selection-start-column="53" selection-end-line="18" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentTotals.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2520">
-          <caret line="193" column="48" selection-start-line="193" selection-start-column="48" selection-end-line="193" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentPrestamosPlus.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="54" column="25" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/CurrencyActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="40" column="38" selection-start-line="40" selection-start-column="38" selection-end-line="40" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_settings.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" selection-start-line="9" selection-end-line="22" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/NewMotive.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1200">
-          <caret line="94" column="40" selection-start-line="94" selection-start-column="40" selection-end-line="94" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Settings.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="28" selection-start-line="29" selection-start-column="28" selection-end-line="29" selection-end-column="28" />
-          <folding>
-            <element signature="e#18#206#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentPrestamosMinus.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="24" column="55" selection-start-line="24" selection-start-column="55" selection-end-line="24" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Graphs.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="60" column="36" lean-forward="true" selection-start-line="60" selection-start-column="36" selection-end-line="60" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_see_cuentas.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_see_by_motive.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_fast_add.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2775">
-          <caret line="185" column="38" selection-start-line="185" selection-start-column="29" selection-end-line="185" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/background.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="37" selection-start-line="7" selection-start-column="31" selection-end-line="7" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FastAddFragment.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="57" column="17" selection-start-line="57" selection-start-column="17" selection-end-line="57" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seePrestamoActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8745">
-          <caret line="583" column="44" selection-start-line="583" selection-start-column="44" selection-end-line="583" selection-end-column="44" />
-          <folding>
-            <element signature="e#18#851#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/SeeByMotive.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1215">
-          <caret line="106" column="41" selection-start-line="106" selection-start-column="41" selection-end-line="106" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/BalanceGraphActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" selection-start-line="40" selection-end-line="40" />
-          <folding>
-            <element signature="e#18#1275#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/LineChartCuentasActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="142" column="13" lean-forward="true" selection-start-line="142" selection-start-column="13" selection-end-line="142" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeTraspaso.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2040">
-          <caret line="161" column="39" selection-start-line="161" selection-start-column="39" selection-end-line="161" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/NewPrestamoActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1005">
-          <caret line="76" column="29" selection-start-line="76" selection-start-column="21" selection-end-line="76" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/PrestamoActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="990">
-          <caret line="85" column="67" selection-start-line="85" selection-start-column="67" selection-end-line="85" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/DriveMan.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeCuentas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3930">
-          <caret line="300" column="47" selection-start-line="300" selection-start-column="47" selection-end-line="300" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Traspaso.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3074">
-          <caret line="286" column="13" selection-start-line="286" selection-start-column="13" selection-end-line="286" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/CreateTrip.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="335">
-          <caret line="46" column="29" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/seeMove.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="348" column="28" selection-start-line="348" selection-start-column="12" selection-end-line="348" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Gasto.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="292" column="59" lean-forward="true" selection-start-line="292" selection-start-column="59" selection-end-line="292" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/SeeTripMainActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3615">
-          <caret line="261" selection-start-line="261" selection-end-line="261" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/TripsMainActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="21" column="52" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/Principal.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2295">
-          <caret line="191" selection-start-line="191" selection-end-line="191" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/FragmentMoves.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2415">
-          <caret line="196" selection-start-line="196" selection-end-line="196" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4095">
-          <caret line="344" column="48" selection-start-line="344" selection-start-column="44" selection-end-line="344" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_gasto.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/prueba.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="76" selection-start-line="76" selection-end-line="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/MainTotals.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lala/DataBase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2685">
-          <caret line="186" column="46" selection-start-line="186" selection-start-column="46" selection-end-line="186" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1763">
-          <caret line="18" column="49" selection-start-line="18" selection-start-column="49" selection-end-line="18" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>

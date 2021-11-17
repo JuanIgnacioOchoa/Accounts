@@ -225,11 +225,15 @@ public class Principal {
         return c.getString(c.getColumnIndex(DBMan.DBMoneda.Moneda));
     }
     public static int getIdMonedaTotales(int cuenta){
+        if(cuenta == -1){
+            return -1;
+        }
         Cursor c = db.rawQuery("SELECT IdMoneda " +
                 "FROM AccountsTotales " +
                 "WHERE AccountsTotales._id = ?",new String[]{String.valueOf(cuenta)});
         c.moveToFirst();
-        return c.getInt(c.getColumnIndex("IdMoneda"));
+        int result = c.getInt(c.getColumnIndex("IdMoneda"));
+        return result;
     }
     public static String getCuentaTotales(int cuenta){
         Cursor c = db.rawQuery("SELECT Cuenta " +

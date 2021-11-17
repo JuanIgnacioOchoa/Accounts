@@ -193,6 +193,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d("Accoubt DB", "onUpgrade from " + oldVersion + " to " + newVersion);
+
         if(oldVersion <= 1){
             db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Tarjeta de Credito' where _id = 2");
             db.execSQL("UPDATE AccountsTiposCuentas set Tipo = 'Efectivo' where _id = 1");
@@ -200,15 +201,18 @@ public class DataBase extends SQLiteOpenHelper {
             db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (4, 'Cuentas de Inversion')");
             db.execSQL("Insert into AccountsTiposCuentas (_id, Tipo) values (5, 'Prestamos')");
         }
+
         if(oldVersion <= 2){
             db.execSQL("UPDATE AccountsMovimiento set Cambio = 1.0 WHERE Cambio is null");
         }
+
         if(oldVersion <= 3){
             db.execSQL("insert into AccountsMotivo" +
                     "                (_id, Motivo, Motivo)" +
                     "            values\n" +
                     "            (15, 'xxxxx', 0)");
         }
+
     }
 
 }

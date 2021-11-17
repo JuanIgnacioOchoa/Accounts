@@ -90,7 +90,7 @@
         android:id="@+id/space3" />
 
     <EditText
-        android:layout_width="230dp"
+        android:layout_width="200dp"
         android:layout_height="60dp"
         android:id="@+id/gasto_etCantidad"
         android:hint="@string/ammount_m"
@@ -103,7 +103,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/gasto_spMoneda"
         android:layout_alignBottom="@+id/gasto_etCantidad"
-        android:layout_toEndOf="@+id/gasto_etCantidad" />
+        android:layout_toEndOf="@+id/gasto_etCantidad"
+        android:layout_alignParentEnd="true"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

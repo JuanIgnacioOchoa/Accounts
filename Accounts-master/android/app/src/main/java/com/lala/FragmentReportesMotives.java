@@ -168,12 +168,12 @@ public class FragmentReportesMotives extends Fragment implements AdapterView.OnI
     public void updateAdapter(){
         if(month == null){
             c = Principal.getSumByMotivesYear(idMoneda,year);
-            gasto = Principal.round(Principal.getGastoTotalYearly(idMoneda, year), 2);
-            ingreso = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year), 2);
+            //gasto = Principal.round(Principal.getGastoTotalYearly(idMoneda, year, false), 2);
+            //ingreso = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year, false), 2);
         } else{
             c = Principal.getSumByMotivesMonth(idMoneda,month,year);
-            gasto = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year), 2);
-            ingreso = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year), 2);
+            //gasto = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year, false), 2);
+            //ingreso = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year, false), 2);
         }
         ganancia = ingreso + gasto;
         if (ganancia <= 0) {

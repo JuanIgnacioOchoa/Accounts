@@ -216,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -556,6 +558,7 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         protected Integer doInBackground(String ... pParams) {
+            //return 2;
             driveRunning = true;
             Log.d("Accoun", "Do in BackGround " + pParams[0] + " " + pParams[0]);
             String s = DriveMan.getAccessToken(pParams[0], getString(R.string.server_client_id));

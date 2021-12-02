@@ -23,6 +23,8 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,6 +45,7 @@ public class Reportes extends AppCompatActivity{
     private TextView TVGanancia,TVGasto, TVIngreso, TVPorcentaje;
     private Double gasto, ingreso, ganancia, porcentaje;
     private Spinner spMonth, spTimeLapse, spMoneda;
+    private CheckBox cbAccounts;
     private Calendar calendar;
     private String year;
     private String month;
@@ -96,6 +99,7 @@ public class Reportes extends AppCompatActivity{
         spTimeLapse       = (Spinner)  findViewById(R.id.spYear);
         spMonth      = (Spinner)  findViewById(R.id.spMonth);
         spMoneda       = (Spinner)  findViewById(R.id.spMoneda);
+        cbAccounts       = (CheckBox)  findViewById(R.id.CBAccounts);
 
         months = new String[]{
                 getString(R.string.jan),
@@ -253,8 +257,8 @@ public class Reportes extends AppCompatActivity{
                                 month = "12";
                                 break;
                         }
-                        gasto    = Principal.round(Principal.getGastoTotalMonthly(idMoneda,month, year),2);
-                        ingreso  = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year),2);
+                        //gasto    = Principal.round(Principal.getGastoTotalMonthly(idMoneda,month, year, false),2);
+                        //ingreso  = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year, false),2);
                         ganancia = ingreso + gasto;
                         if(ganancia  <= 0){
                             porcentaje = (ganancia / -gasto) * 100;
@@ -276,8 +280,8 @@ public class Reportes extends AppCompatActivity{
                     case 2:
                         year = spAdapterYear.getItem(position);
                         month = null;
-                        gasto    = Principal.round(Principal.getGastoTotalYearly(idMoneda, year),2);
-                        ingreso  = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year),2);
+                        //gasto    = Principal.round(Principal.getGastoTotalYearly(idMoneda, year, false),2);
+                        //ingreso  = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year, false),2);
                         ganancia = ingreso + gasto;
                         if(ganancia  <= 0){
                             porcentaje = (ganancia / -gasto) * 100;
@@ -333,11 +337,11 @@ public class Reportes extends AppCompatActivity{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 idMoneda = (int) id;
                 if(month == null){
-                    gasto = Principal.round(Principal.getGastoTotalYearly(idMoneda, year), 2);
-                    ingreso = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year), 2);
+                    //gasto = Principal.round(Principal.getGastoTotalYearly(idMoneda, year, false), 2);
+                    //ingreso = Principal.round(Principal.getIngresoTotalYearly(idMoneda, year, false), 2);
                 } else {
-                    gasto = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year), 2);
-                    ingreso = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year), 2);
+                    //gasto = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year, false), 2);
+                    //ingreso = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year, false), 2);
                 }
                 ganancia = ingreso + gasto;
                 if(ganancia  <= 0){
@@ -363,6 +367,14 @@ public class Reportes extends AppCompatActivity{
 
             }
         });
+
+        cbAccounts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean b = cbAccounts.isChecked();
+                int a = 1;
+            }
+        });
     }
 
     @Override
@@ -373,6 +385,7 @@ public class Reportes extends AppCompatActivity{
     }
 
     public void setEnabledSpinner(boolean e){
+        cbAccounts.setEnabled(e);
         spMoneda.setEnabled(e);
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

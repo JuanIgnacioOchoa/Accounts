@@ -57,14 +57,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/TV_TR_FechaInic"
-        android:lines="5"
+        android:lines="3"
         android:id="@+id/ET_TR_Desc"
         android:hint="Descripcion del Viaje"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="120dp"
+        android:id="@+id/LL_Trip_Totals"
+        android:orientation="vertical"
+        android:layout_below="@id/ET_TR_Desc"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/totals_in"
+                android:textColor="#000000"
+                android:textSize="20dp"
+                android:gravity="center"/>:
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sp_ll_trip_moneda"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lv_total_currency"/>
+    </LinearLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ET_TR_Desc"
-        android:layout_marginBottom="60dp"
+        android:layout_below="@id/LL_Trip_Totals"
+        android:layout_marginBottom="0dp"
         android:layout_marginTop="10dp"
         android:id="@+id/LV_Movimiento"/>
 </RelativeLayout>

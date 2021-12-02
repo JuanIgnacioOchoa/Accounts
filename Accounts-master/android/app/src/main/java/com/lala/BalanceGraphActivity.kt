@@ -34,6 +34,8 @@ class BalanceGraphActivity : Fragment(), OnChartValueSelectedListener {
     private var idMoneda = 1
     private var month:String? = "01"
     private var year = "2019"
+    private var account = false
+    private var trips = false
     private val arrayList = ArrayList<GastoData>()
     private lateinit var adapter:RecipeAdapter
     private var selectedItem = -1
@@ -87,28 +89,27 @@ class BalanceGraphActivity : Fragment(), OnChartValueSelectedListener {
             selectedItem = position
         }
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
-        updateAdapter(idMoneda, month, year)
+        updateAdapter(idMoneda, month, year, account, trips)
     }
 
-    fun updateData(idMoneda: Int, month: String?, year: String){
+    fun updateData(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean){
         this.idMoneda = idMoneda
         this.month = month
         this.year = year
+        this.account = account
+        this.trips = trips
     }
 
-    fun updateAdapter(idMoneda: Int, month: String?, year: String) {
+    fun updateAdapter(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean) {
         if(pieChart == null){
             return
         }
         var gasto:Double
         var ingreso:Double
-        if (month == null) {
-            gasto = Principal.getGastoTotalYearly(idMoneda, year)*-1
-            ingreso = Principal.getIngresoTotalYearly(idMoneda, year)
-        } else {
-            gasto = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year), 2) * -1
-            ingreso = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year), 2)
-        }
+
+        gasto = Principal.getGastoTotalByDate(idMoneda, year, month, account, trips)*-1
+        ingreso = Principal.getIngresoTotalByDate(idMoneda, year, month, account, trips)
+
         val ganancia = ingreso - gasto
         var porcentaje = 0.0
         if (ganancia <= 0) {

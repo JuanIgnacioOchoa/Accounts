@@ -51,6 +51,32 @@
             android:background="@null"
             />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:id="@+id/linear2"
+        android:layout_below="@id/linearLayout">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/include_between_accounts"
+            android:id="@+id/CBAccounts"
+            android:textColor="#000000"
+            android:layout_gravity="center_vertical"
+            android:buttonTint="@color/colorPrimaryDark"
+            android:layout_weight="1"/>
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/include_trips"
+            android:id="@+id/CBTrips"
+            android:textColor="#000000"
+            android:layout_gravity="center_vertical"
+            android:buttonTint="@color/colorPrimaryDark"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
 
 </RelativeLayout>

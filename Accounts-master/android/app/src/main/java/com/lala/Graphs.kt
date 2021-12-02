@@ -41,6 +41,8 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
     private var idMoneda = 1
     private var month:String? = "01"
     private var year = "2019"
+    private var account = false
+    private var trips = false
     private val arrayList = ArrayList<GastoData>()
     private lateinit var adapter:RecipeAdapter
     private var selectedItem = -1
@@ -96,7 +98,7 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
                 i.putExtra("month", month)
                 i.putExtra("year", year)
                 i.putExtra("Gasto", arrayList[position].gasto)
-                i.putExtra("Ingreso", 0.0)
+                i.putExtra("Ingreso", arrayList[position].ingreso)
                 i.putExtra("IdMoneda", idMoneda)
                 startActivity(i)
             } else{
@@ -109,29 +111,27 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
             selectedItem = position
         }
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
-        updateAdapter(idMoneda, month, year)
+        updateAdapter(idMoneda, month, year, account, trips)
     }
-    fun updateData(idMoneda: Int, month: String?, year: String){
+    fun updateData(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean){
         this.idMoneda = idMoneda
         this.month = month
         this.year = year
+        this.account = account
+        this.trips = trips
     }
-    fun updateAdapter(idMoneda: Int, month: String?, year: String) {
+    fun updateAdapter(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean) {
         if(pieChart == null){
             return
         }
-        var c:Cursor
+        var c = Principal.getTotalesByMotive(idMoneda.toString(), year, month, account, trips, false)
         var total:Double
-        if (month == null) {
-            c = Principal.getTotalesGastoByYearByMotive(idMoneda.toString(), year)
-            total = Principal.getGastoTotalYearly(idMoneda, year)
-        } else {
-            c = Principal.getTotalesGastoMonthlyByMotive(idMoneda.toString(), month, year)
-            total = Principal.round(Principal.getGastoTotalMonthly(idMoneda, month, year), 2)
-        }
+
+        total = Principal.round(Principal.getGastoTotalByDate(idMoneda, year, month, account, trips), 2)
         pieChart!!.centerText = "Total\n${instance.format(Principal.round(total, 2))}"
         pieChart!!.setCenterTextColor(Color.RED)
         var gasto = 0.0
+        var ingreso = 0.0;
         val value = ArrayList<PieEntry>()
         var i = 0
         val inflater = LayoutInflater.from(context);
@@ -139,13 +139,14 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
         arrayList.clear()
         while (c.moveToNext()){
             gasto = c.getDouble(c.getColumnIndex("Gasto"))
+            ingreso = c.getDouble(c.getColumnIndex("Ingreso"))
             if(c.getInt(c.getColumnIndex("isViaje")) == 1 || gasto == 0.0){
                 continue
             }
 
             val motivo = c.getString(c.getColumnIndex("Motivo"))
             val per:Float = (gasto/total).toFloat()
-            arrayList.add(GastoData(motivo, gasto, c.getInt(c.getColumnIndex("_id")), per))
+            arrayList.add(GastoData(motivo, gasto, ingreso, c.getInt(c.getColumnIndex("_id")), per))
             if(per > .025){
                 value.add(PieEntry(per, motivo))
             } else {
@@ -175,7 +176,7 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
         pieChart!!.getLegend().setEnabled(false);
         adapter.updateData(arrayList)
         val mv = CustomMarkerView(context, R.layout.custom_marker_view_layout);
-        piechart.marker = mv
+        pieChart!!.marker = mv
         //val xs = arrayOf(Highlight(1.0f, 0.111013226f, 0))
         //pieChart!!.highlightValues(xs)
     }
@@ -222,7 +223,7 @@ class Graphs : Fragment(), OnChartValueSelectedListener {
     }
 
 
-    data class GastoData(val motivo: String, val gasto: Double, val id: Int, val por:Float)
+    data class GastoData(val motivo: String, val gasto: Double, val ingreso: Double, val id: Int, val por:Float)
 
     inner class RecipeAdapter(private val context: Context,
                               private var dataSource: ArrayList<GastoData>) : BaseAdapter() {

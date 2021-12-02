@@ -4,20 +4,19 @@ package com.lala
 import android.database.Cursor
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.ads.MobileAds
-import androidx.viewpager.widget.ViewPager
 import android.widget.*
-import androidx.fragment.app.FragmentPagerAdapter
-import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.gms.ads.MobileAds
+import com.google.android.material.tabs.TabLayout
 import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import android.widget.Spinner
 
 
 class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -32,6 +31,8 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var spTimeLapse: Spinner
     private lateinit var spMonth: Spinner
     private lateinit var spMoneda: Spinner
+    private lateinit var cbAccount: CheckBox
+    private lateinit var cbTrips: CheckBox
     private lateinit var months: Array<String>
     private lateinit var instance: NumberFormat
     private lateinit var calendar: Calendar
@@ -59,8 +60,8 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
         spTimeLapse = view.findViewById(R.id.spYear);
         spMonth = view.findViewById(R.id.spMonth);
         spMoneda = view.findViewById(R.id.spMoneda);
-
-
+        cbAccount = view.findViewById(R.id.CBAccounts);
+        cbTrips = view.findViewById(R.id.CBTrips);
 
         return view
     }
@@ -174,20 +175,23 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         year = ys
         month = sm
-
-        graphsGasto.updateData(idMoneda, month, year)
-        graphsIngreso.updateData(idMoneda, month, year)
-        balance.updateData(idMoneda, month, year)
-        graphCuentas.updateData(month, year)
+        update()
 
         spMonth.setOnItemSelectedListener(this)
         spTimeLapse.setOnItemSelectedListener(this)
         spMoneda.setOnItemSelectedListener(this)
-
+        cbAccount.setOnClickListener(View.OnClickListener {
+            update()
+        })
+        cbTrips.setOnClickListener(View.OnClickListener {
+            update()
+        })
     }
 
     fun setEnabledSpinner(e: Boolean) {
         spMoneda.setEnabled(e);
+        cbAccount.isEnabled = e
+        cbTrips.isEnabled = e
     }
 
     companion object {
@@ -199,6 +203,20 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onPause() {
         super.onPause()
         init = false
+    }
+
+    fun update(){
+        graphsGasto.updateData(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
+        graphsIngreso.updateData(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
+        balance.updateData(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
+        graphCuentas.updateData(month, year) // TODO colocar moneda
+
+        if(cursorMoneda.count > 0) {
+            graphsGasto.updateAdapter(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked)
+            graphsIngreso.updateAdapter(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked)
+            balance.updateAdapter(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked)
+            graphCuentas.updateAdapter(month, year)
+        }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -258,17 +276,7 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         }
 
-        graphsGasto.updateData(idMoneda, month, year) // TODO colocar moneda
-        graphsIngreso.updateData(idMoneda, month, year) // TODO colocar moneda
-        balance.updateData(idMoneda, month, year) // TODO colocar moneda
-        graphCuentas.updateData(month, year) // TODO colocar moneda
-
-        if(cursorMoneda.count > 0) {
-            graphsGasto.updateAdapter(idMoneda, month, year)
-            graphsIngreso.updateAdapter(idMoneda, month, year)
-            balance.updateAdapter(idMoneda, month, year)
-            graphCuentas.updateAdapter(month, year)
-        }
+        update()
     }
 
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

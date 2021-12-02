@@ -190,8 +190,9 @@ public class FragmentTotals extends Fragment {
         double cash = Principal.getTotalesCash(moneda, false);
         double credit = Principal.getTotalesCreditCard(moneda, false);
         double invest = Principal.getTotalesInvests(moneda, false);
-        double deudores = Principal.getTotalesDeudores(moneda);
-        double deudas = Principal.getTotalesDeudas(moneda);
+        Cursor loans = Principal.getLoansTotalByCurrency(moneda);
+        double deudas = loans.getDouble(loans.getColumnIndex("deuda"));
+        double deudores = loans.getDouble(loans.getColumnIndex("deudores"));
         tvCash.setText(instance.format(cash));
         tvCreditCard.setText(instance.format(credit));
         tvInversion.setText(instance.format(invest));

@@ -41,6 +41,8 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
     private var idMoneda = 1
     private var month:String? = "01"
     private var year = "2019"
+    private var account = false
+    private var trips = false
     private val arrayList = ArrayList<GastoData>()
     private lateinit var adapter:RecipeAdapter
     private var selectedItem = -1
@@ -90,8 +92,8 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
                 i.putExtra("_id", arrayList[position].id)
                 i.putExtra("month", month)
                 i.putExtra("year", year)
-                i.putExtra("Ingreso", arrayList[position].gasto)
-                i.putExtra("Gasto", 0.0)
+                i.putExtra("Ingreso", arrayList[position].ingreso)
+                i.putExtra("Gasto", arrayList[position].gasto)
                 i.putExtra("IdMoneda", idMoneda)
                 startActivity(i)
             } else{
@@ -104,42 +106,41 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
             selectedItem = position
         }
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
-        updateAdapter(idMoneda, month, year)
+        updateAdapter(idMoneda, month, year, account, trips)
     }
-    fun updateData(idMoneda: Int, month: String?, year: String){
+    fun updateData(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean){
         this.idMoneda = idMoneda
         this.month = month
         this.year = year
+        this.account = account
+        this.trips = trips
     }
-    fun updateAdapter(idMoneda: Int, month: String?, year: String) {
+    fun updateAdapter(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean) {
         if(pieChart == null){
             return
         }
-        var c:Cursor
+        var c = Principal.getTotalesByMotive(idMoneda.toString(), year, month, account, trips, true)
         var total:Double
-        if (month == null) {
-            c = Principal.getTotalesIngresoByYearByMotive(idMoneda.toString(), year)
-            total = Principal.getIngresoTotalYearly(idMoneda, year)
-        } else {
-            c = Principal.getTotalesIngresoMonthlyByMotive(idMoneda.toString(), month, year)
-            total = Principal.round(Principal.getIngresoTotalMonthly(idMoneda, month, year), 2)
-        }
+
+        total = Principal.round(Principal.getIngresoTotalByDate(idMoneda, year, month, account, trips), 2)
         pieChart!!.centerText = "Total\n${instance.format(Principal.round(total, 2))}"
         pieChart!!.setCenterTextColor(ContextCompat.getColor(context!!, R.color.positive_green))
         var gasto = 0.0
+        var ingreso = 0.0
         val value = ArrayList<PieEntry>()
         var i = 0
         arrayList.clear()
         val inflater = LayoutInflater.from(context);
         labelLayout.removeAllViewsInLayout()
         while (c.moveToNext()){
-            gasto = c.getDouble(c.getColumnIndex("Ingreso"))
-            if(c.getInt(c.getColumnIndex("isViaje")) == 1 || gasto == 0.0){
+            gasto = c.getDouble(c.getColumnIndex("Gasto"))
+            ingreso = c.getDouble(c.getColumnIndex("Ingreso"))
+            if(c.getInt(c.getColumnIndex("isViaje")) == 1 || ingreso == 0.0){
                 continue
             }
             val motivo = c.getString(c.getColumnIndex("Motivo"))
-            val per:Float = (gasto/total).toFloat()
-            arrayList.add(GastoData(motivo, gasto, c.getInt(c.getColumnIndex("_id")), per))
+            val per:Float = (ingreso/total).toFloat()
+            arrayList.add(GastoData(motivo, gasto, ingreso, c.getInt(c.getColumnIndex("_id")), per))
             if(per > 0.02){
                 value.add(PieEntry(per, motivo))
             } else {
@@ -167,7 +168,7 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
 
         adapter.updateData(arrayList)
         val mv = CustomMarkerView(context, R.layout.custom_marker_view_layout);
-        piechart.marker = mv
+        pieChart!!.marker = mv
         //val xs = arrayOf(Highlight(1.0f, 0.111013226f, 0))
         //pieChart!!.highlightValues(xs)
     }
@@ -214,7 +215,7 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
     }
 
 
-    data class GastoData(val motivo: String, val gasto: Double, val id: Int, val por:Float)
+    data class GastoData(val motivo: String, val gasto: Double, val ingreso: Double, val id: Int, val por:Float)
 
     inner class RecipeAdapter(private val context: Context,
                               private var dataSource: ArrayList<GastoData>) : BaseAdapter() {
@@ -250,13 +251,13 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
             TVMotivo.setTextColor(ContextCompat.getColor(context, R.color.positive_green))
             TVCantidadI.setTextColor(ContextCompat.getColor(context, R.color.positive_green))
             TVColor.setBackgroundColor(a[position % a.size])
-            var gasto = dataSource[position].gasto
+            var ingreso = dataSource[position].ingreso
             var porcentaje = dataSource[position].por
-            if (gasto == null) gasto = 0.0
-            gasto = Principal.round(gasto, 2)
+            if (ingreso == null) ingreso = 0.0
+            ingreso = Principal.round(ingreso, 2)
 
             TVCantidadI.text = instance.format(Principal.round((porcentaje*100).toDouble(), 2)) + "%"
-            TVCantidadG.text = "$" + instance.format(gasto)
+            TVCantidadG.text = "$" + instance.format(ingreso)
             TVMotivo.setText(dataSource[position].motivo)
 
             return rowView

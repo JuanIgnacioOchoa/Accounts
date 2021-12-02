@@ -14,6 +14,7 @@ import androidx.cursoradapter.widget.CursorAdapter
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.*
 import androidx.core.content.ContextCompat
+import com.mynameismidori.currencypicker.ExtendedCurrency
 
 import kotlinx.android.synthetic.main.activity_see_trip_main.*
 import java.text.DateFormatSymbols
@@ -32,7 +33,9 @@ class SeeTripMainActivity : AppCompatActivity() {
     private lateinit var tvFechaInic:TextView
     private lateinit var tvFechaFin:TextView
     private lateinit var spMoneda:Spinner
+    private lateinit var spMonedaTotals:Spinner
     private lateinit var lvMovimientos:ListView
+    private lateinit var listViewTotales: ListView
     private var editable:Boolean = false;
     private var instance: NumberFormat = NumberFormat.getInstance()
     private val calendar = Calendar.getInstance()
@@ -41,6 +44,8 @@ class SeeTripMainActivity : AppCompatActivity() {
     //private lateinit var adapterMoves:myAdapter
     private lateinit var adapterMoves:myAdapterFecha
     private lateinit var cursorMoneda:Cursor
+    private lateinit var adapterTotals:myAdapterCurrncies
+    private lateinit var cursorTotals:Cursor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +68,15 @@ class SeeTripMainActivity : AppCompatActivity() {
         tvFechaInic = findViewById<TextView>(R.id.TV_TR_FechaInic)
         tvFechaFin = findViewById<TextView>(R.id.TV_TR_FechaFin)
         spMoneda = findViewById<Spinner>(R.id.SP_TR_Moneda)
+        spMonedaTotals = findViewById(R.id.sp_ll_trip_moneda)
         lvMovimientos = findViewById<ListView>(R.id.LV_Movimiento)
+        listViewTotales = findViewById<ListView>(R.id.lv_total_currency)
         var fechaInic: String? = null
         var fechaFin: String? = null
         etNombre.isEnabled = false
         etDesc.isEnabled = false
         spMoneda.isEnabled = false
+        spMonedaTotals.isEnabled = true
         cursorMoves = Principal.getMovesByTrips(_id)
         adapterMoves = myAdapterFecha(applicationContext, cursorMoves)
         lvMovimientos.setAdapter(adapterMoves)
@@ -83,21 +91,28 @@ class SeeTripMainActivity : AppCompatActivity() {
         fechaInic = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaInicio))
         cursorMoneda = Principal.getMoneda();
         spMoneda.adapter = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
+        spMonedaTotals.adapter = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
         etNombre.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre)))
         etDesc.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Descripcion)))
         tvFechaFin.text = fechaFin
         tvFechaInic.text = fechaInic
+        var idMoneda = -1
         var j = 0
         while (j < spMoneda.adapter.count) {
             val value = spMoneda.getItemAtPosition(j) as Cursor
             val id = value.getInt(value.getColumnIndex("_id"))
-            val idMoneda = cursorTrip.getInt(cursorTrip.getColumnIndex(DBMan.DBViaje.IdMoneda))
+            idMoneda = cursorTrip.getInt(cursorTrip.getColumnIndex(DBMan.DBViaje.IdMoneda))
             if (id == idMoneda) {
                 spMoneda.setSelection(j)
+                spMonedaTotals.setSelection(j)
                 j = spMoneda.adapter.count + 1
             }
             j++
         }
+        cursorTotals = Principal.getTripTotalByCurrency(idMoneda, _id)
+        adapterTotals = myAdapterCurrncies(applicationContext, cursorTotals)
+        listViewTotales.setAdapter(adapterTotals)
+
         //TODO hide keyboard
         //SetOnClickListeners
         fab.setOnClickListener {
@@ -237,7 +252,24 @@ class SeeTripMainActivity : AppCompatActivity() {
             alertDialog.show()
             alertDialog.setCanceledOnTouchOutside(false)
         })
+        spMonedaTotals.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                var idMoneda = id.toInt()
+                cursorTotals = Principal.getTripTotalByCurrency(idMoneda, _id)
+                while(cursorTotals.moveToNext()){
+                    var moneda = cursorTotals.getString(cursorTotals.getColumnIndex("Moneda"))
+                    var ihlsd = 0
+                }
 
+                cursorTotals = Principal.getTripTotalByCurrency(idMoneda, _id)
+                adapterTotals = myAdapterCurrncies(applicationContext, cursorTotals)
+                listViewTotales.adapter = adapterTotals
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
     }
 
     override fun onResume() {
@@ -342,4 +374,35 @@ class SeeTripMainActivity : AppCompatActivity() {
             tvFecha.text = fecha
         }
     }
+
+    inner class myAdapterCurrncies(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
+        override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
+            return LayoutInflater.from(context).inflate(R.layout.inflate_currency_totals, parent, false)
+        }
+
+        override fun bindView(view: View, context: Context, cursor: Cursor) {
+            // Find fields to populate in inflated template
+            val tvTotal = view.findViewById(R.id.total) as TextView
+            val ivFlag = view.findViewById<ImageView>(R.id.flag)
+
+
+            var moneda = cursor.getString(cursor.getColumnIndex("Moneda"))
+            var total = cursor.getDouble(cursor.getColumnIndex("Total"))
+            val extendedCurrency = ExtendedCurrency.getCurrencyByISO(moneda)
+            var i = 0;
+            if (total == 0.0) {
+                tvTotal.setTextColor(ContextCompat.getColor(context, R.color.neutral_yellow))
+            } else if (total < 0) {
+                tvTotal.setTextColor(Color.RED)
+            } else {
+                tvTotal.setTextColor(ContextCompat.getColor(context, R.color.positive_green))
+            }
+            tvTotal.text = "$" + instance.format(total) + " " + moneda
+
+            if(extendedCurrency != null) {
+                ivFlag.setImageResource(extendedCurrency.flag)
+            }
+        }
+    }
+
 }

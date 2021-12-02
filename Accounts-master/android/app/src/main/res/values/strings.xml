@@ -27,6 +27,9 @@
     <string name="person_">Person: </string>
     <string name="zeros_m">0.00$</string>
     <string name="show_zeros">Show on 0</string>
+    <string name="include_between_accounts">Include accounts</string>
+    <string name="include_trips">Include trips</string>
+    <string name="totals_in">Totals In:</string>
     <string name="month">Month</string>
     <string name="year">Year</string>
     <string name="savings">Savings</string>

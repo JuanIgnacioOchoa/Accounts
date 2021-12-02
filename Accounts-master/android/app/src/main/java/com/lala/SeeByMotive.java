@@ -34,6 +34,7 @@ public class SeeByMotive extends AppCompatActivity {
     private ListView lv;
     private TextView textViewGa, textViewIn;
     private int id, idMoneda;
+    private  double in = 0.0, ga = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,21 +52,23 @@ public class SeeByMotive extends AppCompatActivity {
         });
         Intent i = this.getIntent();
         id = i.getIntExtra("_id", 0);
-        double ga = i.getDoubleExtra("Gasto", 0.0);
-        double in = i.getDoubleExtra("Ingreso", 0.0);
+        ga = i.getDoubleExtra("Gasto", 0.0);
+        in = i.getDoubleExtra("Ingreso", 0.0);
         idMoneda = i.getIntExtra("IdMoneda", 1);
         String month = i.getStringExtra("month");
         String year = i.getStringExtra("year");
+        String moneda = Principal.getIdMoneda(idMoneda);
         cursorFecha = Principal.getMovimientosFecha(id, month, year, idMoneda);
         String title = Principal.getMotiveId(id);
         this.setTitle(title);
+        toolbar.setTitle(title);
         instance = NumberFormat.getInstance();
         instance.setMinimumFractionDigits(2);
         lv = (ListView) findViewById(R.id.listView);
         textViewIn = findViewById(R.id.textViewIn);
         textViewGa = findViewById(R.id.textViewGa);
-        textViewGa.setText(instance.format(ga));
-        textViewIn.setText(instance.format(in));
+        textViewGa.setText("$" + instance.format(ga) + " " + moneda);
+        textViewIn.setText("$" + instance.format(in) + " " + moneda);
         adapter = new myAdapterFecha(getApplicationContext(), cursorFecha);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(null);
@@ -84,6 +87,11 @@ public class SeeByMotive extends AppCompatActivity {
          */
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.setTitle("ABC");
+    }
     public class myAdapterFecha extends CursorAdapter {
 
         public myAdapterFecha(Context context, Cursor cursor) {
@@ -149,7 +157,8 @@ public class SeeByMotive extends AppCompatActivity {
                 }
                 cuentaTV.setText(cuenta);
                 motivoTV.setText(motivo);
-                cantidadTV.setText(instance.format(cantidad * cambio)+" " + moneda);
+                //cantidadTV.setText(instance.format(cantidad * cambio)+" " + moneda);
+                cantidadTV.setText("$" + instance.format(cantidad)+" " + moneda);
                 cantidadTV.setGravity(Gravity.RIGHT);
 
                 linear.addView(cuentaTV);

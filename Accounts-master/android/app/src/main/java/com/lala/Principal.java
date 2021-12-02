@@ -368,6 +368,32 @@ public class Principal {
         }
         return 0.0;
     }
+
+    public static Cursor getLoansTotalByCurrency(int moneda){
+        Cursor c = db.rawQuery("" +
+                "SELECT SUM(deuda) as deuda, sum(deudores) as deudores FROM (\n" +
+                "\tselect p.Cantidad, pago, (p.Cantidad - coalesce(pago, 0.0)) as restante, (\n" +
+                "\t\tCASE \n" +
+                "\t\t\tWHEN (p.Cantidad - coalesce(pago, 0.0)) < 0.0\n" +
+                "\t\t\tthen (p.Cantidad - coalesce(pago, 0.0))\n" +
+                "\t\tend\n" +
+                "\t) as deuda, (\n" +
+                "\t\tCASE \n" +
+                "\t\t\tWHEN (p.Cantidad - coalesce(pago, 0.0)) > 0.0\n" +
+                "\t\t\tthen (p.Cantidad - coalesce(pago, 0.0))\n" +
+                "\t\tend\n" +
+                "\t) as deudores\n" +
+                "\t\tfrom AccountsPrestamos as p\n" +
+                "\tLEFT JOIN (\n" +
+                "\t\tSELECT  SUM(CANTIDAD) as pago, IdPrestamo\n" +
+                "\t\t\tFROM AccountsPrestamosDetalle\n" +
+                "\t\t\tGROUP BY IdPrestamo\n" +
+                "\t) as t1 on t1.IdPrestamo = p._id\n" +
+                "\t\tWHERE p.IdMoneda = ?\n" +
+                ")", new String[]{"" + moneda,});
+        c.moveToNext();
+        return c;
+    }
     //Movimientos
     public static Cursor getMovimientos() {
         return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE strftime('%Y',Fecha) = strftime('%Y', date('now'))and " +
@@ -500,9 +526,7 @@ public class Principal {
                 "                then Cantidad * -1 end) as Ingreso FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == strftime('%Y', date('now')) " +
                 "and strftime('%m',Fecha) == strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now')) " +
                 "and IdMoneda == ? and Cambio IS NOT NULL and Cambio <> 1 \n" +
-                "union\n" +
-                "SELECT  SUM(Cantidad) as Ingreso From AccountsTotales, AccountsMovimiento WHERE IdMotivo == 3 and Traspaso == AccountsTotales._id and AccountsTotales.IdMoneda == ? and strftime('%Y',Fecha) == strftime('%Y', date('now')) and strftime('%m',Fecha) == strftime('%m',date('now')) and strftime('%d',Fecha) >= 1 and strftime('%d',Fecha) <= strftime('%d',date('now'))\n" +
-                ")\n",new String[]{Moneda+"",Moneda+"",Moneda+""});
+                ")\n",new String[]{Moneda+"",Moneda+""});
         c.moveToFirst();
         Double ingreso;
         try {
@@ -515,18 +539,49 @@ public class Principal {
         return ingreso;
     }
 
-    public static Double getIngresoTotalMonthly(int Moneda,String month, String year){
-        Cursor c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
-                "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and \n" +
-                "  strftime('%m',Fecha) == \"" + month + "\" \n" +
-                "union\n" +
-                "\n" +
-                "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) <> AccountsMovimiento.IdMoneda\n" +
-                "                then Cantidad * -1 end) as Ingreso FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" and " +
-                "IdMoneda == ? and Cambio IS NOT NULL and Cambio <> 1 \n" +
-                "union\n" +
-                "SELECT  SUM(Cantidad) as Ingreso From AccountsTotales, AccountsMovimiento WHERE IdMotivo == 3 and Traspaso == AccountsTotales._id and AccountsTotales.IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and strftime('%m',Fecha) == \"" + month + "\"\n" +
-                ")\n",new String[]{Moneda+"",Moneda+"",Moneda+""});
+    public static Double getIngresoTotalByDate(int Moneda, String year, String month, boolean accounts, boolean trips){
+        String dateQuery = "";
+        if(month == null){
+            dateQuery = "strftime('%Y',Fecha) = \"" + year + "\"";
+        } else {
+            dateQuery = "strftime('%Y',Fecha) = \"" + year + "\" and strftime('%m',Fecha) = \"" + month + "\"";
+        }
+        Cursor c;
+        if(accounts) {
+            c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                    "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and " + dateQuery +
+                    "union\n" +
+                    "\n" +
+                    "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) <> AccountsMovimiento.IdMoneda\n" +
+                    "                then Cantidad * -1 end) as Ingreso FROM AccountsMovimiento WHERE Cantidad < 0 and " + dateQuery + " and " +
+                    "IdMoneda == ? and Cambio IS NOT NULL and Cambio <> 1 \n" +
+                    "union\n" +
+                    "SELECT  SUM(Cantidad) as Ingreso From AccountsTotales, AccountsMovimiento WHERE IdMotivo == 3 and Traspaso == AccountsTotales._id and AccountsTotales.IdMoneda == ? and " + dateQuery +
+                    "union \n" +
+                            "                SELECT sum( Case \n" +
+                            "\t\t\t\t\tWHEN (\n" +
+                            "\t\t\t\t\t\t\tSELECT AccountsTotales.IdMoneda \n" +
+                            "\t\t\t\t\t\t\t\tfrom AccountsTotales, AccountsMovimiento as p\n" +
+                            "\t\t\t\t\t\t\t\t\tWHERE AccountsTotales._id = Traspaso and AccountsMovimiento._id = p._id\n" +
+                            "\t\t\t\t\t) = ? and IdMotivo = 2 and Cambio <> 1\n" +
+                            "\t\t\t\t\tthen Cantidad \n" +
+                            "\t\t\t\t\tWHEN (\n" +
+                            "\t\t\t\t\t\tSELECT AccountsTotales.IdMoneda \n" +
+                            "\t\t\t\t\t\t\t\tfrom AccountsTotales, AccountsMovimiento as p\n" +
+                            "\t\t\t\t\t\t\t\t\tWHERE AccountsTotales._id = Traspaso and AccountsMovimiento._id = p._id\n" +
+                            "\t\t\t\t\t) = ? and IdMotivo = 1 and Cambio <> 1\n" +
+                            "\t\t\t\t\tthen Cantidad * 1000\n" +
+                            "\t\t\t\tend ) as Ingreso\t\t\n" +
+                            "\t\t\t\tFROM AccountsMovimiento\n" +
+                            "\t\t\t\t\tWHERE " + dateQuery + " \n" +
+                            "\t\t\tGROUP BY IdMotivo"+
+                    ")\n",new String[]{Moneda+"",Moneda+"",Moneda+"",Moneda+"",Moneda+""});
+        } else {
+            c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                    "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and " + dateQuery +
+                    ")\n",new String[]{Moneda+""});
+        }
+
         c.moveToFirst();
         Double ingreso;
         try {
@@ -538,16 +593,60 @@ public class Principal {
         }
         return ingreso;
     }
-    public static Double getIngresoTotalYearly(int Moneda, String year){
-        Cursor c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
-                "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" \n" +
-                "union\n" +
-                "\n" +
-                "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) <> AccountsMovimiento.IdMoneda\n" +
-                "                then Cantidad * -1 end) as Ingreso FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\"  and IdMoneda == ? and Cambio IS NOT NULL and Cambio <> 1 \n" +
-                "union\n" +
-                "SELECT  SUM(Cantidad) as Ingreso From AccountsTotales, AccountsMovimiento WHERE IdMotivo == 3 and Traspaso == AccountsTotales._id and AccountsTotales.IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\"\n" +
-                ")\n",new String[]{Moneda+"",Moneda+"",Moneda+""});
+
+    public static Double getIngresoTotalMonthly(int Moneda,String month, String year, boolean accounts, boolean trips){
+        Cursor c;
+        if(accounts) {
+            c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                    "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and \n" +
+                    "  strftime('%m',Fecha) == \"" + month + "\" \n" +
+                    "union\n" +
+                    "\n" +
+                    "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) <> AccountsMovimiento.IdMoneda\n" +
+                    "                then Cantidad * -1 end) as Ingreso FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\" and strftime('%m',Fecha) == \"" + month + "\" and " +
+                    "IdMoneda == ? and Cambio IS NOT NULL and Cambio <> 1 \n" +
+                    "union\n" +
+                    "SELECT  SUM(Cantidad) as Ingreso From AccountsTotales, AccountsMovimiento WHERE IdMotivo == 3 and Traspaso == AccountsTotales._id and AccountsTotales.IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and strftime('%m',Fecha) == \"" + month + "\"\n" +
+                    ")\n",new String[]{Moneda+"",Moneda+"",Moneda+""});
+        } else {
+            c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                    "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" and \n" +
+                    "  strftime('%m',Fecha) == \"" + month + "\" \n" +
+                    ")\n",new String[]{Moneda+""});
+        }
+
+        c.moveToFirst();
+        Double ingreso;
+        try {
+            ingreso = c.getDouble(c.getColumnIndex("Ingreso"));
+            ingreso++;
+            ingreso--;
+        } catch (Exception e){
+            ingreso = 0.0;
+        }
+        return ingreso;
+    }
+
+    public static Double getIngresoTotalYearly(int Moneda, String year, boolean accounts, boolean trips){
+        Cursor c;
+        if(accounts){
+            c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                    "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" \n" +
+                    "union\n" +
+                    "\n" +
+                    "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) <> AccountsMovimiento.IdMoneda\n" +
+                    "                then Cantidad * -1 end) as Ingreso FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" + year + "\"  and IdMoneda == ? and Cambio IS NOT NULL and Cambio <> 1 \n" +
+                    "union\n" +
+                    "SELECT  SUM(Cantidad) as Ingreso From AccountsTotales, AccountsMovimiento WHERE IdMotivo == 3 and Traspaso == AccountsTotales._id and AccountsTotales.IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\"\n" +
+                    ")\n",new String[]{Moneda+"",Moneda+"",Moneda+""});
+
+
+        } else {
+            c = db.rawQuery("SELECT SUM(Ingreso) as Ingreso FROM (\n" +
+                    "  SELECT sum(Cantidad ) as Ingreso FROM AccountsMovimiento WHERE Cantidad > 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" + year +"\" \n" +
+                    ")\n",new String[]{Moneda+""});
+        }
+
         c.moveToFirst();
         Double ingreso;
         try {
@@ -577,29 +676,98 @@ public class Principal {
         return gasto;
     }
 
-    public static Double getGastoTotalMonthly(int Moneda, String month, String year){
-        Cursor c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
-                "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\" and \n" +
-                "strftime('%m',Fecha) == \"" + month + "\"\n" +
-                "union\n" + "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
-                " then Cantidad * Cambio end) FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" +year +"\" and strftime('%m',Fecha)" +
-                " == \"" + month +"\" and Cambio <> 1 \n" +
-                "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales) == ? THEN" +
-                " Cantidad * Cambio * -1 end) FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == \"" +year +"\" and strftime('%m',Fecha) == \"" + month +"\"" +
-                " \n" + ")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+    public static Double getGastoTotalByDate(int Moneda, String year, String month, boolean accounts, boolean trips){
+        String dateQuery = "";
+        if(month == null){
+            dateQuery = "strftime('%Y',Fecha) = \"" + year + "\"";
+        } else {
+            dateQuery = "strftime('%Y',Fecha) = \"" + year + "\" and strftime('%m',Fecha) = \"" + month + "\"";
+        }
+        Cursor c;
+        if(accounts){
+            c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                    "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and " + dateQuery +
+                    "union\n" + "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
+                    " then Cantidad * Cambio end) FROM AccountsMovimiento WHERE Cantidad < 0 and " + dateQuery +
+                    " == \"" + month +"\" and Cambio <> 1 \n" +
+                    "union"+
+            "        SELECT ( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
+                    "                     then Cantidad * Cambio end) as Gasto\n" +
+                    "            FROM AccountsMovimiento \n" +
+                    "                WHERE Cantidad < 0 and " + dateQuery + " and Cambio <> 1 "+
+                    "union \n" +
+                    "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales) == 1 THEN\n" +
+                    "   Cantidad * Cambio * -1 end) as Gasto\n" +
+                    "   FROM AccountsMovimiento \n" +
+                    "       WHERE " + dateQuery +
+                    "union \n" +
+                    "\t\tSELECT  SUM( CASE \n" +
+                    "                    WHEN (\n" +
+                    "                        SELECT AccountsTotales.IdMoneda \n" +
+                    "                            from AccountsTotales, AccountsMovimiento as p\n" +
+                    "                                WHERE AccountsTotales._id = IdTotales and AccountsMovimiento._id = p._id\n" +
+                    "                ) = ? and IdMotivo = 2 and Cambio <> 1\n" +
+                    "                then Cantidad * Cambio * -1\n" +
+                    "                WHEN (\n" +
+                    "                    SELECT AccountsTotales.IdMoneda \n" +
+                    "                        from AccountsTotales, AccountsMovimiento as p\n" +
+                    "                            WHERE AccountsTotales._id = IdTotales and AccountsMovimiento._id = p._id\n" +
+                    "                    ) = ? and IdMotivo  = 1 and Cambio <> 1\n" +
+                    "                    then Cantidad * 1000000 * -1\n" +
+                    "                end ) as Gasto\n" +
+                    "            FROM AccountsMovimiento\n" +
+                    "                WHERE  " + dateQuery +
+                    " \n" + ")",new String[]{Moneda+"",Moneda+"",Moneda+"", Moneda+""});
+        } else {
+            c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                    "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and " + dateQuery +
+                    " \n" + ")",new String[]{Moneda+""});
+        }
         c.moveToFirst();
         Double gasto;
         gasto = c.getDouble(c.getColumnIndex("Gasto"));
 
         return gasto;
     }
-    public static Double getGastoTotalYearly(int Moneda, String year){
-        Cursor c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
-                "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\"\n" +
-                "union\n" + "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
-                " then Cantidad * Cambio end) FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" +year +"\" and Cambio <> 1 \n" +
-                "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales) == ? THEN" +
-                " Cantidad * Cambio * -1 end) FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == \"" +year +"\")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+    public static Double getGastoTotalMonthly(int Moneda, String month, String year, boolean accounts, boolean trips){
+        Cursor c;
+        if(accounts){
+            c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                    "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\" and \n" +
+                    "strftime('%m',Fecha) == \"" + month + "\"\n" +
+                    "union\n" + "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
+                    " then Cantidad * Cambio end) FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" +year +"\" and strftime('%m',Fecha)" +
+                    " == \"" + month +"\" and Cambio <> 1 \n" +
+                    "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales) == ? THEN" +
+                    " Cantidad * Cambio * -1 end) FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == \"" +year +"\" and strftime('%m',Fecha) == \"" + month +"\"" +
+                    " \n" + ")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+        } else {
+            c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                    "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\" and \n" +
+                    "strftime('%m',Fecha) == \"" + month + "\"\n" +
+                    " \n" + ")",new String[]{Moneda+""});
+        }
+        c.moveToFirst();
+        Double gasto;
+        gasto = c.getDouble(c.getColumnIndex("Gasto"));
+
+        return gasto;
+    }
+    public static Double getGastoTotalYearly(int Moneda, String year, boolean accounts, boolean trips){
+        Cursor c;
+        if(accounts){
+            c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                    "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\"\n" +
+                    "union\n" + "SELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales and Cambio > 0) == ?\n" +
+                    " then Cantidad * Cambio end) FROM AccountsMovimiento WHERE Cantidad < 0 and strftime('%Y',Fecha) == \"" +year +"\" and Cambio <> 1 \n" +
+                    "union\n" + "SELECT SUM (CASE WHEN idMotivo == 3 and (SELECT AccountsTotales.idMoneda FROM AccountsTotales, AccountsMovimiento WHERE AccountsTotales._id == IdTotales) == ? THEN" +
+                    " Cantidad * Cambio * -1 end) FROM AccountsMovimiento WHERE strftime('%Y',Fecha) == \"" +year +"\"" +
+                    ")",new String[]{Moneda+"",Moneda+"",Moneda+""});
+        } else {
+            c = db.rawQuery("SELECT SUM(Gasto) as Gasto FROM(\n" +
+                    "SELECT sum(Cantidad ) as Gasto FROM AccountsMovimiento WHERE Cantidad < 0 and IdMoneda == ? and strftime('%Y',Fecha) == \"" +year +"\"\n" +
+                    ")",new String[]{Moneda+""});
+        }
         c.moveToFirst();
         Double gasto;
         gasto = c.getDouble(c.getColumnIndex("Gasto"));
@@ -801,6 +969,92 @@ public class Principal {
                         "                        WHERE table1.IdViaje == AccountsTrips._id and (Gasto IS NOT NULL or Ingreso IS NOT NULL) GROUP BY Motivo ORDER BY count1 DESC\n",
                 new String[]{Moneda+"", year, Moneda+"", year ,Moneda+"",year, Moneda+"",year, Moneda+"",year, Moneda+"", year ,Moneda+"",year, Moneda+"",year, Moneda+"",year});
     }
+
+    public static Cursor getTotalesByMotive(String moneda, String year, String month, boolean accounts, boolean trips, boolean ingreso){
+        String dateQuery = "";
+        String accountsQuery = "";
+        String[] values = new String[]{};
+        String nullClause = ingreso ? " Ingreso IS NOT NULL " : " Gasto IS NOT NULL ";
+        String orderBy = ingreso ? "ORDER BY Ingreso desc" : "Order BY Gasto ";
+        if(month == null){
+            dateQuery = "strftime('%Y',Fecha) = \"" + year + "\"";
+        } else {
+            dateQuery = "strftime('%Y',Fecha) = \"" + year + "\" and strftime('%m',Fecha) = \"" + month + "\"";
+        }
+
+        if(accounts){
+            values = new String[]{moneda+"", moneda+"", moneda+"", moneda+"", moneda+"", moneda+"", moneda+""};
+            accountsQuery = "union" +
+                    "\t\tSELECT SUM( CASE WHEN (SELECT AccountsTotales.idMoneda \n" +
+                    "\t\t\t\t\t\t\t\t\t\t\tFROM AccountsTotales, AccountsMovimiento as p \n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\tWHERE AccountsTotales._id == IdTotales and Cambio > 0 and AccountsMovimiento._id = p._id ) <> AccountsMovimiento.IdMoneda and IdMoneda == ? \n" +
+                    "\t\t\t\t\tthen Cantidad * -1 end) as Ingreso, \n" +
+                    "                SUM( CASE WHEN (\n" +
+                    "                        SELECT AccountsTotales.IdMoneda\n" +
+                    "                            FROM AccountsTotales, AccountsMovimiento as p\n" +
+                    "                                WHERE AccountsTotales._id = IdTotales and Cambio <> 1 and AccountsMovimiento._id = p._id\n" +
+                    "                    ) = ?\n" +
+                    "                    then Cantidad * Cambio\n" +
+                    "                end) as Gasto, IdMotivo, 2 as type\n" +
+                    "\t\t\tFROM AccountsMovimiento, AccountsMotivo\n" +
+                    "\t\t\t\tWHERE Cantidad < 0 and " + dateQuery + "  and \n" +
+                    "\t\t\t\t\tCambio IS NOT NULL and Cambio <> 1 and AccountsMotivo._id = IdMotivo\n" +
+                    "\t\tGROUP BY IdMotivo" +
+                            "   UNION\n" +
+                            "   SELECT SUM( Case \n" +
+                            "               WHEN (\n" +
+                            "                   SELECT AccountsTotales.IdMoneda \n" +
+                            "                       from AccountsTotales, AccountsMovimiento as p \n" +
+                            "                           WHERE AccountsTotales._id = Traspaso and AccountsMovimiento._id = p._id\n" +
+                            "               ) = ? and IdMotivo = 2 and Cambio <> 1\n" +
+                            "                   then Cantidad \n" +
+                            "               WHEN (\n" +
+                            "                   SELECT AccountsTotales.IdMoneda \n" +
+                            "                       from AccountsTotales, AccountsMovimiento as p \n" +
+                            "                           WHERE AccountsTotales._id = Traspaso and AccountsMovimiento._id = p._id\n" +
+                            "                   ) = ? and IdMotivo = 1 and Cambio <> 1\n" +
+                            "                   then Cantidad * 1000\n" +
+                            "           end ) as Ingreso, \n" +
+                            "           SUM( CASE \n" +
+                            "               WHEN (\n" +
+                            "                   SELECT AccountsTotales.IdMoneda \n" +
+                            "                       from AccountsTotales, AccountsMovimiento as p\n" +
+                            "                           WHERE AccountsTotales._id = IdTotales and AccountsMovimiento._id = p._id\n" +
+                            "           ) = ? and IdMotivo = 2 and Cambio <> 1\n" +
+                            "           then Cantidad * Cambio * -1\n" +
+                            "           WHEN (\n" +
+                            "               SELECT AccountsTotales.IdMoneda \n" +
+                            "                   from AccountsTotales, AccountsMovimiento as p \n" +
+                            "                       WHERE AccountsTotales._id = IdTotales and AccountsMovimiento._id = p._id\n" +
+                            "               ) = ? and IdMotivo  = 1 and Cambio <> 1\n" +
+                            "               then Cantidad * 1000000 * -1\n" +
+                            "           end ) as Gasto, IdMotivo, 3 as type\n" +
+                            "           FROM AccountsMovimiento\n" +
+                            "               WHERE " + dateQuery +
+                            "       GROUP BY IdMotivo";
+
+        } else {
+            values = new String[]{moneda+""};
+        }
+        String sql = "SELECT _id as _id, SUM(Ingreso) as Ingreso, SUM(Gasto) as Gasto , Motivo, isViaje, type FROM("+
+                "SELECT AccountsMotivo._id as _id, SUM(Ingreso) as Ingreso, SUM(Gasto) as Gasto , (case WHEN type = 2 then 'Movimiento entre cuentas' else Motivo end) as Motivo, (0) as isViaje, type" +
+                "    FROM( " +
+                "       SELECT  sum( " +
+                "                   case WHEN Cantidad > 0 then Cantidad end " +
+                "               ) as Ingreso, " +
+                "               sum(case WHEN Cantidad < 0 then Cantidad end) as Gasto, IdMotivo, 1 as type" +
+                "           FROM AccountsMovimiento  " +
+                "               WHERE IdMoneda > 0 and IdMoneda = ? and " + dateQuery +
+                "       GROUP BY IdMotivo " +
+                accountsQuery +
+                "    ) as table1, AccountsMotivo " +
+                "       WHERE table1.IdMotivo == AccountsMotivo._id and  " + nullClause +
+                "GROUP BY Motivo, type "+orderBy +
+                ")\n" +
+                "GROUP By Motivo " + orderBy;
+        return db.rawQuery(sql, values);
+    }
+
 
     public static Cursor getTotalesGastoByYearByMotive(String moneda, String year){
         return db.rawQuery("SELECT \n" +
@@ -1647,6 +1901,111 @@ public class Principal {
     }
 
     //Trips
+    public static Cursor getTripTotalByCurrency(int moneda, int id){
+        String[] values = new String[]{""+moneda,""+id,""+moneda, ""+id, ""+moneda, ""+id,""+moneda,
+                ""+id, ""+moneda, ""+id, ""+moneda, moneda+"",""+moneda, ""+id,""+moneda, ""+id};
+        return db.rawQuery("" +
+                        "SELECT SUM(Mov) as Total, t1.Moneda as _id, AccountsMoneda.Moneda \n" +
+                        "\tFROM (\n" +
+                        "\t\tSELECT am.*,\n" +
+                        "\t\tCASE WHEN t1.Movimiento is not NULL\n" +
+                        "\t\tthen t1.Movimiento\n" +
+                        "\t\tWHEN t2.Movimiento is not NULL\n" +
+                        "\t\tthen t2.Movimiento\n" +
+                        "\t\tWHEN t3.Movimiento is not NULL\n" +
+                        "\t\tthen t3.Movimiento\n" +
+                        "\t\tWHEN t4.Movimiento is not NULL\n" +
+                        "\t\tthen t4.Movimiento\n" +
+                        "\t\tWHEN t5.Movimiento is not NULL\n" +
+                        "\t\tthen t5.Movimiento\n" +
+                        "\t\telse am.Cantidad\n" +
+                        "\t\tend as Mov,\n" +
+                        "\t\tCASE WHEN t1.Movimiento is not NULL or t1.Movimiento is not NULL or t2.Movimiento is not NULL or \n" +
+                        "\t\tt3.Movimiento is not NULL or t4.Movimiento is not NULL or t5.Movimiento is not NULL\n" +
+                        "\t\tthen " + moneda + "\n" +
+                        "\t\telse am.IdMoneda\n" +
+                        "\t\tend as Moneda\n" +
+                        "\t\tFROM AccountsMovimiento as am\n" +
+                        "\t\tLEFT JOIN(\n" +
+                        "\t\t\tSELECT _id, Cantidad as Movimiento, Cantidad, Cambio, IdTotales, IdMoneda, Fecha, comment, 1 as type\n" +
+                        "\t\t\t\tFROM AccountsMovimiento\n" +
+                        "\t\t\t\t\tWHERE IdMoneda = ? and IdViaje = ?\n" +
+                        "\t\t) as t1 on am._id = t1._id\n" +
+                        "\t\tLEFT JOIN(\n" +
+                        "\t\t\tSELECT _id, Cantidad * Cambio as Movimiento, Cantidad, Cambio, IdTotales, IdMoneda, Fecha, comment, 2 as type\n" +
+                        "\t\t\t\tFROM AccountsMovimiento as m\n" +
+                        "\t\t\t\t\tWHERE IdMoneda <> ? and IdViaje = ? and (SELECT IdMoneda FROM AccountsTotales as t WHERE m.IdTotales = t._id) = ?\n" +
+                        "\t\t) as t2 on am._id = t2._id\n" +
+                        "\t\tLEFT JOIN (\n" +
+                        "\t\t\tSELECT _id, Cantidad / Cambio as Movimiento, Cantidad, Cambio, IdTotales, IdMoneda, Fecha, comment, 3 as type\n" +
+                        "\t\t\t\tFROM( \n" +
+                        "\t\t\t\t\t SELECT A._id, Cantidad, IdTotales, A.IdMoneda, Fecha, comment , (\n" +
+                        "\t\t\t\t\t\t\tSELECT Cambio \n" +
+                        "\t\t\t\t\t\t\t\tFROM (\n" +
+                        "\t\t\t\t\t\t\t\t\tSELECT B.Fecha, B.Cambio, abs(julianday(A.Fecha) - julianday(B.Fecha)) as diff\n" +
+                        "\t\t\t\t\t\t\t\t\t\tFROM AccountsMovimiento as B, AccountsTotales as tb\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tWHERE A._id <> B._id and A.IdViaje = ? and B.Cambio <> 1 and\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tstrftime(A.Fecha) is not null and julianday(B.Fecha) is not null AND\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tB.IdMoneda = ? and tb._id = B.IdTotales and tb.IdMoneda = A.IdMoneda\n" +
+                        "\t\t\t\t\t\t\t\t)\n" +
+                        "\t\t\t\t\t\t\t\torder by diff\n" +
+                        "\t\t\t\t\t\t\t\tlimit 1\n" +
+                        "\t\t\t\t\t\t) as Cambio \n" +
+                        "\t\t\t\t\tFROM AccountsMovimiento as A\n" +
+                        "\t\t\t\t\t\twhere A.Cambio = 1 and A.IdViaje = ? \n" +
+                        "\t\t\t\t)\n" +
+                        "\t\t\t\t\tWHERE Cambio is not null\n" +
+                        "\t\t) as t3 on am._id = t3._id\n" +
+                        "\t\tLEFT JOIN(\n" +
+                        "\t\t\t\t\tSELECT _id, Cantidad * Cambio as Movimiento, Cantidad, Cambio, IdTotales, IdMoneda, Fecha, comment, 4 as type\n" +
+                        "\t\t\t\tFROM( \n" +
+                        "\t\t\t\t\t SELECT A._id, Cantidad, IdTotales, A.IdMoneda, Fecha, comment , (\n" +
+                        "\t\t\t\t\t\t\tSELECT Cambio \n" +
+                        "\t\t\t\t\t\t\t\tFROM (\n" +
+                        "\t\t\t\t\t\t\t\t\tSELECT B.Fecha, B.Cambio as Cambio, abs(julianday(A.Fecha) - julianday(B.Fecha)) as diff\n" +
+                        "\t\t\t\t\t\t\t\t\t\tFROM AccountsMovimiento as B, AccountsTotales as tb\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tWHERE A._id <> B._id and B.Cambio <> 1 and\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tstrftime(A.Fecha) is not null and julianday(B.Fecha) is not null AND\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t tb._id = B.IdTotales  and tb.IdMoneda = ?\n" +
+                        "\t\t\t\t\t\t\t\t)\n" +
+                        "\t\t\t\t\t\t\t\torder by diff\n" +
+                        "\t\t\t\t\t\t\t\tlimit 1\n" +
+                        "\t\t\t\t\t\t) as Cambio,\n" +
+                        "\t\t\t\t\t\tCambio as c2, IdMoneda, *\n" +
+                        "\t\t\t\t\tFROM AccountsMovimiento as A\n" +
+                        "\t\t\t\t\t\twhere A.Cambio = 1 and A.IdViaje = ? and IdMoneda <> ?\n" +
+                        "\t\t\t\t)\n" +
+                        "\t\t\t\t\tWHERE Cambio is not null\n" +
+                        "\t\t) as t4 on am._id = t4._id\n" +
+                        "\t\tLEFT JOIN(\n" +
+                        "\t\t\tSELECT _id, Cantidad * Cambio as Movimiento, Cantidad, Cambio, IdTotales, IdMoneda, Fecha, comment, 5 as type\n" +
+                        "\t\t\t\tFROM( \n" +
+                        "\t\t\t\t\t SELECT A._id, Cantidad, IdTotales, A.IdMoneda, Fecha, comment , (\n" +
+                        "\t\t\t\t\t\t\tSELECT Cambio \n" +
+                        "\t\t\t\t\t\t\t\tFROM (\n" +
+                        "\t\t\t\t\t\t\t\t\tSELECT B.Fecha, A.CAmbio/B.Cambio as Cambio, abs(julianday(A.Fecha) - julianday(B.Fecha)) as diff\n" +
+                        "\t\t\t\t\t\t\t\t\t\tFROM AccountsMovimiento as B, AccountsTotales as tb\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tWHERE A._id <> B._id and B.Cambio <> 1 and\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tstrftime(A.Fecha) is not null and julianday(B.Fecha) is not null AND\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\t tb._id = B.IdTotales and tb.IdMoneda <> ? and B.IdMoneda = ?\n" +
+                        "\t\t\t\t\t\t\t\t)\n" +
+                        "\t\t\t\t\t\t\t\torder by diff\n" +
+                        "\t\t\t\t\t\t\t\tlimit 1\n" +
+                        "\t\t\t\t\t\t) as Cambio,\n" +
+                        "\t\t\t\t\t\tCambio as c2, IdMoneda, *\n" +
+                        "\t\t\t\t\tFROM AccountsMovimiento as A\n" +
+                        "\t\t\t\t\t\twhere A.IdViaje = ? and IdMoneda <> ? and A.Cambio <> 1\n" +
+                        "\t\t\t\t)\n" +
+                        "\t\t\t\t\tWHERE Cambio is not null\n" +
+                        "\t\t) as t5 on am._id = t5._id\n" +
+                        "\t\t\tWHERE IdViaje = ?\n" +
+                        "\t\t\n" +
+                        "\t) as t1, AccountsMoneda\n" +
+                        "\t\tWHERE t1.Moneda = AccountsMoneda._id\n" +
+                        "GROUP BY t1.Moneda\n"+
+                        "ORDER by abs(Total) desc", values
+                );
+    }
     public static Cursor getTripMovesByFecha(String date, int id){
         return db.rawQuery("SELECT * FROM AccountsMovimiento WHERE (IdViaje = ?) and Fecha = ? ORDER BY Fecha DESC, _id DESC",
                 new String[]{""+id, date});

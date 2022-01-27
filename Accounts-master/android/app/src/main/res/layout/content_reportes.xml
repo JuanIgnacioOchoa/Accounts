@@ -12,13 +12,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="25dp"
         android:weightSum="3"
-        android:id="@+id/linearLayout">
+        android:id="@+id/reportFilter">
         <Spinner
             android:id="@+id/spMonth"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
@@ -30,7 +30,7 @@
         <Spinner
             android:id="@+id/spYear"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
@@ -51,12 +51,44 @@
             android:background="@null"
             />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:weightSum="3"
+        android:id="@+id/reportFilter2"
+        android:layout_below="@id/reportFilter"
+        android:visibility="gone">
+        <Spinner
+            android:id="@+id/spMonths"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/month"
+            android:background="@null"
+
+            />
+
+        <Spinner
+            android:id="@+id/spYears"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/spMonth"
+            android:text="@string/year"
+            android:background="@null"
+            />
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="2"
         android:id="@+id/linear2"
-        android:layout_below="@id/linearLayout">
+        android:layout_below="@id/reportFilter2">
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:layout_height="wrap_content"

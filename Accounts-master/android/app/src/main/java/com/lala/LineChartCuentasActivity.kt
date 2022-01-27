@@ -42,11 +42,10 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
     private var graphInstance: Fragment? = null
     private var lineChart:LineChart? = null
     private var instance: NumberFormat = NumberFormat.getInstance()
-    private var month:String? = "01"
     private var startMonth:String = "01"
-    private var year = "2019"
     private var startYear = "2019"
     private var startDay = 31
+    private var type = 1
     val hashMap = HashMap<Int, String>()
     val indexMap = HashMap<String, CuentaData>()
     val arrayList = ArrayList<String>()
@@ -54,6 +53,8 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
     private lateinit var adapter: RecipeAdapter
     private lateinit var cTotales:Cursor
     private lateinit var labelLayout: LinearLayout
+    private lateinit var startDate: Date
+    private lateinit var endDate: Date
     private var now:String = ""
     companion object {
         fun newInstance(): LineChartCuentasActivity{
@@ -144,23 +145,223 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
         }
 
         if(cTotales.count > 0){
-            updateAdapter(month, year)
+            updateAdapter(startDate, endDate, 1)
         }
     }
-    fun updateData(month: String?, year: String){
-        this.month = month
-        this.year = year
+    fun updateData(startDate: Date, endDate: Date, type: Int){
+        this.startDate = startDate
+        this.endDate = endDate
+        this.type = type
     }
+
+    fun updateAdapter(startDate: Date, endDate: Date, type: Int) {
+        if(lineChart == null){
+            return
+        }
+        val calStartDate:Calendar = Calendar.getInstance()
+        val calEndDate:Calendar = Calendar.getInstance()
+        calStartDate.time = startDate
+        calEndDate.time = endDate
+        val month = calEndDate.get(Calendar.MONTH) + 1
+        val year = calEndDate.get(Calendar.YEAR)
+        val c = Principal.getTotalsHistory(startDate, endDate, type)
+        if(!c.moveToFirst()){
+            return
+        }
+        when (type){
+            0 -> {
+                val calendar = Calendar.getInstance()
+                var ld = "${(calendar.get(Calendar.DAY_OF_MONTH) + 1)}"//(calendar.get(Calendar.DAY_OF_MONTH) + 1)
+
+
+                var firstDay = 32
+                var lastDay = 0
+                for((key, value ) in indexMap){
+                    value.entries.clear()
+                    value.cantidad = value.cantidadActual
+                    value.end = false
+                    value.last = lastDay
+                    value.first = firstDay
+                }
+                for((key, value) in indexMap){
+                    if(year == startYear.toInt() && month == startMonth.toInt()){
+                        value.entries.add(Pair(30.0f, value.cantidadActual.toFloat()))
+                    }
+                }
+                c.moveToPrevious()
+
+                while(c.moveToNext()){
+                    val id = c.getString(c.getColumnIndex("_id"))
+                    val cantdidad = c.getDouble(c.getColumnIndex("Cantidad"))
+                    val y = c.getString(c.getColumnIndex("y"))
+                    val mo = c.getString(c.getColumnIndex("mo"))
+                    val d = c.getString(c.getColumnIndex("dd"))
+                    if(indexMap[id] == null){
+                        val totalId = id.takeLast(3)
+                        if(totalId.toIntOrNull() == null){
+                            //if (id[0] != '5') {
+                            //indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                            //}
+                        }
+                        continue
+                    }
+                    val totalId = id.takeLast(3)
+                    if(totalId.toIntOrNull() == null){
+                        //if (id[0] != '5') {
+                        indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                        //}
+                    }
+                    indexMap[id]!!.cantidad = cantdidad + indexMap[id]!!.cantidad
+                    if(y.toInt() == year.toInt() && mo.toInt() == month.toInt()){
+                        if(firstDay > d.toInt())
+                            firstDay = d.toInt()
+                        if(lastDay < d.toInt()){
+                            lastDay = d.toInt()
+                        }
+                        if(indexMap[id]!!.first > d.toInt()){
+                            indexMap[id]!!.first = d.toInt()
+                        }
+
+                        if(!indexMap[id]!!.end){
+                            indexMap[id]!!.end = true
+                        }
+
+
+                        if(ld.toInt() != d.toInt()){
+                            for((key, value) in indexMap){
+                                if(id == key || totalId == key){
+                                    value.entries.add(Pair(d.toFloat(), (value.cantidad - cantdidad).toFloat()))
+                                } else {
+                                    value.entries.add(Pair(d.toFloat(), value.cantidad.toFloat()))
+                                }
+                            }
+                            ld = d
+                        }
+                    }
+                }
+                for((key, value) in indexMap){
+                    value.entries.add(Pair(0.0f, (value.cantidad).toFloat()))
+                }
+            }
+            1 -> {
+                val calendar = Calendar.getInstance()
+                var ld = "${(calendar.get(Calendar.DAY_OF_MONTH) + 1)}"//(calendar.get(Calendar.DAY_OF_MONTH) + 1)
+
+
+                var firstDay = 32
+                var lastDay = 0
+                for((key, value ) in indexMap){
+                    value.entries.clear()
+                    value.cantidad = value.cantidadActual
+                    value.end = false
+                    value.last = lastDay
+                    value.first = firstDay
+                }
+                for((key, value) in indexMap){
+                    if(year == startYear.toInt() && month == startMonth.toInt()){
+                        value.entries.add(Pair(30.0f, value.cantidadActual.toFloat()))
+                    }
+                }
+                c.moveToPrevious()
+
+                while(c.moveToNext()){
+                    val id = c.getString(c.getColumnIndex("_id"))
+                    val cantdidad = c.getDouble(c.getColumnIndex("Cantidad"))
+                    val y = c.getString(c.getColumnIndex("y"))
+                    val mo = c.getString(c.getColumnIndex("mo"))
+                    val d = c.getString(c.getColumnIndex("dd"))
+                    if(indexMap[id] == null){
+                        val totalId = id.takeLast(3)
+                        if(totalId.toIntOrNull() == null){
+                            //if (id[0] != '5') {
+                            //indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                            //}
+                        }
+                        continue
+                    }
+                    val totalId = id.takeLast(3)
+                    if(totalId.toIntOrNull() == null){
+                        //if (id[0] != '5') {
+                        indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                        //}
+                    }
+                    indexMap[id]!!.cantidad = cantdidad + indexMap[id]!!.cantidad
+                    if(y.toInt() == year.toInt() && mo.toInt() == month.toInt()){
+                        if(firstDay > d.toInt())
+                            firstDay = d.toInt()
+                        if(lastDay < d.toInt()){
+                            lastDay = d.toInt()
+                        }
+                        if(indexMap[id]!!.first > d.toInt()){
+                            indexMap[id]!!.first = d.toInt()
+                        }
+
+                        if(!indexMap[id]!!.end){
+                            indexMap[id]!!.end = true
+                        }
+
+
+                        if(ld.toInt() != d.toInt()){
+                            for((key, value) in indexMap){
+                                if(id == key || totalId == key){
+                                    value.entries.add(Pair(d.toFloat(), (value.cantidad - cantdidad).toFloat()))
+                                } else {
+                                    value.entries.add(Pair(d.toFloat(), value.cantidad.toFloat()))
+                                }
+                            }
+                            ld = d
+                        }
+                    }
+                }
+                for((key, value) in indexMap){
+                    value.entries.add(Pair(0.0f, (value.cantidad).toFloat()))
+                }
+            }
+            2 -> {
+                var lm = c.getString(c.getColumnIndex("mo"))
+                for((key, value ) in indexMap){
+                    value.entries.clear()
+                    value.cantidad = value.cantidadActual
+                    if(year == startYear.toInt()){
+                        value.entries.add(Pair(startMonth.toFloat()+0.1f, value.cantidadActual.toFloat()))
+                    }
+                }
+                c.moveToFirst()
+                c.moveToPrevious()
+                while(c .moveToNext()){
+                    val id = c.getString(c.getColumnIndex("_id"))
+                    val cantdidad = c.getDouble(c.getColumnIndex("Cantidad"))
+                    val y = c.getString(c.getColumnIndex("y"))
+                    val m = c.getString(c.getColumnIndex("mo"))
+                    if(indexMap[id] == null){
+                        continue
+                    }
+                    val totalId = id.takeLast(3)
+                    if(totalId.toIntOrNull() == null){
+                        indexMap[totalId]!!.cantidad = cantdidad + indexMap[totalId]!!.cantidad
+                    }
+                    indexMap[id]!!.cantidad = cantdidad + indexMap[id]!!.cantidad
+                    if(lm.toInt() != m.toInt() && year == y.toInt()){
+                        for((key, value) in indexMap){
+                            if(id == key || totalId == key){
+                                value.entries.add(Pair(m.toFloat(), (value.cantidad - cantdidad).toFloat()))
+                            } else {
+                                value.entries.add(Pair(m.toFloat(), value.cantidad.toFloat()))
+                            }
+                        }
+                        lm = m
+                    }
+                }
+            }
+        }
+        updateDataSets()
+    }
+
     fun updateAdapter(month: String?, year: String) {
         if(lineChart == null){
             return
         }
-        //var m:String? = null
-        //var d:String? = null
-        //var y:String? = null
         var c:Cursor
-        //cTotales.moveToFirst()
-        //cTotales.moveToPrevious()
         if (month == null) {
             var mdf = 0
             var tmpYear = year.toInt()
@@ -173,17 +374,12 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 return
             }
             var lm = c.getString(c.getColumnIndex("mo"))
-            //var x = 0
             for((key, value ) in indexMap){
                 value.entries.clear()
                 value.cantidad = value.cantidadActual
                 if(year == startYear){
                     value.entries.add(Pair(startMonth.toFloat()+0.1f, value.cantidadActual.toFloat()))
                 }
-            }
-            c.moveToPrevious()
-            while(c.moveToNext()){
-                Log.d("Accoun", c.getString(c.getColumnIndex("_id"))+c.getDouble(c.getColumnIndex("Cantidad")))
             }
             c.moveToFirst()
             c.moveToPrevious()
@@ -211,7 +407,8 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                     lm = m
                 }
             }
-        } else {
+        }
+        else {
             var mdf = 0
             var tmpMonth = month.toInt()
             var tmpYear = year.toInt()
@@ -379,7 +576,6 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                 set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f));
                 set1.setFormSize(15f);
                 set1.setFillColor(col)
-                Log.d("Accoun", "$index $key ${value.cuenta}")
                 dataSets.add(set1)
                 hashMap[index] = key
                 val rowView = inflater.inflate(R.layout.label_layout, null)
@@ -393,10 +589,9 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
         }
         val data = LineData(dataSets)
         lineChart!!.setData(data)
-        val mv = CustomMarkerView(context, R.layout.custom_marker_view_layout);
-        lineChart!!.marker = mv
-        lineChart!!.getLegend().setEnabled(false);
-        adapter.updateData(arrayList)
+        //val mv = CustomMarkerView(context, R.layout.custom_marker_view_layout);
+        //lineChart!!.marker = mv
+        //lineChart!!.getLegend().setEnabled(false);
         adapter.updateData(arrayList)
 
 
@@ -500,6 +695,7 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
 
         override fun refreshContent(e: Entry?, highlight: Highlight?) {
             super.refreshContent(e, highlight)
+            /*
             if(highlight != null) {
                 if(month == null){
                     val months = arrayOf(getString(R.string.jan),
@@ -514,6 +710,8 @@ class LineChartCuentasActivity : Fragment(), OnChartValueSelectedListener {
                     tvContent.text = "${highlight.x.toInt()}"
                 }
             }
+
+             */
         }
 
         override fun getX(): Float {

@@ -61,6 +61,7 @@ class SeeTripMainActivity : AppCompatActivity() {
         _id = intent.getIntExtra("_id", 0)
         cursorTrip = Principal.getTrip(_id)
         val nombre = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre))
+        val moneda = cursorTrip.getInt(cursorTrip.getColumnIndex(DBMan.DBViaje.IdMoneda))
         cont = applicationContext
         setTitle("$nombre")
         etNombre = findViewById<EditText>(R.id.ET_TR_Nombre)
@@ -89,7 +90,7 @@ class SeeTripMainActivity : AppCompatActivity() {
         }
         fechaFin = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaFin))
         fechaInic = cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.FechaInicio))
-        cursorMoneda = Principal.getMoneda();
+        cursorMoneda = Principal.getMonedaWith(moneda);
         spMoneda.adapter = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
         spMonedaTotals.adapter = SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorMoneda, arrayOf("Moneda"), intArrayOf(android.R.id.text1), 0)
         etNombre.setText(cursorTrip.getString(cursorTrip.getColumnIndex(DBMan.DBViaje.Nombre)))

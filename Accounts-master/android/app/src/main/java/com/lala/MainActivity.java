@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
+/*
         ibSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,6 +206,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+ */
         AccountManager accountManager = AccountManager.get(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -304,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ibSync.setVisibility(View.GONE);
         }
-        updateDrive(false);
+        //updateDrive(false);
     }
 
     @Override
@@ -317,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d("Accoun Lifecycle", "onStop");
-        updateDrive(false);
+        //updateDrive(false);
     }
     @Override
     protected void onStart(){

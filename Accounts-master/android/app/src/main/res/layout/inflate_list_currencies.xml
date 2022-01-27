@@ -30,28 +30,6 @@
 
         </FrameLayout>
     </LinearLayout>
-    <!--
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="6dp"
-            android:id="@+id/curr_flag3"/>
-
-        <ImageView
-            android:src="@drawable/frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
-    <ImageView
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-        android:id="@+id/curr_flag2"/>
--->
 
     <LinearLayout
         android:layout_width="match_parent"

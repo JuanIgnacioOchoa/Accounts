@@ -39,8 +39,10 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
     private lateinit var listView: ListView
     private var instance: NumberFormat = NumberFormat.getInstance()
     private var idMoneda = 1
-    private var month:String? = "01"
-    private var year = "2019"
+    //private var month:String? = "01"
+    //private var year = "2019"
+    private lateinit var startDate: Date
+    private lateinit var endDate: Date
     private var account = false
     private var trips = false
     private val arrayList = ArrayList<GastoData>()
@@ -90,8 +92,8 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
             if(selectedItem == position){
                 val i = Intent(context, SeeByMotive::class.java)
                 i.putExtra("_id", arrayList[position].id)
-                i.putExtra("month", month)
-                i.putExtra("year", year)
+                i.putExtra("startDate", startDate)
+                i.putExtra("endDate", endDate)
                 i.putExtra("Ingreso", arrayList[position].ingreso)
                 i.putExtra("Gasto", arrayList[position].gasto)
                 i.putExtra("IdMoneda", idMoneda)
@@ -106,23 +108,23 @@ class IngresoGraph : Fragment(), OnChartValueSelectedListener {
             selectedItem = position
         }
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
-        updateAdapter(idMoneda, month, year, account, trips)
+        updateAdapter(idMoneda, startDate, endDate, account, trips)
     }
-    fun updateData(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean){
+    fun updateData(idMoneda: Int, startDate: Date, endDate: Date, account: Boolean, trips: Boolean){
         this.idMoneda = idMoneda
-        this.month = month
-        this.year = year
+        this.startDate = startDate
+        this.endDate = endDate
         this.account = account
         this.trips = trips
     }
-    fun updateAdapter(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean) {
+    fun updateAdapter(idMoneda: Int, startDate: Date, endDate: Date, account: Boolean, trips: Boolean) {
         if(pieChart == null){
             return
         }
-        var c = Principal.getTotalesByMotive(idMoneda.toString(), year, month, account, trips, true)
+        var c = Principal.getTotalesByMotive(idMoneda.toString(), startDate, endDate, account, trips, true, 1)
         var total:Double
 
-        total = Principal.round(Principal.getIngresoTotalByDate(idMoneda, year, month, account, trips), 2)
+        total = Principal.round(Principal.getIngresoTotalByDate(idMoneda, startDate, endDate, account, trips), 2)
         pieChart!!.centerText = "Total\n${instance.format(Principal.round(total, 2))}"
         pieChart!!.setCenterTextColor(ContextCompat.getColor(context!!, R.color.positive_green))
         var gasto = 0.0

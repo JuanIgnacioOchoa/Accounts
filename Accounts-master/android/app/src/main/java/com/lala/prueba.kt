@@ -374,6 +374,7 @@ class prueba : AppCompatActivity()/*, View.OnClickListener*/ {
     }
 
     private fun updateDrive(usrApprove: Boolean): Int {
+        //return 1
         if (!usrApprove && Principal.getOnlyWifi() && !Principal.isWifiAvailable(applicationContext)) {
             Log.d("Accoun", "Only Wifi and no wifi available")
             return 1

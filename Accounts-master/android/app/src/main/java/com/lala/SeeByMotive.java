@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class SeeByMotive extends AppCompatActivity {
 
@@ -55,10 +56,12 @@ public class SeeByMotive extends AppCompatActivity {
         ga = i.getDoubleExtra("Gasto", 0.0);
         in = i.getDoubleExtra("Ingreso", 0.0);
         idMoneda = i.getIntExtra("IdMoneda", 1);
-        String month = i.getStringExtra("month");
-        String year = i.getStringExtra("year");
+        Date startDate = (Date)i.getSerializableExtra("startDate");
+        Date endDate = (Date)i.getSerializableExtra("endDate");
+        //String month = i.getStringExtra("month");
+        //String year = i.getStringExtra("year");
         String moneda = Principal.getIdMoneda(idMoneda);
-        cursorFecha = Principal.getMovimientosFecha(id, month, year, idMoneda);
+        cursorFecha = Principal.getMovimientosFecha(id, startDate, endDate, idMoneda);
         String title = Principal.getMotiveId(id);
         this.setTitle(title);
         toolbar.setTitle(title);

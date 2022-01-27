@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import java.text.NumberFormat
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -32,8 +33,10 @@ class BalanceGraphActivity : Fragment(), OnChartValueSelectedListener {
     private lateinit var colorsGastoIn: ArrayList<Int>
     private var instance: NumberFormat = NumberFormat.getInstance()
     private var idMoneda = 1
-    private var month:String? = "01"
-    private var year = "2019"
+    //private var month:String? = "01"
+    //private var year = "2019"
+    private lateinit var startDate: Date
+    private lateinit var endDate: Date
     private var account = false
     private var trips = false
     private val arrayList = ArrayList<GastoData>()
@@ -89,15 +92,72 @@ class BalanceGraphActivity : Fragment(), OnChartValueSelectedListener {
             selectedItem = position
         }
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
-        updateAdapter(idMoneda, month, year, account, trips)
+        //updateAdapter(idMoneda, month, year, account, trips)
+        updateAdapter(idMoneda, startDate, endDate, account, trips)
+    }
+
+    fun updateData(idMoneda: Int, startDate: Date, endDate: Date, account: Boolean, trips: Boolean){
+        this.idMoneda = idMoneda
+        this.startDate = startDate
+        this.endDate = endDate
+        this.account = account
+        this.trips = trips
     }
 
     fun updateData(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean){
         this.idMoneda = idMoneda
-        this.month = month
-        this.year = year
+        //this.month = month
+        //this.year = year
         this.account = account
         this.trips = trips
+    }
+    fun updateAdapter(idMoneda: Int, startDate: Date, endDate: Date, account: Boolean, trips: Boolean) {
+        if(pieChart == null){
+            return
+        }
+        var gasto:Double
+        var ingreso:Double
+
+        //gasto = Principal.getGastoTotalByDate(idMoneda, year, month, account, trips)*-1
+        //ingreso = Principal.getIngresoTotalByDate(idMoneda, year, month, account, trips)
+        gasto = Principal.getGastoTotalByDate(idMoneda, startDate, endDate, account, trips)*-1
+        ingreso = Principal.getIngresoTotalByDate(idMoneda, startDate, endDate, account, trips)
+
+        val ganancia = ingreso - gasto
+        var porcentaje = 0.0
+        if (ganancia <= 0) {
+            porcentaje = ganancia / gasto * 100
+            pieChart!!.setCenterTextColor(colorsGastoIn[1])
+        } else {
+            porcentaje = ganancia / ingreso * 100
+            pieChart!!.setCenterTextColor(colorsGastoIn[0])
+        }
+
+        pieChart!!.centerText = "Ahorro\n${instance.format(Principal.round(ganancia, 2))}\n${instance.format(Principal.round(porcentaje, 2)) + "%"}"
+
+        val value = ArrayList<PieEntry>()
+        arrayList.clear()
+        arrayList.add(GastoData("Ingreso", ingreso, 0, (ingreso/(gasto+ingreso)).toFloat()))
+        arrayList.add(GastoData("Gasto", gasto, 1, (gasto/(ingreso+gasto)).toFloat()))
+        value.add(PieEntry(ingreso.toFloat(), "Ingreso"))
+        value.add(PieEntry(gasto.toFloat(), "Gasto"))
+
+        val pieDataSet = PieDataSet(value, "")
+
+        val pieData = PieData(pieDataSet)
+
+        pieChart!!.data = pieData
+
+        pieDataSet.colors = colorsGastoIn
+        pieDataSet.setDrawValues(false)
+
+        pieChart!!.animateXY(700, 700)
+
+        adapter.updateData(arrayList)
+        //val mv = CustomMarkerView(context, R.layout.custom_marker_view_layout);
+        //piechart.marker = mv
+        //val xs = arrayOf(Highlight(1.0f, 0.111013226f, 0))
+        //pieChart!!.highlightValues(xs)
     }
 
     fun updateAdapter(idMoneda: Int, month: String?, year: String, account: Boolean, trips: Boolean) {
@@ -107,8 +167,8 @@ class BalanceGraphActivity : Fragment(), OnChartValueSelectedListener {
         var gasto:Double
         var ingreso:Double
 
-        gasto = Principal.getGastoTotalByDate(idMoneda, year, month, account, trips)*-1
-        ingreso = Principal.getIngresoTotalByDate(idMoneda, year, month, account, trips)
+        gasto = Principal.getGastoTotalByDate(idMoneda, startDate, endDate, account, trips)*-1
+        ingreso = Principal.getIngresoTotalByDate(idMoneda, startDate, endDate, account, trips)
 
         val ganancia = ingreso - gasto
         var porcentaje = 0.0

@@ -1,9 +1,11 @@
 package com.lala
 
 
+import android.content.Context
 import android.database.Cursor
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +32,8 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var balance: BalanceGraphActivity
     private lateinit var spTimeLapse: Spinner
     private lateinit var spMonth: Spinner
+    private lateinit var spYears: Spinner
+    private lateinit var spMonths: Spinner
     private lateinit var spMoneda: Spinner
     private lateinit var cbAccount: CheckBox
     private lateinit var cbTrips: CheckBox
@@ -38,12 +42,16 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var calendar: Calendar
     private lateinit var cursorMoneda: Cursor
     private lateinit var simpleCursorAdapter: SimpleCursorAdapter
+    private lateinit var reportFilter2: LinearLayout
     private var init = false
     private var idMoneda: Int = 1
-    private lateinit var year: String
-    private var month: String? = null
+    private lateinit var startDate: Date
+    private lateinit var endDate: Date
+    //private lateinit var year: String
+    //private var month: String? = null
     private lateinit var spAdapteMonth: ArrayAdapter<String>
     private lateinit var spAdapterYear: ArrayAdapter<String>
+    private lateinit var spAdapterMonths: ArrayAdapter<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,9 +67,12 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         spTimeLapse = view.findViewById(R.id.spYear);
         spMonth = view.findViewById(R.id.spMonth);
+        spYears = view.findViewById(R.id.spYears);
+        spMonths = view.findViewById(R.id.spMonths);
         spMoneda = view.findViewById(R.id.spMoneda);
         cbAccount = view.findViewById(R.id.CBAccounts);
         cbTrips = view.findViewById(R.id.CBTrips);
+        reportFilter2 = view.findViewById(R.id.reportFilter2)
 
         return view
     }
@@ -71,6 +82,7 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         MobileAds.initialize(context)
 
+        reportFilter2.visibility = View.GONE
         // Create the adapter that will return a fragment for each of the three primary sections of the activity.
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
 
@@ -122,6 +134,7 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
             y--
         }
         spAdapterYear = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, years)
+        spAdapterMonths = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, months)
 
         cursorMoneda = Principal.getMoneda()
         val to = intArrayOf(android.R.id.text1)
@@ -130,6 +143,8 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
         //calendar.get(Calendar.MONTH) + 1;
         //calendar.get(Calendar.YEAR);
         spMonth.setAdapter(spAdapteMonth)
+        spYears.setAdapter(spAdapterYear)
+        spMonths.setAdapter(spAdapterMonths)
         spTimeLapse.setAdapter(spAdapterTimeLapse)
         spMoneda.setAdapter(simpleCursorAdapter)
 
@@ -164,22 +179,16 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
             idMoneda = cursorMoneda.getInt(cursorMoneda.getColumnIndex("_id"))
         }
         val cal = Calendar.getInstance()
-        val m = cal.get(Calendar.MONTH) + 1
-        var sm = ""
-        if (m < 10) {
-            sm = "0$m"
-        } else {
-            sm = "" + m
-        }
-        val ys = cal.get(Calendar.YEAR).toString()
-
-        year = ys
-        month = sm
+        endDate = cal.time
+        cal.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
+        startDate = cal.time
         update()
 
         spMonth.setOnItemSelectedListener(this)
         spTimeLapse.setOnItemSelectedListener(this)
         spMoneda.setOnItemSelectedListener(this)
+        spYears.setOnItemSelectedListener(this)
+        spMonths.setOnItemSelectedListener(this)
         cbAccount.setOnClickListener(View.OnClickListener {
             update()
         })
@@ -190,6 +199,13 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     fun setEnabledSpinner(e: Boolean) {
         spMoneda.setEnabled(e);
+        if(e){
+            cbAccount.visibility = View.VISIBLE
+            cbTrips.visibility = View.VISIBLE
+        } else {
+            cbAccount.visibility = View.GONE
+            cbTrips.visibility = View.GONE
+        }
         cbAccount.isEnabled = e
         cbTrips.isEnabled = e
     }
@@ -206,19 +222,18 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     fun update(){
-        graphsGasto.updateData(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
-        graphsIngreso.updateData(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
-        balance.updateData(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
-        graphCuentas.updateData(month, year) // TODO colocar moneda
+        graphsGasto.updateData(idMoneda, startDate, endDate, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
+        graphsIngreso.updateData(idMoneda, startDate, endDate, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
+        balance.updateData(idMoneda, startDate, endDate, cbAccount.isChecked, cbTrips.isChecked) // TODO colocar moneda
+        graphCuentas.updateData(startDate, endDate, spTimeLapse.selectedItemPosition) // TODO colocar moneda
 
         if(cursorMoneda.count > 0) {
-            graphsGasto.updateAdapter(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked)
-            graphsIngreso.updateAdapter(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked)
-            balance.updateAdapter(idMoneda, month, year, cbAccount.isChecked, cbTrips.isChecked)
-            graphCuentas.updateAdapter(month, year)
+            graphsGasto.updateAdapter(idMoneda, startDate, endDate, cbAccount.isChecked, cbTrips.isChecked)
+            graphsIngreso.updateAdapter(idMoneda, startDate, endDate, cbAccount.isChecked, cbTrips.isChecked)
+            balance.updateAdapter(idMoneda, startDate, endDate, cbAccount.isChecked, cbTrips.isChecked)
+            graphCuentas.updateAdapter(startDate, endDate, spTimeLapse.selectedItemPosition)
         }
     }
-
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -226,14 +241,19 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val sp = parent as Spinner
         val i = sp.id
+        (parent.getChildAt(0) as TextView).setTextColor(Color.BLACK)
         if (sp.id == spMonth.id) {
             when (spTimeLapse.getSelectedItemPosition()) {
                 0 -> {
+
+                    val week = spMonth.selectedItem as WeekDays
+                    startDate = week.start
+                    endDate = week.end
                 }
                 1 -> {
                     val s = spAdapteMonth.getItem(position)
-                    year = s!!.substring(4, 8)
-                    month = s!!.substring(0, 3)
+                    val year = s!!.substring(4, 8)
+                    var month = s!!.substring(0, 3)
                     var x = months[0]
                     var monthCount = 0
                     //Toast.makeText(getApplicationContext(), month, Toast.LENGTH_LONG).show();
@@ -256,17 +276,32 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         10 -> month = "11"
                         11 -> month = "12"
                     }
-
+                    val calendar = Calendar.getInstance()
+                    calendar.set(Calendar.MONTH, monthCount)
+                    calendar.set(Calendar.YEAR, year.toInt())
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
+                    startDate = calendar.time
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+                    endDate = calendar.time
                 }
                 2 -> {
-                    year = spAdapterYear.getItem(position)
-                    month = null
-
+                    val year = spAdapterYear.getItem(position)
+                    val calendar = Calendar.getInstance()
+                    calendar.set(Calendar.MONTH, 0)
+                    calendar.set(Calendar.YEAR, year.toInt())
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
+                    startDate = calendar.time
+                    calendar.set(Calendar.MONTH, calendar.getActualMaximum(Calendar.MONTH))
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+                    endDate = calendar.time
                 }
             }
         } else if (sp.id == spTimeLapse.id) {
+            reportFilter2.visibility = View.GONE
             when (position) {
                 0 -> {
+                    reportFilter2.visibility = View.VISIBLE
+
                 }
                 1 -> spMonth.setAdapter(spAdapteMonth)
                 2 -> spMonth.setAdapter(spAdapterYear)
@@ -274,15 +309,118 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
         } else if (sp.id == spMoneda.id) {
             idMoneda = id.toInt()
 
+        } else if(sp.id == spYears.id){
+            val calendar = Calendar.getInstance()
+            var month = 0
+            if(spAdapterYear.getItem(position) == calendar.get(Calendar.YEAR).toString()){
+                var m = mutableListOf<String>()
+                var c = 0
+                while(calendar.get(Calendar.MONTH) >= c){
+                    m.add(months[c])
+                    c++
+                }
+                spAdapterMonths = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, m)
+                spMonths.setAdapter(spAdapterMonths)
+            } else {
+                spAdapterMonths = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, months)
+                spMonths.setAdapter(spAdapterMonths)
+            }
+            month = spMonths.selectedItemPosition
+            spMonth.setAdapter(WeekAdapter(context, getWeekDays(month, spAdapterYear.getItem(position).toInt())))
+        } else if(sp.id == spMonths.id){
+            val month = spMonths.selectedItemPosition
+            val year = (spYears.selectedItem as String).toInt()
+            val weekDays = getWeekDays(month, year)
+            spMonth.setAdapter(WeekAdapter(context, weekDays))
+            val now = Calendar.getInstance().time
+            for(i in 0 until weekDays.size){
+                val focus = spMonth.getItemAtPosition(i) as WeekDays
+                if(now.after(focus.start) && now.before(focus.end)){
+                    spMonth.setSelection(i)
+                }
+            }
         }
 
         update()
     }
 
+    fun getWeekDays(month: Int, year: Int) : MutableList<WeekDays>{
+        var result = mutableListOf<WeekDays>()
+        var calendar = Calendar.getInstance()
+        var calendar2 = Calendar.getInstance()
+        calendar.set(Calendar.MONTH, month)
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar2.set(Calendar.MONTH, month)
+        calendar2.set(Calendar.YEAR, year)
+        calendar2.set(Calendar.DAY_OF_MONTH, 1)
+        calendar2.add(Calendar.MONTH, 1)
+        Log.d("Accoun", calendar.time.toString())
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+            calendar.add(Calendar.DATE, -1)
+        }
+        Log.d("Accoun", calendar.time.toString())
+        while(calendar < calendar2){
+            val monday = calendar.time
+            calendar.add(Calendar.DATE, 6)
+            val sunday = calendar.time
+            result.add(WeekDays(monday, sunday))
+
+            calendar.add(Calendar.DATE, 1)
+        }
+        return result;
+    }
+
+    inner class WeekDays(startDate: Date, endDate: Date){
+        val start: Date
+        val end: Date
+
+        init {
+            start = startDate
+            end = endDate
+        }
+
+        fun getLabel():String{
+            val calendarS = Calendar.getInstance()
+            val calendarE = Calendar.getInstance()
+            calendarS.time = this.start
+            calendarE.time = this.end
+            return (calendarS.get(Calendar.DAY_OF_MONTH).toString() + " - " +
+                    calendarE.get(Calendar.DAY_OF_MONTH).toString() + " " +
+                    months[calendarE.get(Calendar.MONTH)] + " " + calendarE.get(Calendar.YEAR))
+        }
+    }
+
+    inner class WeekAdapter(val context: Context?, var dataSource: MutableList<WeekDays>) : BaseAdapter() {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val li = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = li.inflate(android.R.layout.simple_list_item_1, null) //set layout for displaying items
+
+            val txt = view.findViewById<View>(android.R.id.text1) as TextView //get id for Text view
+
+            txt.setText(dataSource[position].getLabel())
+            txt.setTextColor(Color.WHITE)
+            return view
+        }
+
+        override fun getItem(position: Int): Any? {
+            return dataSource[position];
+        }
+
+        override fun getCount(): Int {
+            return dataSource.size;
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong();
+        }
+    }
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         //private val imageResId = intArrayOf(R.drawable.cuentas, R.drawable.profile_icon)
         private val title = arrayOf("Balance", "Gasto", "Ingreso", "Cuentas")
+
+
 
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
@@ -321,7 +459,5 @@ class ReportesFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             return title[position]
         }
-
     }
-
 }
